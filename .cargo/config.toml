@@ -1,0 +1,3 @@
+# near-sdk >= 5.27 selects on-chain host functions only under `--cfg near`.
+[target.wasm32-unknown-unknown]
+rustflags = ["--cfg", "near", "-C", "link-arg=-s"]
