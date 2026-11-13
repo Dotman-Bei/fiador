@@ -68,7 +68,13 @@ Win the Social Money track (1st = $10K), keeping the grand prize in reach.
 | 2.5 | pending | | |
 | 3 | pending | | |
 
-## Next action (updated 2026-11-13 17:47 UTC = 18:47 WAT)
+## Next action (updated 2026-11-13 19:06 UTC)
+
+**Design pass DONE and guide-verified from the pushed commit 5b364f2 (opus-5-5, direction A Passbook, picked by the user from three mockups):** scope clean (13 files, all under `web/` or `docs/design/`; nothing in contract, scripts, src/lib, deployments, README); `web/src/styles/tokens.css` is the only place with hex values or font families (grep of every other css/tsx: none; no inline `style={{`); B2 distinct brand holds: Newsreader / Instrument Sans / DM Mono on paper `#fffdf8` + oxblood `#7b1e2c`, against nightcrew/basanos putty-black-teal with Host Grotesk or IBM Plex and stigi olive-on-bone; `base: './'` set (B16 closed): built `dist/index.html` loads `./assets/...`, `dist/app/index.html` loads `../assets/...`, no leading slash; guide re-ran `npm run check` 21 files / 102 tests and `npm run web:check` 4 files / 16 tests + build, all PASS. Not verified by the guide: the visual rendering (the Chrome extension was not connected to this session, so I did not look at the pages; the user chose the direction from rendered mockups). Fonts load from Google Fonts with system fallbacks. **One copy overclaim found in `web/src/landing/Landing.tsx` (Proof list, first bullet): "every point of standing traces to a named account and a repaid loan" is false for the 4 NEAR starter standing, and a Refused loan has no proposal id. Fix before the demo is recorded.** Then demo-studio (Step 2.5), then the closing concierge pass. README reconcile (post-demo) must add the three desk-review limitations (standing can be pumped by instant borrow-and-repay; the visitor line is anonymous credit with a council kill switch; a callback failure could strand a loan).
+
+(Earlier entry follows.)
+
+### Earlier entry (17:47 UTC)
 
 **Pause 3 freeze (scripts:48) DONE and guide-verified: tx `2WCjkuZJ6J8pjZEjYM8DXn2Jb1o5ntLkMy4v5uWG7iQ1` (DeleteKey, SuccessValue, 17:42:43 UTC); my own RPC read: desk keys 0, code hash unchanged (`GNKaSKXm...`, still the committed wasm), 3.5479 NEAR; `npm run verify` = VERIFY PASS (16 checks, 6 loans); gate commit a3ca51a, ledger 36ef0a6. B17 is now true (the desk is keyless). All 40 manifest tasks are committed. Calendar: 17:45 UTC, 30h14m to the deadline, ahead of the forecast (the build ended ~17:42 UTC against the forecast 20:40). Remaining plan: Design pass ~1.5h, demo ~1.25h, closing ~0.75h, so submission is realistic tonight, with buffer for sleep. NEXT: the Design pass (Opus, high; needs claude-in-chrome connected, B1), then demo-studio, then the concierge closing pass. The orchestrator tab should now print its WHEN GREEN report; verify it from the repo, it does not block the Design pass.**
 
