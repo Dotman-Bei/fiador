@@ -1,0 +1,14 @@
+{
+  "measured_at": "2026-11-13T17:15:49.164Z",
+  "headroom": "1.3",
+  "add_proposal": "2335448918308",
+  "on_filed": "10365776681821",
+  "act_proposal": "6491259527508",
+  "on_voted": "1540169063312",
+  "recommended": {
+    "add_proposal": "3036083593801",
+    "on_filed": "13475509686368",
+    "act_proposal": "8438637385761",
+    "on_voted": "2002219782306"
+  }
+}

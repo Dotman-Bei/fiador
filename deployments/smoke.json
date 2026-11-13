@@ -1,0 +1,19 @@
+{
+  "network": "testnet",
+  "rpc": "https://rpc.testnet.fastnear.com",
+  "factory": "sputnikv2.testnet",
+  "dao": "fiador.sputnikv2.testnet",
+  "dao_version": "2.3.1",
+  "smoke": "smoke.fiador-ops-vmwpxk.testnet",
+  "council": [
+    "council-1.fiador-ops-vmwpxk.testnet",
+    "council-2.fiador-ops-vmwpxk.testnet",
+    "council-3.fiador-ops-vmwpxk.testnet"
+  ],
+  "root": "fiador-ops-vmwpxk.testnet",
+  "vote_check_proposal": 0,
+  "transfer_proposal": 1,
+  "permission_denied": true,
+  "smoke_transfer_yocto": "10000000000000000000000",
+  "at": "2026-11-13T17:15:49.171Z"
+}
