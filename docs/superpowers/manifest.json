@@ -2,7 +2,8 @@
   "project": "fiador",
   "spec": "docs/superpowers/specs/2026-11-13-fiador-design.md",
   "subsystems": [
-    "smoke"
+    "smoke",
+    "desk"
   ],
   "tasks": [
     {
@@ -548,6 +549,430 @@
       "commit": "chore(gate): live smoke run records",
       "human_gate": true,
       "gate_profile": "deploy",
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:21",
+      "subsystem": "desk",
+      "title": "Desk crate scaffold: state, types, errors, params, gas, test helpers",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "smoke:1"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "contract/desk/Cargo.toml",
+          "contract/desk/Cargo.lock",
+          ".gitattributes",
+          "contract/desk/src/lib.rs",
+          "contract/desk/src/errors.rs",
+          "contract/desk/src/types.rs",
+          "contract/desk/src/params.rs",
+          "contract/desk/src/gas.rs",
+          "contract/desk/src/governance.rs",
+          "contract/desk/src/sputnik.rs",
+          "contract/desk/src/lending.rs",
+          "contract/desk/src/requests.rs",
+          "contract/desk/src/repay.rs",
+          "contract/desk/src/council.rs",
+          "contract/desk/src/visitors.rs",
+          "contract/desk/src/views.rs",
+          "contract/desk/src/tests/mod.rs",
+          "contract/desk/src/tests/common.rs",
+          "contract/desk/src/tests/governance.rs",
+          "contract/desk/src/tests/sputnik_json.rs",
+          "contract/desk/src/tests/ask_chain.rs",
+          "contract/desk/src/tests/cosign.rs",
+          "contract/desk/src/tests/repay.rs",
+          "contract/desk/src/tests/council.rs",
+          "contract/desk/src/tests/visitors.rs",
+          "contract/desk/src/tests/views.rs",
+          "contract/desk/src/tests/gas_headroom.rs"
+        ],
+        "modify": [],
+        "test": [
+          "contract/desk/src/tests/init.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk: crate fiador_desk (near-sdk =5.30.1): Desk { dao, params, members, loans, requests, book }, new(dao: AccountId, params: Params) -> Self, get_config() -> ConfigView",
+        "contract/desk JSON: Params { starter_standing: U128, max_standing: U128, growth_step: U128, book_cap: U128, loan_term_sec: u64, grace_sec: u64, request_ttl_sec: u64, visitor_slots: u32, visitor_starter: U128, visitor_window_sec: u64, visitor_deposit: U128, proposal_bond: U128 }",
+        "contract/desk JSON: ConfigView { dao: string, params: Params, book: U128, member_count: u32, loan_count: u64, request_count: u32 }",
+        "contract/desk JSON: Lane = \"Standing\" | \"Cosigned\" | \"Council\"; LoanStatus = \"Filing\" | \"Voting\" | \"AwaitingCouncil\" | \"Active\" | \"Repaid\" | \"RepaidLate\" | \"Defaulted\" | \"Refused\" | \"NotFunded\" | \"Voided\"",
+        "contract/desk JSON: AskResult = { \"Held\": { gap: U128, expires_at_ms: u64 } } | { \"Loan\": { loan_id: u64, status: LoanStatus, proposal_id: u64 | null } }",
+        "contract/desk JSON: MemberView { account_id: string, standing: U128, drawn: U128, pledged: U128, unused: U128, open_loans: u32, visitor: SeatView | null, repaid_on_time: u32, defaults: u32 }; SeatView { joined_at_ms: u64, expires_at_ms: u64, deposit: U128, loans_taken: u32 }",
+        "contract/desk JSON: LoanView { id: u64, borrower: string, principal: U128, borrower_part: U128, cosigner: string | null, pledge: U128, lane: Lane, status: LoanStatus, proposal_id: u64 | null, created_at_ms: u64, due_at_ms: u64, closed_at_ms: u64 }",
+        "contract/desk JSON: RequestView { borrower: string, amount: U128, gap: U128, expires_at_ms: u64, expired: bool }",
+        "contract/desk/src/errors.rs: every ERR_* refusal string",
+        "contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, with_members, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)"
+      ],
+      "requires": [
+        "npm run cargo -- <cargo args>"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::init::",
+        "expect": "PASS — `test result: ok. 4 passed; 0 failed` (warnings about not-yet-used helpers are expected; the first run also creates `contract/desk/Cargo.lock`)"
+      },
+      "commit": "feat(desk): crate scaffold, state, types, errors and params",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:22",
+      "subsystem": "desk",
+      "title": "DAO-only governance: set_params, admit_member, remove_member",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:21"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/governance.rs"
+        ],
+        "test": [
+          "contract/desk/src/tests/governance.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk: set_params(params: Params); admit_member(account_id: AccountId); remove_member(account_id: AccountId) — callable only by the DAO account stored at init (ERR_ONLY_DAO)"
+      ],
+      "requires": [
+        "contract/desk: crate fiador_desk (near-sdk =5.30.1): Desk { dao, params, members, loans, requests, book }, new(dao: AccountId, params: Params) -> Self, get_config() -> ConfigView",
+        "contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, with_members, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::governance::",
+        "expect": "PASS — `test result: ok. 10 passed; 0 failed`"
+      },
+      "commit": "feat(desk): DAO-only governance",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:23",
+      "subsystem": "desk",
+      "title": "Sputnik 2.3.1 JSON builders and tolerant result readers",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:21"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/sputnik.rs"
+        ],
+        "test": [
+          "contract/desk/src/tests/sputnik_json.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk/src/sputnik.rs: transfer_kind(&AccountId, u128) -> Value; add_proposal_args(&Loan) -> Vec<u8>; act_proposal_args(proposal_id: u64, &Loan) -> Vec<u8>; get_proposal_args(u64) -> Vec<u8>; read_u64_result() -> Option<u64>; promise_ok() -> bool; parse_status(&[u8]) -> Option<String>; read_proposal_status() -> Option<String>"
+      ],
+      "requires": [
+        "contract/desk: crate fiador_desk (near-sdk =5.30.1): Desk { dao, params, members, loans, requests, book }, new(dao: AccountId, params: Params) -> Self, get_config() -> ConfigView"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::sputnik_json::",
+        "expect": "PASS — `test result: ok. 5 passed; 0 failed`"
+      },
+      "commit": "feat(desk): Sputnik JSON builders and readers",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:24",
+      "subsystem": "desk",
+      "title": "The ask chain and the one file-and-approve routine (security core)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:22",
+        "desk:23"
+      ],
+      "effort": "xhigh",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/lending.rs",
+          "contract/desk/src/tests/common.rs"
+        ],
+        "test": [
+          "contract/desk/src/tests/ask_chain.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk: ask(amount: U128) -> PromiseOrValue<AskResult>; callbacks on_filed(loan_id: u64, approve: bool), on_voted(loan_id: u64)",
+        "contract/desk/src/lending.rs: open_loan, holds_reservation, release, close, outcome, check_visitor_can_borrow, file_transfer (the one routine that writes to Sputnik), VISITOR_MAX_LOANS = 3",
+        "contract/desk/src/tests/common.rs: active_loan(d: &mut Desk, borrower: &str, amount: u128, sec: u64, proposal_id: u64) -> u64"
+      ],
+      "requires": [
+        "contract/desk: set_params(params: Params); admit_member(account_id: AccountId); remove_member(account_id: AccountId) — callable only by the DAO account stored at init (ERR_ONLY_DAO)",
+        "contract/desk/src/sputnik.rs: transfer_kind(&AccountId, u128) -> Value; add_proposal_args(&Loan) -> Vec<u8>; act_proposal_args(proposal_id: u64, &Loan) -> Vec<u8>; get_proposal_args(u64) -> Vec<u8>; read_u64_result() -> Option<u64>; promise_ok() -> bool; parse_status(&[u8]) -> Option<String>; read_proposal_status() -> Option<String>"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::ask_chain::",
+        "expect": "PASS — `test result: ok. 16 passed; 0 failed`"
+      },
+      "commit": "feat(desk): ask chain and the file-and-approve core",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:25",
+      "subsystem": "desk",
+      "title": "Co-signing a held request, and cancelling it",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:24"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/requests.rs",
+          "contract/desk/src/tests/common.rs"
+        ],
+        "test": [
+          "contract/desk/src/tests/cosign.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk: cosign(borrower: AccountId, max_pledge: U128) -> PromiseOrValue<AskResult>; cancel_request()",
+        "contract/desk/src/tests/common.rs: active_cosigned_loan(d: &mut Desk, borrower: &str, cosigner: &str, amount: u128, sec: u64, proposal_id: u64) -> u64"
+      ],
+      "requires": [
+        "contract/desk: ask(amount: U128) -> PromiseOrValue<AskResult>; callbacks on_filed(loan_id: u64, approve: bool), on_voted(loan_id: u64)",
+        "contract/desk/src/lending.rs: open_loan, holds_reservation, release, close, outcome, check_visitor_can_borrow, file_transfer (the one routine that writes to Sputnik), VISITOR_MAX_LOANS = 3",
+        "contract/desk/src/tests/common.rs: active_loan(d: &mut Desk, borrower: &str, amount: u128, sec: u64, proposal_id: u64) -> u64"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::cosign::",
+        "expect": "PASS — `test result: ok. 13 passed; 0 failed`"
+      },
+      "commit": "feat(desk): co-signing and request cancel",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:26",
+      "subsystem": "desk",
+      "title": "Repayment and deterministic settlement",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:25"
+      ],
+      "effort": "xhigh",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/repay.rs"
+        ],
+        "test": [
+          "contract/desk/src/tests/repay.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk: repay(loan_id: u64) -> Promise, payable: exact principal, Active loans only; forwards the principal to the DAO",
+        "contract/desk/src/repay.rs: settle(&Loan, now) -> LoanStatus, reward(&Loan), apply_default(&Loan)"
+      ],
+      "requires": [
+        "contract/desk: cosign(borrower: AccountId, max_pledge: U128) -> PromiseOrValue<AskResult>; cancel_request()",
+        "contract/desk/src/tests/common.rs: active_cosigned_loan(d: &mut Desk, borrower: &str, cosigner: &str, amount: u128, sec: u64, proposal_id: u64) -> u64"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::repay::",
+        "expect": "PASS — `test result: ok. 11 passed; 0 failed`"
+      },
+      "commit": "feat(desk): repayment and settlement",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:27",
+      "subsystem": "desk",
+      "title": "Council lane, sync_loan and mark_default (reconciliation with Sputnik)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:26"
+      ],
+      "effort": "xhigh",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/council.rs"
+        ],
+        "test": [
+          "contract/desk/src/tests/council.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk: ask_council(amount: U128) -> PromiseOrValue<AskResult>; sync_loan(loan_id: u64) -> Promise; mark_default(loan_id: u64) -> Promise; callback on_proposal_read(loan_id: u64, purpose: ReadPurpose) -> LoanStatus"
+      ],
+      "requires": [
+        "contract/desk: repay(loan_id: u64) -> Promise, payable: exact principal, Active loans only; forwards the principal to the DAO",
+        "contract/desk/src/repay.rs: settle(&Loan, now) -> LoanStatus, reward(&Loan), apply_default(&Loan)"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::council::",
+        "expect": "PASS — `test result: ok. 14 passed; 0 failed`"
+      },
+      "commit": "feat(desk): council lane and reconciliation",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:28",
+      "subsystem": "desk",
+      "title": "The visitor line with recycling seats",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:27"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/visitors.rs"
+        ],
+        "test": [
+          "contract/desk/src/tests/visitors.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk: join_visitor_line(), payable: exact visitor_deposit; records never exceed visitor_slots; a full line reclaims one expired idle seat and refunds its deposit, else ERR_VISITOR_LINE_FULL"
+      ],
+      "requires": [
+        "contract/desk: ask_council(amount: U128) -> PromiseOrValue<AskResult>; sync_loan(loan_id: u64) -> Promise; mark_default(loan_id: u64) -> Promise; callback on_proposal_read(loan_id: u64, purpose: ReadPurpose) -> LoanStatus"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::visitors::",
+        "expect": "PASS — `test result: ok. 12 passed; 0 failed`"
+      },
+      "commit": "feat(desk): visitor line",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:29",
+      "subsystem": "desk",
+      "title": "Paginated public views",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:28"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/views.rs"
+        ],
+        "test": [
+          "contract/desk/src/tests/views.rs"
+        ]
+      },
+      "provides": [
+        "contract/desk: get_member(account_id: AccountId) -> Option<MemberView>; get_members(from_index: u32, limit: u32) -> Vec<MemberView>; get_loan(loan_id: u64) -> Option<LoanView>; get_loans(from_index: u64, limit: u64) -> Vec<LoanView>; get_requests(from_index: u32, limit: u32) -> Vec<RequestView> (limits capped at 100)"
+      ],
+      "requires": [
+        "contract/desk: join_visitor_line(), payable: exact visitor_deposit; records never exceed visitor_slots; a full line reclaims one expired idle seat and refunds its deposit, else ERR_VISITOR_LINE_FULL"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::views::",
+        "expect": "PASS — `test result: ok. 6 passed; 0 failed`"
+      },
+      "commit": "feat(desk): paginated views",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:30",
+      "subsystem": "desk",
+      "title": "Gas headroom against the live smoke measurement",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:29",
+        "smoke:12"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [
+          "contract/desk/src/tests/gas_headroom.rs",
+          "contract/desk/src/gas.rs"
+        ],
+        "test": []
+      },
+      "provides": [
+        "contract/desk/src/gas.rs: gas constants verified >= 1.3x the live smoke measurement (D28)"
+      ],
+      "requires": [
+        "deployments/smoke-gas.json",
+        "contract/desk: get_member(account_id: AccountId) -> Option<MemberView>; get_members(from_index: u32, limit: u32) -> Vec<MemberView>; get_loan(loan_id: u64) -> Option<LoanView>; get_loans(from_index: u64, limit: u64) -> Vec<LoanView>; get_requests(from_index: u32, limit: u32) -> Vec<RequestView> (limits capped at 100)"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml",
+        "expect": "PASS — `test result: ok. 96 passed; 0 failed` (the whole desk suite, including the 5 headroom tests)"
+      },
+      "commit": "test(desk): gas headroom over the live smoke measurement",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "desk:31",
+      "subsystem": "desk",
+      "title": "Build and commit the desk wasm",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-desk.md",
+      "depends_on": [
+        "desk:30",
+        "smoke:2"
+      ],
+      "effort": "low",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "contract/res/fiador_desk.wasm"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "contract/res/fiador_desk.wasm"
+      ],
+      "requires": [
+        "npm run wasm -- <smoke|desk>",
+        "npm run wasm:check -- <file.wasm> <export1,export2,...>",
+        "contract/desk/src/gas.rs: gas constants verified >= 1.3x the live smoke measurement (D28)"
+      ],
+      "gate": {
+        "run": "npm run wasm:check -- contract/res/fiador_desk.wasm new,get_config,set_params,admit_member,remove_member,ask,on_filed,on_voted,cosign,cancel_request,repay,ask_council,sync_loan,mark_default,on_proposal_read,join_visitor_line,get_member,get_members,get_loan,get_loans,get_requests",
+        "expect": "PASS — `WASM CHECK PASS contract/res/fiador_desk.wasm <N> bytes, <M> exports`"
+      },
+      "commit": "build(desk): commit fiador_desk.wasm",
+      "human_gate": false,
       "allow_empty": false,
       "status": "pending"
     }
