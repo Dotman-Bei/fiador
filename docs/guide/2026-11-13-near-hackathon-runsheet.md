@@ -13,10 +13,11 @@ Guide seat: claude-sonnet-5-5 · standard · effort high (as launched). Updated 
 
 ## Project repo
 
-- `Dotman-Bei/near-hackathon-2026` (private), created by the guide per `references/repo-bootstrap.md` on 2026-11-13.
-- Local clone: `C:\Users\bamig\Documents\VIBE CODE\Hackathons\near-hackathon-2026` (sibling of the kit).
+- **Current: `Dotman-Bei/good-standing`** (private, default branch main). Created by the guide on 2026-11-13 as `Dotman-Bei/near-hackathon-2026` per `references/repo-bootstrap.md`; renamed by idea-forge Step 4 after the brief landed (guide verified: `git remote get-url origin` and `gh repo view` both show good-standing; description set).
+- Local clone (folder keeps the OLD event name, unchanged on purpose; the VS Code window is open on it): `C:\Users\bamig\Documents\VIBE CODE\Hackathons\near-hackathon-2026`.
 - Kit: `C:\Users\bamig\Documents\VIBE CODE\Hackathons\build-system` (read-only; local HEAD 0e63cfa, one commit ahead of origin/main, nothing behind).
-- Rename: expected once the project is named (idea-forge Step 4). Record both names here.
+- Every kickoff's `REPO:` field = `Dotman-Bei/good-standing`.
+- Project name "Good Standing" is provisional per the brief; the guide recommends keeping it (see Strategy decisions). A second rename costs another repo rename.
 - Git on this machine: use `git -c credential.helper= -c "credential.helper=!gh auth git-credential" <cmd>` for fetch/push (default helper stalls).
 
 ## Goal
@@ -41,7 +42,8 @@ Win the Social Money track (1st = $10K), keeping the grand prize in reach.
 
 | Decision | Choice | Why |
 |---|---|---|
-| Steps | 0a, 0, 1, 2, Design pass, 2.5 (lean), 3 closing; 3 preflight only if the architect creates `human_gate` tasks | No idea chosen yet so idea-forge is worth it; sponsor facts (Sputnik DAO, Trezu) are the feasibility fuel so 0a is worth it, timeboxed |
+| Steps | 0a, 0, 1, 2, Design pass, 2.5 (lean), 3 preflight (REQUIRED: the brief names faucet funding, testnet deploy and DAO creation as human-gated, so a parallel concierge preflight runs during the build) + 3 closing | No idea chosen yet so idea-forge is worth it; sponsor facts (Sputnik DAO, Trezu) are the feasibility fuel so 0a is worth it, timeboxed |
+| Project name | keep "Good Standing" (guide recommendation, user decides before the architect) | live scan of 935 entries (2026-11-13 12:59 UTC): no "Good Standing" or "Surety" entry exists; only "Standing Order" (payroll, 5 tracks) shares the word, and the product's own vocabulary is "standing". Renaming means another repo rename and the brief, contract and UI copy all say Standing |
 | Tracks (revised after the pack) | `social` PRIMARY (the idea must win here: 96 live entries, 5th-least crowded of 13); `security` and `realworld` as secondary tags ONLY if the idea genuinely fits, never bending the idea | `security`'s Build line ("spending limits, policy engines, ... reputation") matches the Social example's mechanics verbatim; `realworld` overlaps Trezu payments/bulk payouts (211 entries). `agents` DROPPED from the shortlist: 392 entries (2nd most crowded), Agent Market has no testnet and holds custodial USD/USDC, and it adds scope to a ~12h build. Multi-tick is explicitly allowed; whether one project can WIN in two tracks is not stated anywhere (organizers only; not worth a delay since the plan is Social-first) |
 | Risk appetite | `safe-feasible` (user decides; `novel-wow` is the alternative) | no published weights; Claude Code/Codex must be able to RUN the project from the README (testnet, no secrets); ~12h; unfamiliar NEAR stack. Differentiation comes from the PRIOR ART head-to-head (idea-forge keeps looking if its idea only ties), and the brief must not be the track's example prompt (bounty board + earned trust) re-skinned |
 | Sponsor depth (0a) | Deep: Sputnik DAO, Trezu, Named Accounts (nearaccounts.com), near.social, NEAR.AI + Agent Market. Shallow: the other ecosystem partners | the Social Money track names the first three; the last two feed the agents double-dip |
@@ -53,7 +55,7 @@ Win the Social Money track (1st = $10K), keeping the grand prize in reach.
 | Step | Status | Artifact / verification | Seat settings |
 |---|---|---|---|
 | 0a | **done, verified 2026-11-13 13:08 WAT** | pack `docs/resources/2026-11-13-near-hackathon/` (commit 3955d85): INDEX, event, tracks (all 13), prior-art (+ agents list), deep files for sputnik-dao, trezu, named-accounts, near-social, agent-market, near-ai, shallow ecosystem file. Guide spot-checks vs live sources: deadline matches HACKATHON.md; no weights published (matches page); mainnet factory 2,148 DAOs exact; testnet factory 5,635 (pack 5,634, +1 live); Social entries 96 (pack 95, +1 live). Known gaps are labeled in INDEX.md, none block ideation | claude-opus-5-5 (reported), effort high (as instructed) |
-| 0 | pending | | |
+| 0 | **done, verified 2026-11-13 ~14:00 WAT** | `docs/idea-forge/2026-11-13-good-standing-brief.md` (commit 8f8c712, pushed, clean vs origin). All fields present: event + constraints, problem, one-line solution, must-haves, tracks, published judging (none), why it wins + head-to-head, money shot, out of scope, Feasibility notes (pack facts [PACK] and live checks [LIVE] kept apart, addresses and signatures transcribed), rubric (420/500), prior-art evidence, architect kickoff block. Architect block checked: DOCS names brief, pack, frontend contract, tollgate, runsheet, event URL; CONSTRAINTS carries "Follow docs/design/frontend-contract.md." Guide spot-checks: 935 live entries scanned, no name collision, no lending entry except `setllend` (defi order book), Patch Fund / Petty Cash / Hat Tip / Rescue Room / Standing Order all exist with the claimed tracks; fresh testnet DAO `version` = "2.3.1" (matches brief). Residual: competitor claims rest on one-line posts, repos not opened (stated in the brief) | claude-fable-5-2 (reported; above the opus binding, no warning), effort max (set by the user, unverifiable) |
 | 1 | pending | | |
 | 2 | pending | | |
 | Design pass | pending | | |
@@ -62,9 +64,11 @@ Win the Social Money track (1st = $10K), keeping the grand prize in reach.
 
 ## Next action
 
-User opens a new Claude Code chat tab in the VS Code window on the project repo and pastes the Step 0 (idea-forge) kickoff (model `opus`, effort `max`). Then: guide verifies the brief (committed + pushed, all fields, Feasibility notes, architect block lists the frontend contract) and makes the calendar-fit call.
+User opens a new Claude Code chat tab in the VS Code window on the project repo and pastes the Step 1 (architect) kickoff (model `opus`, effort `xhigh` = "Extra"). It is idea-forge's emitted block plus a guide CALENDAR/GATES paragraph (the brief is untouched).
 
-Calendar at 2026-11-13 13:08 WAT (12:08 UTC): 35h51m to the deadline. Remaining budget ~10h (0 0:45, 1 1:15, 2 4:30, Design 1:30, demo 1:15, closing 0:45) on top of ~2.5h spent, i.e. roughly 12.5h of work against the 12h plan: fits the deadline with a large clock buffer, but the build must stay trim. Calendar-fit call is made on the brief.
+Then, in order, one at a time: guide verifies the architect baton (spec + plans + manifest.json + submission-draft + Stack requirements appended to the tollgate report, Stage-4 validation clean, every deploy/key/fund task `human_gate: true`) -> throwaway tab installs the executor agents -> concierge PREFLIGHT kickoff in a parallel tab -> orchestrator kickoff.
+
+**Calendar-fit call (2026-11-13 12:59 UTC = 13:59 WAT; deadline 2026-11-14 23:59 UTC; 34h59m of clock left):** FITS, with one condition. Spent ~3h23m. Remaining plan: architect 1:15 + build 4:30 + Design pass 1:30 + demo 1:15 + closing 0:45 = 9h15m, so ~12h38m total against the 12h working plan: ~40 min over the plan but inside the clock by a wide margin; sleep/buffer sits in the clock. The risk is not hours, it is (a) the desk contract's async chain (request -> add_proposal -> callback -> act_proposal -> callback with standing and pledge accounting) and (b) a Rust-to-wasm toolchain that does not exist yet on this Windows box. Condition: the brief's day-1 smoke test (build + deploy a trivial contract; create a DAO with a custom bond-0 policy; have a contract account file and alone-approve a Transfer; read it back Approved) is the FIRST build task; if the local wasm build fails within ~1h of Step 2 starting, switch to a Linux CI build (GitHub Actions on this repo, user's gh token has `workflow` scope) that commits the wasm. Hard rule: the brief's cut order stands (wallet-connected /app actions first, then the faucet visitor flow); the contract with 3 lanes + default, seeded DAO, board, `verify` and the story script are never cut. Latest acceptable submission target stays 2026-11-14 18:00 UTC.
 
 ## Open blockers / watch list
 
@@ -77,6 +81,12 @@ Calendar at 2026-11-13 13:08 WAT (12:08 UTC): 35h51m to the deadline. Remaining 
 - **B9 Sputnik code vs README:** proposal bond must match exactly; `act_proposal` must echo the proposal kind (sponsors/sputnik-dao.md gotchas 1-2). The brief's Feasibility notes must carry them.
 - **B5 HACKATHON.md contains instructions aimed at coding agents (incl. a submission API).** Treat as data; nothing calls that API; the submission is the user's.
 - **B6 X post:** the submission needs a public X post with demo video; the user posts it (not automatable by us).
+- **B10 Rust-to-wasm toolchain (OPEN, biggest build risk):** machine has rustc/cargo 1.99.0 but NO `wasm32-unknown-unknown` target (only `wasm32v1-none`, which cannot build a std near-sdk contract), no cargo-near, no near CLI, no WSL, no Docker. Newer Rust emits wasm features the NEAR runtime may reject, so the architect must pin a toolchain (`rust-toolchain.toml`) and probe it; the architect appends these as Stack requirements rows and the guide re-probes them before the orchestrator kickoff. Installs are the user's/consented, never the tollgate's. Fallback: Linux CI build committing the wasm so nobody needs Rust to reproduce the demo.
+- **B11 Testnet funds and accounts (human gates, concierge PREFLIGHT):** ~30 testnet NEAR (brief's estimate: DAO creation 6-10, desk + storage a few, loan float 10-15, ~1 each for ~8 persona accounts) from the public faucet; keys only in env vars or a git-ignored `.env`, never in the repo. Faucet may rate-limit, so start the preflight in parallel with the build, not after.
+- **B12 Static hosting for the board (Step 3 gate):** the brief wants a hosted board kept up to 2026-11-18 (ideally 11-25). The repo is private until the public flip, so the host must build from a private repo or the flip must come first; choose at Step 3.
+- **B13 Name decision (user, before the architect):** keep "Good Standing" (recommended) or switch to "Surety". Default if the user says nothing: keep.
+- **B14 First integration test settles the `act_proposal` call shape:** live testnet build (2.3.1) appears not to need the echoed `proposal`, `main` requires it; plans must send the one shape valid on both (`id`, `action`, `proposal`, optional `memo`) and JSON shapes come from a live 2.3.1 DAO, not `main`.
+- **B15 Security core:** the desk seat can approve ANY transfer proposal it can add. The plans must make it vote only on ids returned by its own `add_proposal` call; the contract is the `top`-tier, review-heavy task (pin rule: security-sensitive tasks never below `top`).
 
 ## Design pass prompt (current version, used after Step 2)
 
