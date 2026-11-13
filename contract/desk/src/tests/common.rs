@@ -98,3 +98,13 @@ pub fn transfers_to(account: &AccountId) -> Vec<u128> {
         })
         .collect()
 }
+
+/// A desk with these members admitted by the DAO (each at starter standing 4 NEAR).
+pub fn with_members(names: &[&str]) -> Desk {
+    let mut d = new_desk();
+    at(&dao_id(), T0, 0, vec![]);
+    for n in names {
+        d.admit_member(acc(n));
+    }
+    d
+}
