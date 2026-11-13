@@ -1,0 +1,21 @@
+{
+  "run": "1",
+  "at": "2026-11-13T17:35:54.105Z",
+  "personas": {
+    "ada": "ada-1.fiador-ops-vmwpxk.testnet",
+    "bayo": "bayo-1.fiador-ops-vmwpxk.testnet",
+    "chidi": "chidi-1.fiador-ops-vmwpxk.testnet"
+  },
+  "loans": {
+    "money_shot": 0,
+    "council": 1,
+    "late": 2,
+    "defaulted": 3,
+    "refused": 4
+  },
+  "treasury": {
+    "before": "17421540000000000000000000",
+    "after_payout": "11421540000000000000000000",
+    "after_repay": "17421540000000000000000000"
+  }
+}
