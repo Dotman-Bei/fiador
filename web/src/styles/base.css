@@ -12,11 +12,13 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--ground);
   color: var(--ink);
   font-family: var(--font-text);
   font-size: var(--fs-body);
-  line-height: var(--lh-body);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-ui);
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -33,57 +35,55 @@ figure {
   margin: 0;
 }
 
+/* Newsreader is for large headlines only */
 h1,
-h2,
-h3 {
+h2 {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: var(--track-display);
+  font-weight: var(--w-regular);
   font-optical-sizing: auto;
+  text-wrap: balance;
 }
 
 h1 {
   font-size: var(--fs-display);
   line-height: var(--lh-display);
-}
-
-h1 em,
-h2 em {
-  font-style: italic;
-  color: var(--cover);
+  letter-spacing: var(--track-display);
 }
 
 h2 {
   font-size: var(--fs-h2);
   line-height: var(--lh-heading);
+  letter-spacing: var(--track-h2);
 }
 
 h3 {
-  font-size: var(--fs-h3);
+  font-family: var(--font-text);
+  font-size: var(--fs-title);
+  font-weight: var(--w-medium);
   line-height: var(--lh-heading);
 }
 
 a {
   color: inherit;
-  text-decoration-color: var(--rule);
+  text-decoration-color: var(--hair-strong);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  transition: color var(--ease), background-color var(--ease), border-color var(--ease), text-decoration-color var(--ease);
+  transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
 }
 
 a:hover {
-  color: var(--cover);
+  color: var(--accent);
   text-decoration-color: currentColor;
 }
 
 code {
-  font-family: var(--font-figure);
-  font-size: 0.9em;
+  font-family: var(--font-text);
+  font-weight: var(--w-medium);
   overflow-wrap: anywhere;
 }
 
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -94,32 +94,49 @@ code {
   padding-inline: var(--gutter);
 }
 
-.wordmark {
-  font-family: var(--font-display);
-  font-size: var(--fs-h3);
-  font-weight: 500;
-  letter-spacing: var(--track-display);
-  line-height: var(--lh-display);
-  text-decoration: none;
+.secondary {
+  color: var(--ink-2);
 }
 
-.navlinks {
+.muted {
+  color: var(--ink-3);
+}
+
+/* Navigation */
+.nav {
+  border-bottom: var(--hair);
+}
+
+.nav-row {
   display: flex;
-  gap: var(--s-5);
-  font-size: var(--fs-small);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  height: var(--nav-h);
 }
 
-.navlinks a {
+.wordmark {
+  font-family: var(--font-text);
+  font-size: var(--fs-title);
+  font-weight: var(--w-strong);
+  line-height: var(--lh-tight);
   text-decoration: none;
 }
 
-.label {
-  font-family: var(--font-figure);
-  font-size: var(--fs-label);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--muted);
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  font-size: var(--fs-body);
+}
+
+.nav-links a:not(.btn) {
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.nav-links a:not(.btn):hover {
+  color: var(--ink);
 }
 
 /* Buttons */
@@ -127,140 +144,191 @@ code {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--s-2);
-  padding: var(--s-3) var(--s-5);
-  border: 1px solid var(--cover);
-  border-radius: var(--r-pill);
-  background: var(--cover);
-  color: var(--cover-ink);
+  height: var(--control-h);
+  padding-inline: var(--s-4);
+  border: 1px solid var(--accent);
+  border-radius: var(--r-control);
+  background: var(--accent);
+  color: var(--on-accent);
   font-family: var(--font-text);
   font-size: var(--fs-body);
-  font-weight: 600;
-  line-height: var(--lh-heading);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-tight);
   text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--ease), border-color var(--ease), color var(--ease);
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
 }
 
 .btn:hover {
-  background: var(--cover-deep);
-  border-color: var(--cover-deep);
-  color: var(--cover-ink);
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+  color: var(--on-accent);
 }
 
-.btn-line {
-  background: transparent;
-  border-color: var(--ink);
+.btn:active {
+  transform: scale(var(--press));
+}
+
+.btn-quiet {
+  background: var(--surface);
+  border-color: var(--hair-strong);
   color: var(--ink);
-  font-weight: 500;
 }
 
-.btn-line:hover {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
+.btn-quiet:hover {
+  background: var(--raised);
+  border-color: var(--hair-strong);
+  color: var(--ink);
 }
 
-/* Panels */
-.panel {
-  background: var(--leaf);
+.btn-lg {
+  height: var(--hero-control-h);
+  padding-inline: var(--s-5);
+}
+
+.btn-sm {
+  height: var(--s-7);
+  padding-inline: var(--s-3);
+  font-size: var(--fs-small);
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
   border: var(--hair);
-  border-radius: var(--r-panel);
-  padding: var(--s-5);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
 }
 
-/* Ledger tables */
+/* Tables: rows of one height, figures right-aligned */
 .scroll {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.ledger {
+.table {
   width: 100%;
   border-collapse: collapse;
-  font-family: var(--font-figure);
-  font-size: var(--fs-small);
-  line-height: var(--lh-tight);
-  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-body);
 }
 
-.ledger th,
-.ledger td {
-  padding: var(--s-3) var(--s-3);
+.table th,
+.table td {
+  height: var(--row-h);
+  padding: 0 var(--s-3);
   text-align: left;
-  vertical-align: top;
-}
-
-.ledger th {
-  font-size: var(--fs-label);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--muted);
   white-space: nowrap;
-  border-bottom: var(--hair-ink);
 }
 
-.ledger td {
+.table th {
+  font-size: var(--fs-small);
+  font-weight: var(--w-regular);
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--hair-strong);
+}
+
+.table td {
   border-bottom: var(--hair);
 }
 
-.ledger th:first-child,
-.ledger td:first-child {
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.table th:first-child,
+.table td:first-child {
   padding-left: 0;
 }
 
-.ledger th:last-child,
-.ledger td:last-child {
+.table th:last-child,
+.table td:last-child {
   padding-right: 0;
 }
 
-.ledger .n {
+.table .n {
   text-align: right;
-  white-space: nowrap;
 }
 
-.ledger .nowrap {
-  white-space: nowrap;
-}
-
-/* Stamps */
+/* The signature: an inked rubber stamp on a loan line */
 .stamp {
   display: inline-block;
-  padding: 1px var(--s-2);
+  padding: var(--stamp-pad-y) var(--s-2);
   border: var(--stamp-border) solid currentColor;
-  border-radius: var(--r-stamp);
-  font-family: var(--font-figure);
-  font-size: var(--fs-stamp);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  line-height: var(--lh-tight);
+  border-radius: var(--r-tag);
+  font-family: var(--font-text);
+  font-size: var(--fs-meta);
+  font-weight: var(--w-strong);
+  letter-spacing: var(--track-stamp);
+  line-height: var(--lh-heading);
   text-transform: uppercase;
   white-space: nowrap;
-  transform: rotate(var(--tilt));
+  mix-blend-mode: multiply;
+  opacity: var(--stamp-opacity);
+  transform: rotate(var(--tilt, var(--tilt-a)));
 }
 
-.tone-ok {
-  color: var(--ok);
+.ink-repaid {
+  color: var(--stamp-repaid);
 }
 
-.tone-open {
-  color: var(--open);
+.ink-late {
+  color: var(--stamp-late);
 }
 
-.tone-bad {
-  color: var(--cover);
+.ink-default {
+  color: var(--stamp-default);
 }
 
-.tone-quiet {
-  color: var(--muted);
+.ink-open {
+  color: var(--stamp-open);
+}
+
+.ink-void {
+  color: var(--stamp-void);
+}
+
+.tone-yes {
+  color: var(--stamp-repaid);
+}
+
+.tone-no {
+  color: var(--stamp-default);
+}
+
+/* One entrance: a short fade and rise */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes press {
+  from {
+    opacity: 0;
+    transform: rotate(var(--tilt, var(--tilt-a))) scale(var(--stamp-press-from));
+  }
+  to {
+    opacity: var(--stamp-opacity);
+    transform: rotate(var(--tilt, var(--tilt-a))) scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
+    animation: none !important;
     transition: none !important;
   }
 }

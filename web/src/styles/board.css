@@ -1,213 +1,243 @@
 /* /app/ (board and member actions). Tokens only: docs/design/direction.md. */
-.topbar {
-  border-bottom: var(--hair);
-}
-
-.topbar-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-4);
-  padding-block: var(--s-4);
+.wrap-app {
+  max-width: var(--container-app);
 }
 
 .board {
-  padding-block: var(--s-7) var(--s-6);
-}
-
-.board-head {
-  padding-bottom: var(--s-6);
-  border-bottom: var(--hair-ink);
+  padding-block: var(--s-9) var(--s-6);
 }
 
 .board-head h1 {
-  font-size: var(--fs-h2);
+  font-size: var(--fs-page-title);
   line-height: var(--lh-heading);
-  margin-bottom: var(--s-3);
+  letter-spacing: var(--track-h2);
 }
 
 .board-head p {
-  max-width: 48em;
-  color: var(--muted);
+  max-width: var(--measure-wide);
+  margin-top: var(--s-3);
+  color: var(--ink-2);
 }
 
 .board-head a {
-  font-family: var(--font-figure);
-  font-size: var(--fs-small);
+  font-weight: var(--w-medium);
   color: var(--ink);
   overflow-wrap: anywhere;
 }
 
-.notice {
-  margin-top: var(--s-5);
-  padding: var(--s-5);
-  background: var(--leaf);
-  border: var(--hair);
-  border-radius: var(--r-panel);
-  font-family: var(--font-figure);
-  font-size: var(--fs-small);
-  color: var(--muted);
+/* Board section titles are interface text, not headlines */
+.board h2,
+.act h2 {
+  font-family: var(--font-text);
+  font-size: var(--fs-title);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-heading);
+  letter-spacing: 0;
 }
 
-/* Treasury and desk: two summary columns */
+.notice {
+  margin-top: var(--s-6);
+  padding: var(--s-6);
+  color: var(--ink-2);
+}
+
+/* Treasury (wide, the one figure that matters) beside the desk facts */
 .summary {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  border-bottom: var(--hair);
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--s-6);
+  margin-top: var(--s-8);
 }
 
 .summary > section {
-  padding: var(--s-6) var(--s-6) var(--s-6) 0;
-}
-
-.summary > section + section {
-  border-left: var(--hair);
-  padding: var(--s-6) 0 var(--s-6) var(--s-6);
-}
-
-.board h2 {
-  font-size: var(--fs-h3);
-  line-height: var(--lh-heading);
-  margin-bottom: var(--s-4);
+  padding: var(--s-6);
 }
 
 .figures {
   display: grid;
-  gap: var(--s-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-6);
+  margin-top: var(--s-6);
 }
 
-.figures dt,
-.facts dt {
-  font-family: var(--font-figure);
-  font-size: var(--fs-label);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--muted);
+.figures > div:first-child {
+  grid-column: 1 / -1;
+  padding-bottom: var(--s-6);
+  border-bottom: var(--hair);
+}
+
+.figures dt {
+  font-size: var(--fs-small);
+  color: var(--ink-3);
 }
 
 .figures dd {
-  font-family: var(--font-figure);
+  margin-top: var(--s-1);
   font-size: var(--fs-figure);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-heading);
+}
+
+.figures > div:first-child dd {
+  font-size: var(--fs-hero-figure);
   line-height: var(--lh-tight);
-  font-variant-numeric: tabular-nums;
 }
 
 .figures dd.small {
   font-size: var(--fs-body);
+  line-height: var(--lh-ui);
 }
 
 .facts {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-top: var(--s-4);
 }
 
 .facts dt,
 .facts dd {
+  display: flex;
+  align-items: center;
+  min-height: var(--row-h);
   padding-block: var(--s-2);
   border-bottom: var(--hair);
 }
 
 .facts dt {
   padding-right: var(--s-3);
-  align-self: stretch;
-  display: flex;
-  align-items: center;
+  color: var(--ink-2);
 }
 
 .facts dd {
-  font-family: var(--font-figure);
-  font-size: var(--fs-small);
-  font-variant-numeric: tabular-nums;
+  justify-content: flex-end;
+  text-align: right;
+  font-weight: var(--w-medium);
 }
 
-/* Ledgers */
+.facts dt:last-of-type,
+.facts dd:last-of-type {
+  border-bottom: 0;
+}
+
+/* Ledger blocks */
 .book {
-  padding-block: var(--s-6);
-  border-bottom: var(--hair);
+  margin-top: var(--s-6);
+  padding: var(--s-6);
+}
+
+.book h2 {
+  margin-bottom: var(--s-4);
 }
 
 .book > p {
-  color: var(--muted);
+  color: var(--ink-3);
+}
+
+/* The loan book is the passbook page: cream leaf, double rule under the header, stamped outcomes */
+.book-ledger {
+  background: var(--leaf);
+}
+
+.book-ledger .table th {
+  border-bottom: var(--rule-double);
+}
+
+.book-ledger .table td {
+  border-bottom-color: var(--hair-strong);
+}
+
+.cell-quiet {
+  color: var(--ink-3);
 }
 
 .readout {
-  padding-top: var(--s-5);
-  font-family: var(--font-figure);
-  font-size: var(--fs-label);
-  color: var(--muted);
+  margin-top: var(--s-6);
+  font-size: var(--fs-meta);
+  color: var(--ink-3);
   overflow-wrap: anywhere;
 }
 
-/* Member actions (wallet) */
+/* Member actions (wallet): one card, three forms divided by hairlines */
 .act {
-  padding-block: var(--s-6) var(--s-8);
+  padding-block: var(--s-6) var(--s-12);
 }
 
 .act-panel {
-  display: grid;
-  gap: var(--s-5);
-}
-
-.act h2 {
-  font-size: var(--fs-h3);
-  line-height: var(--lh-heading);
+  padding: var(--s-6);
 }
 
 .act-intro {
-  max-width: 48em;
-  color: var(--muted);
+  max-width: var(--measure-wide);
+  margin-top: var(--s-2);
+  color: var(--ink-2);
+}
+
+.act-connect {
+  margin-top: var(--s-6);
 }
 
 .act-account {
-  font-family: var(--font-figure);
-  font-size: var(--fs-small);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--s-3);
+  margin-top: var(--s-6);
   overflow-wrap: anywhere;
 }
 
 .act-forms {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--s-4);
+  margin-top: var(--s-6);
+  border-top: var(--hair);
 }
 
 .act-form {
   display: flex;
   flex-direction: column;
   gap: var(--s-4);
-  background: var(--paper);
-  border: var(--hair);
-  border-radius: var(--r-panel);
-  padding: var(--s-5);
+  padding: var(--s-6) var(--s-6) 0;
+}
+
+.act-form:first-child {
+  padding-left: 0;
+}
+
+.act-form:last-child {
+  padding-right: 0;
+}
+
+.act-form + .act-form {
+  border-left: var(--hair);
 }
 
 .act-form label {
   display: grid;
   gap: var(--s-2);
-  font-family: var(--font-figure);
-  font-size: var(--fs-label);
-  font-weight: 500;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--muted);
+  font-size: var(--fs-small);
+  color: var(--ink-2);
 }
 
 .act-form input {
   width: 100%;
-  padding: var(--s-2) 0;
-  border: 0;
-  border-bottom: var(--hair-ink);
-  border-radius: 0;
-  background: transparent;
+  height: var(--control-h);
+  padding: 0 var(--s-3);
+  border: var(--hair);
+  border-radius: var(--r-control);
+  background: var(--raised);
   color: var(--ink);
-  font-family: var(--font-figure);
+  font-family: var(--font-text);
   font-size: var(--fs-body);
-  letter-spacing: normal;
-  text-transform: none;
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.act-form input:hover {
+  border-color: var(--hair-strong);
+}
+
+.act-form input:focus {
+  background: var(--surface);
 }
 
 .act-form .row {
@@ -218,31 +248,48 @@
 }
 
 .act-status {
-  min-height: 1lh;
-  font-family: var(--font-figure);
+  min-height: var(--s-6);
+  margin-top: var(--s-6);
   font-size: var(--fs-small);
-  color: var(--muted);
+  color: var(--ink-3);
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 960px) {
+  .summary,
   .act-forms {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .act-form,
+  .act-form:first-child,
+  .act-form:last-child {
+    padding: var(--s-6) 0 0;
+  }
+
+  .act-form + .act-form {
+    border-left: 0;
+    border-top: var(--hair);
+    margin-top: var(--s-6);
   }
 }
 
 @media (max-width: 720px) {
-  .summary {
-    grid-template-columns: minmax(0, 1fr);
+  .board {
+    padding-top: var(--s-8);
+  }
+
+  .board-head h1 {
+    font-size: var(--fs-figure);
   }
 
   .summary > section,
-  .summary > section + section {
-    padding: var(--s-5) 0;
-    border-left: 0;
+  .book,
+  .act-panel {
+    padding: var(--s-5);
   }
 
-  .summary > section + section {
-    border-top: var(--hair);
+  .figures > div:first-child dd {
+    font-size: var(--fs-page-title);
   }
 }

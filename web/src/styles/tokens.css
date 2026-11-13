@@ -1,60 +1,126 @@
-/* Fiador design tokens. The only design values web/ may use; see docs/design/direction.md (direction A, Passbook). */
+/*
+ * Fiador design tokens: the only place design values live (docs/design/direction.md, Passbook).
+ * Craft pass by the unslop skill by Damir Sokolovsky (@heydamir), CC BY 4.0.
+ */
 :root {
-  /* Color */
-  --paper: #fffdf8;
-  --leaf: #f6f1e7;
-  --ink: #1b1612;
-  --muted: #6e6358;
-  --rule: #e5dccb;
-  --cover: #7b1e2c;
-  --cover-deep: #5e1520;
-  --cover-ink: #fffdf8;
-  --ok: #1d6b45;
-  --open: #a35a00;
-  --focus: #7b1e2c;
+  /* Neutral ramp, warm, tinted toward paper and ink */
+  --ground: #faf8f3;
+  --surface: #ffffff;
+  --raised: #f1ece2;
+  --ink: #1f1a15;
+  --ink-2: #5c5248;
+  --ink-3: #6f655a;
+  --hair-color: rgb(31 26 21 / 0.09);
+  --hair-strong: rgb(31 26 21 / 0.18);
 
-  /* Type */
-  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  /* One accent: the oxblood passbook cover */
+  --accent: #7b1e2c;
+  --accent-deep: #5e1520;
+  --on-accent: #fffdf8;
+
+  /* Stamp inks: only inside the moments (loan lines and their legend) */
+  --stamp-repaid: #2f6b45;
+  --stamp-late: #8a5a14;
+  --stamp-default: #b0251c;
+  --stamp-open: #1f1a15;
+  --stamp-void: #6f655a;
+
+  /* Passbook materials: only inside the hero object */
+  --cloth: #6e1a27;
+  --cloth-deep: #4c111b;
+  --thread: #e2cfa9;
+  --leaf: #fdf8ec;
+  --leaf-fold: rgb(76 17 27 / 0.12);
+  --margin-rule: rgb(123 30 44 / 0.32);
+  --object-shadow: 0 2px 4px rgb(31 26 21 / 0.08), 0 28px 56px -20px rgb(31 26 21 / 0.35);
+  --card-shadow: 0 1px 2px rgb(31 26 21 / 0.05);
+
+  /* Type: one interface family plus one display partner */
   --font-text: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-figure: 'DM Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
-  --track-display: -0.025em;
-  --track-label: 0.06em;
+  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
 
-  --fs-stamp: 11px;
-  --fs-label: 12px;
+  --fs-meta: 12px;
   --fs-small: 13px;
-  --fs-body: 16px;
-  --fs-lede: 18px;
-  --fs-h3: 22px;
-  --fs-h2: clamp(30px, 4vw, 40px);
-  --fs-figure: clamp(26px, 3vw, 34px);
-  --fs-display: clamp(42px, 7vw, 72px);
+  --fs-body: 15px;
+  --fs-read: 17px;
+  --fs-lede: 19px;
+  --fs-title: 18px;
+  --fs-page-title: 36px;
+  --fs-figure: 32px;
+  --fs-hero-figure: 48px;
+  --fs-h2: clamp(32px, 4vw, 44px);
+  --fs-display: clamp(40px, 5vw, 60px);
 
-  --lh-display: 1.02;
+  --lh-tight: 1;
+  --lh-display: 1.04;
   --lh-heading: 1.15;
-  --lh-tight: 1.35;
-  --lh-body: 1.55;
+  --lh-ui: 1.4;
+  --lh-read: 1.6;
 
-  /* Space */
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-strong: 600;
+
+  --track-display: -0.03em;
+  --track-h2: -0.02em;
+  --track-stamp: 0.04em;
+
+  /* Spacing: the 4px scale */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
   --s-4: 16px;
-  --s-5: 24px;
-  --s-6: 32px;
-  --s-7: 48px;
-  --s-8: 72px;
-  --s-9: 112px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 40px;
+  --s-9: 48px;
+  --s-10: 64px;
+  --s-11: 80px;
+  --s-12: 96px;
+  --s-13: 128px;
 
-  /* Shape and layout */
-  --container: 1120px;
-  --gutter: clamp(16px, 4vw, 40px);
-  --r-stamp: 3px;
-  --r-panel: 4px;
-  --r-pill: 999px;
-  --hair: 1px solid var(--rule);
-  --hair-ink: 1px solid var(--ink);
-  --stamp-border: 1.5px;
-  --tilt: -2deg;
-  --ease: 120ms ease-out;
+  /* Layout */
+  --container: 1200px;
+  --container-app: 1440px;
+  --gutter: clamp(16px, 4vw, 32px);
+  --measure: 36rem;
+  --measure-wide: 44rem;
+  --nav-h: 64px;
+  --row-h: 44px;
+  --control-h: 40px;
+  --hero-control-h: 48px;
+
+  /* Shape */
+  --r-tag: 4px;
+  --r-control: 10px;
+  --r-card: 14px;
+  --r-cover: 12px;
+  --r-leaf: 4px;
+  --hair: 1px solid var(--hair-color);
+  --stamp-border: 2px;
+
+  /* Motion: one curve, a few durations */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms;
+  --dur-enter: 420ms;
+  --stagger: 50ms;
+  --rise: 8px;
+  --press: 0.98;
+
+  /* Stamp tilts, cycled by row so no two neighbours sit alike */
+  --tilt-a: -2deg;
+  --tilt-b: 1.5deg;
+  --tilt-c: -3.5deg;
+  --object-tilt: -1deg;
+  --stamp-press-from: 1.08;
+  --stamp-opacity: 0.92;
+  --stamp-pad-y: 2px;
+  --stitch-opacity: 0.55;
+  --rule-double: 3px double var(--margin-rule);
+
+  /* Passbook and legend columns */
+  --pb-col-amount: 96px;
+  --pb-col-outcome: 108px;
+  --legend-col: 136px;
 }

@@ -11,10 +11,10 @@ const el = document.getElementById('root');
 if (el !== null) {
   createRoot(el).render(
     <>
-      <header className="topbar">
-        <div className="wrap topbar-row">
+      <header className="nav">
+        <div className="wrap wrap-app nav-row">
           <a className="wordmark" href="../">Fiador</a>
-          <nav className="navlinks">
+          <nav className="nav-links">
             <a href="../">About</a> <a href={REPO_URL}>Source</a>
           </nav>
         </div>

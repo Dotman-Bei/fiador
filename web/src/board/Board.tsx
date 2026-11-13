@@ -1,39 +1,29 @@
-/** /app — the public read-only board. Styled from docs/design/direction.md (Passbook): ledger tables, stamped statuses. */
+/** /app — the public read-only board. Styled from docs/design/direction.md (Passbook, unslop craft pass): the loan book is a stamped ledger page. */
 import { useEffect, useState } from 'react';
 import type { Deployment } from '../../../src/lib/deployments';
 import { accountUrl } from '../../../src/lib/deployments';
-import { OPEN_STATUSES } from '../../../src/lib/desk';
 import { RpcClient } from '../../../src/lib/rpc';
 import { loadBoard, loanRows, memberRows, near, waitingRows } from './data';
 import type { BoardData, LoanRow, MemberRow, WaitingRow } from './data';
+import { laneWords, stampInk, stampWords } from '../ledger';
 
 const POLL_MS = 5_000;
 
-export type Tone = 'ok' | 'open' | 'bad' | 'quiet';
-
-/** The stamp color for a loan status: repaid, still open, defaulted, or closed without effect. */
-export function statusTone(status: string): Tone {
-  if (status === 'Repaid') return 'ok';
-  if (status === 'Defaulted') return 'bad';
-  if ((OPEN_STATUSES as readonly string[]).includes(status)) return 'open';
-  return 'quiet';
-}
-
 export function WaitingTable({ rows }: { rows: readonly WaitingRow[] }) {
   return (
-    <section aria-labelledby="waiting" className="book">
+    <section aria-labelledby="waiting" className="book card">
       <h2 id="waiting">Waiting for a co-signer</h2>
       {rows.length === 0 ? (
         <p>No request is waiting for a co-signer.</p>
       ) : (
         <div className="scroll">
-          <table className="ledger">
+          <table className="table">
             <thead>
               <tr><th>Borrower</th><th className="n">Amount</th><th className="n">Gap to co-sign</th><th className="n">Time left</th></tr>
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.borrower}><td>{r.borrower}</td><td className="n">{r.amount}</td><td className="n">{r.gap}</td><td className="n tone-open">{r.timeLeft}</td></tr>
+                <tr key={r.borrower}><td>{r.borrower}</td><td className="n">{r.amount}</td><td className="n">{r.gap}</td><td className="n">{r.timeLeft}</td></tr>
               ))}
             </tbody>
           </table>
@@ -45,22 +35,22 @@ export function WaitingTable({ rows }: { rows: readonly WaitingRow[] }) {
 
 export function LoanBook({ rows }: { rows: readonly LoanRow[] }) {
   return (
-    <section aria-labelledby="book" className="book">
+    <section aria-labelledby="book" className="book book-ledger card">
       <h2 id="book">Loan book</h2>
       {rows.length === 0 ? (
         <p>No loans yet.</p>
       ) : (
         <div className="scroll">
-          <table className="ledger">
+          <table className="table">
             <thead>
               <tr><th>Loan</th><th>Lane</th><th>Borrower</th><th>Co-signer</th><th className="n">Amount</th><th>Status</th><th className="n">Time left</th><th>Sputnik proposal</th></tr>
             </thead>
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id}>
-                  <td>#{r.id}</td><td>{r.lane}</td><td>{r.borrower}</td><td>{r.cosigner}</td><td className="n">{r.amount}</td>
-                  <td><span className={`stamp tone-${statusTone(r.status)}`}>{r.status}</span></td>
-                  <td className="n">{r.timeLeft}</td><td className="nowrap">{r.proposal}</td>
+                  <td className="cell-quiet">#{r.id}</td><td>{laneWords(r.lane)}</td><td>{r.borrower}</td><td>{r.cosigner}</td><td className="n">{r.amount}</td>
+                  <td><span className={`stamp ink-${stampInk(r.status)}`}>{stampWords(r.status)}</span></td>
+                  <td className="n">{r.timeLeft}</td><td>{r.proposal}</td>
                 </tr>
               ))}
             </tbody>
@@ -73,13 +63,13 @@ export function LoanBook({ rows }: { rows: readonly LoanRow[] }) {
 
 export function MembersTable({ rows }: { rows: readonly MemberRow[] }) {
   return (
-    <section aria-labelledby="members" className="book">
+    <section aria-labelledby="members" className="book card">
       <h2 id="members">Members</h2>
       {rows.length === 0 ? (
         <p>No members yet.</p>
       ) : (
         <div className="scroll">
-          <table className="ledger">
+          <table className="table">
             <thead>
               <tr><th>Account</th><th>Kind</th><th className="n">Standing</th><th className="n">Unused</th><th className="n">Drawn</th><th className="n">Pledged</th><th>Repaid loans behind the standing</th></tr>
             </thead>
@@ -100,7 +90,7 @@ export function MembersTable({ rows }: { rows: readonly MemberRow[] }) {
 export function BoardView({ deployment, data, nowMs }: { deployment: Deployment; data: BoardData; nowMs: number }) {
   const p = data.snapshot.config.params;
   return (
-    <main className="board wrap">
+    <main className="board wrap wrap-app">
       <header className="board-head">
         <h1>Fiador board</h1>
         <p>
@@ -109,7 +99,7 @@ export function BoardView({ deployment, data, nowMs }: { deployment: Deployment;
         </p>
       </header>
       <div className="summary">
-        <section aria-labelledby="treasury">
+        <section aria-labelledby="treasury" className="card">
           <h2 id="treasury">Treasury</h2>
           <dl className="figures">
             <div><dt>Balance</dt><dd>{near(data.treasury.balance)}</dd></div>
@@ -117,11 +107,11 @@ export function BoardView({ deployment, data, nowMs }: { deployment: Deployment;
             <div><dt>Out on loan (book)</dt><dd className="small">{near(data.snapshot.config.book)} of {near(p.book_cap)} cap</dd></div>
           </dl>
         </section>
-        <section aria-labelledby="desk">
+        <section aria-labelledby="desk" className="card">
           <h2 id="desk">Desk</h2>
           <dl className="facts">
-            <dt>Seated in the DAO policy</dt><dd className={data.seated ? 'tone-ok' : 'tone-bad'}>{data.seated ? 'yes' : 'no (unseated by the council)'}</dd>
-            <dt>Keyless (frozen)</dt><dd className={data.frozen ? 'tone-ok' : 'tone-open'}>{data.frozen ? 'yes: no access keys, so no admin and no upgrade' : 'not yet'}</dd>
+            <dt>Seated in the DAO policy</dt><dd className={data.seated ? 'tone-yes' : 'tone-no'}>{data.seated ? 'yes' : 'no (unseated by the council)'}</dd>
+            <dt>Keyless (frozen)</dt><dd className={data.frozen ? 'tone-yes' : undefined}>{data.frozen ? 'yes: no access keys, so no admin and no upgrade' : 'not yet'}</dd>
             <dt>Starter standing</dt><dd>{near(p.starter_standing)}</dd>
             <dt>Maximum standing</dt><dd>{near(p.max_standing)}</dd>
             <dt>Growth per on-time repayment</dt><dd>up to {near(p.growth_step)}</dd>
@@ -172,21 +162,21 @@ export function Board({ deployment }: { deployment: Deployment | null }) {
 
   if (deployment === null) {
     return (
-      <main className="board wrap">
+      <main className="board wrap wrap-app">
         <header className="board-head">
           <h1>Fiador board</h1>
         </header>
-        <p className="notice">The demo DAO has not been seeded in this build (deployments/testnet.json is missing).</p>
+        <p className="notice card">The demo DAO has not been seeded in this build (deployments/testnet.json is missing).</p>
       </main>
     );
   }
   if (data === null) {
     return (
-      <main className="board wrap">
+      <main className="board wrap wrap-app">
         <header className="board-head">
           <h1>Fiador board</h1>
         </header>
-        <p className="notice">{error === null ? 'Reading the DAO and the desk from public RPC…' : `Could not read testnet: ${error}`}</p>
+        <p className="notice card">{error === null ? 'Reading the DAO and the desk from public RPC…' : `Could not read testnet: ${error}`}</p>
       </main>
     );
   }

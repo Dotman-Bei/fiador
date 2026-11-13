@@ -35,25 +35,25 @@ export function MemberActions({ deployment }: { deployment: Deployment | null })
   };
 
   return (
-    <section aria-labelledby="act" className="act wrap">
-      <div className="panel act-panel">
+    <section aria-labelledby="act" className="act wrap wrap-app">
+      <div className="card act-panel">
         <h2 id="act">Act as a member (testnet wallet)</h2>
         <p className="act-intro">Optional. Members admitted by the council can ask, co-sign and repay here. Everything on the board above works without a wallet.</p>
         {account === null ? (
-          <p>
+          <p className="act-connect">
             <button type="button" className="btn" onClick={() => void signIn(desk)}>Connect a testnet wallet</button>
           </p>
         ) : (
           <>
             <p className="act-account">
-              Signed in as {account}. <button type="button" className="btn btn-line" onClick={() => void signOut().then(() => setAccount(null))}>Sign out</button>
+              Signed in as {account}. <button type="button" className="btn btn-quiet btn-sm" onClick={() => void signOut().then(() => setAccount(null))}>Sign out</button>
             </p>
             <div className="act-forms">
               <form className="act-form" onSubmit={(e) => { e.preventDefault(); run(() => askCall(askAmount)); }}>
                 <label>Ask for (NEAR) <input value={askAmount} onChange={(e) => setAskAmount(e.target.value)} inputMode="decimal" /></label>
                 <p className="row">
                   <button type="submit" className="btn">Ask</button>
-                  <button type="button" className="btn btn-line" onClick={() => run(cancelCall)}>Cancel my request</button>
+                  <button type="button" className="btn btn-quiet" onClick={() => run(cancelCall)}>Cancel my request</button>
                 </p>
               </form>
               <form className="act-form" onSubmit={(e) => { e.preventDefault(); run(() => cosignCall(borrower, maxPledge)); }}>
