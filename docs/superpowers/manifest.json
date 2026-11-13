@@ -1,0 +1,555 @@
+{
+  "project": "fiador",
+  "spec": "docs/superpowers/specs/2026-11-13-fiador-design.md",
+  "subsystems": [
+    "smoke"
+  ],
+  "tasks": [
+    {
+      "id": "smoke:1",
+      "subsystem": "smoke",
+      "title": "Workspace scaffold and the cargo launcher",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [],
+      "effort": "low",
+      "files": {
+        "create": [
+          "package.json",
+          "tsconfig.json",
+          "vitest.config.ts",
+          ".gitignore",
+          ".env.example",
+          "rust-toolchain.toml",
+          ".cargo/config.toml",
+          "tools/cargo-env.ts",
+          "tools/cargo.ts"
+        ],
+        "modify": [],
+        "test": [
+          "tools/cargo-env.test.ts"
+        ]
+      },
+      "provides": [
+        "tools/cargo-env.ts: buildCargoEnv(input: CargoEnvInput): Record<string, string>",
+        "npm run cargo -- <cargo args>",
+        "npm run typecheck"
+      ],
+      "requires": [],
+      "gate": {
+        "run": "npx vitest run tools/cargo-env.test.ts",
+        "expect": "PASS — `Tests  4 passed (4)`"
+      },
+      "commit": "chore: scaffold the fiador workspace and cargo launcher",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:2",
+      "subsystem": "smoke",
+      "title": "wasm build and wasm check tools",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:1"
+      ],
+      "effort": "low",
+      "files": {
+        "create": [
+          "tools/wasm-inspect.ts",
+          "tools/wasm-check.ts",
+          "tools/wasm-build.ts"
+        ],
+        "modify": [],
+        "test": [
+          "tools/wasm-inspect.test.ts"
+        ]
+      },
+      "provides": [
+        "tools/wasm-inspect.ts: checkWasm(bytes: Uint8Array, required: readonly string[]): WasmCheckResult",
+        "npm run wasm -- <smoke|desk>",
+        "npm run wasm:check -- <file.wasm> <export1,export2,...>"
+      ],
+      "requires": [
+        "tools/cargo-env.ts: buildCargoEnv(input: CargoEnvInput): Record<string, string>"
+      ],
+      "gate": {
+        "run": "npx vitest run tools/wasm-inspect.test.ts",
+        "expect": "PASS — `Tests  4 passed (4)`"
+      },
+      "commit": "feat(tools): wasm build and wasm check",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:3",
+      "subsystem": "smoke",
+      "title": "Encoding, NEAR units and the RPC view client",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:1"
+      ],
+      "effort": "medium",
+      "files": {
+        "create": [
+          "src/lib/encoding.ts",
+          "src/lib/units.ts",
+          "src/lib/rpc.ts"
+        ],
+        "modify": [],
+        "test": [
+          "src/lib/encoding.test.ts",
+          "src/lib/units.test.ts",
+          "src/lib/rpc.test.ts"
+        ]
+      },
+      "provides": [
+        "src/lib/encoding.ts: utf8ToBase64(text: string): string",
+        "src/lib/encoding.ts: base64ToUtf8(b64: string): string",
+        "src/lib/encoding.ts: jsonToBase64(value: unknown): string",
+        "src/lib/encoding.ts: bytesToUtf8(bytes: readonly number[]): string",
+        "src/lib/units.ts: YOCTO_PER_NEAR, TGAS, GAS_300_TGAS (bigint)",
+        "src/lib/units.ts: parseNear(text: string): bigint",
+        "src/lib/units.ts: formatNear(yocto: bigint | string, maxDecimals?: number): string",
+        "src/lib/rpc.ts: DEFAULT_TESTNET_RPC = 'https://rpc.testnet.fastnear.com'",
+        "src/lib/rpc.ts: class RpcError extends Error",
+        "src/lib/rpc.ts: interface AccountInfo { amount: string; locked: string; storage_usage: number; code_hash: string }",
+        "src/lib/rpc.ts: class RpcClient { constructor(url?: string, fetchImpl?: FetchLike); view<T>(accountId: string, methodName: string, args?: Record<string, unknown>): Promise<T>; viewAccount(accountId: string): Promise<AccountInfo | null>; accessKeyCount(accountId: string): Promise<number>; status(): Promise<{ protocolVersion: number; chainId: string }> }"
+      ],
+      "requires": [],
+      "gate": {
+        "run": "npx vitest run src/lib/encoding.test.ts src/lib/units.test.ts src/lib/rpc.test.ts",
+        "expect": "PASS — `Test Files  3 passed (3)` and `Tests  14 passed (14)`"
+      },
+      "commit": "feat(lib): encoding, NEAR units and the RPC view client",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:4",
+      "subsystem": "smoke",
+      "title": "Sputnik 2.3.1 types and the Fiador policy builder",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:3"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "src/lib/sputnik.ts",
+          "src/lib/fixtures/sputnik-2.3.1.ts"
+        ],
+        "modify": [],
+        "test": [
+          "src/lib/sputnik.test.ts"
+        ]
+      },
+      "provides": [
+        "src/lib/sputnik.ts: FACTORY_ID = 'sputnikv2.testnet', COUNCIL_ROLE = 'council', DESK_ROLE = 'desk', DESK_PERMISSIONS",
+        "src/lib/sputnik.ts: types Policy, RolePermission, VotePolicy, RoleKind, ProposalKindInput, TransferKind, FunctionCallKind, FunctionCallSpec, AddMemberKind, RemoveMemberKind, FactoryInfoUpdateKind, ProposalOutput, ProposalStatus, VoteAction",
+        "src/lib/sputnik.ts: daoAccountId(name: string): string",
+        "src/lib/sputnik.ts: buildFiadorPolicy(input: { council: readonly string[]; deskSeat: readonly string[] }): Policy",
+        "src/lib/sputnik.ts: transferKind(receiverId: string, amountYocto: bigint): TransferKind",
+        "src/lib/sputnik.ts: functionCallKind(receiverId: string, calls: readonly FunctionCallSpec[]): FunctionCallKind",
+        "src/lib/sputnik.ts: addMemberKind(memberId: string, role: string): AddMemberKind",
+        "src/lib/sputnik.ts: removeMemberKind(memberId: string, role: string): RemoveMemberKind",
+        "src/lib/sputnik.ts: factoryInfoUpdateKind(autoUpdate: boolean): FactoryInfoUpdateKind",
+        "src/lib/sputnik.ts: addProposalArgs(description: string, kind: ProposalKindInput): { proposal: { description: string; kind: ProposalKindInput } }",
+        "src/lib/sputnik.ts: actProposalArgs(id: number, action: VoteAction, kind: unknown): { id: number; action: VoteAction; proposal: unknown }",
+        "src/lib/sputnik.ts: createDaoArgs(input: { name: string; purpose: string; policy: Policy }): { name: string; args: string }",
+        "src/lib/sputnik.ts: parseProposal(value: unknown): ProposalOutput",
+        "src/lib/sputnik.ts: isTransferKind(kind: unknown): kind is TransferKind",
+        "src/lib/sputnik.ts: roleMembers(policy: Policy, roleName: string): string[] | null",
+        "src/lib/sputnik.ts: canonicalJson(value: unknown): string",
+        "src/lib/sputnik.ts: policiesMatch(a: Policy, b: Policy): boolean",
+        "src/lib/fixtures/sputnik-2.3.1.ts: LIVE_TRANSFER_PROPOSAL, LIVE_FACTORY_INFO_PROPOSAL, LIVE_POLICY"
+      ],
+      "requires": [
+        "src/lib/encoding.ts: jsonToBase64(value: unknown): string",
+        "src/lib/encoding.ts: base64ToUtf8(b64: string): string"
+      ],
+      "gate": {
+        "run": "npx vitest run src/lib/sputnik.test.ts",
+        "expect": "PASS — `Tests  14 passed (14)`"
+      },
+      "commit": "feat(lib): Sputnik 2.3.1 types and the Fiador policy builder",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:5",
+      "subsystem": "smoke",
+      "title": "The seat-holding smoke contract",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:1"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "contract/smoke/Cargo.toml",
+          "contract/smoke/Cargo.lock",
+          "contract/smoke/src/lib.rs"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "contract/smoke: fiador_smoke { new(dao: AccountId); file_and_approve(receiver_id: AccountId, amount: U128) -> Promise; on_filed(receiver_id: AccountId, amount: U128) -> PromiseOrValue<u64>; on_voted(proposal_id: u64) -> u64; get_last() -> SmokeView }"
+      ],
+      "requires": [
+        "npm run cargo -- <cargo args>"
+      ],
+      "gate": {
+        "run": "npm run cargo -- test --manifest-path contract/smoke/Cargo.toml",
+        "expect": "PASS — `test result: ok. 8 passed; 0 failed`"
+      },
+      "commit": "feat(smoke): seat-holding smoke contract",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:6",
+      "subsystem": "smoke",
+      "title": "Build and commit the smoke wasm",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:2",
+        "smoke:5"
+      ],
+      "effort": "low",
+      "files": {
+        "create": [
+          "contract/res/fiador_smoke.wasm"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "contract/res/fiador_smoke.wasm"
+      ],
+      "requires": [
+        "npm run wasm -- <smoke|desk>",
+        "npm run wasm:check -- <file.wasm> <export1,export2,...>",
+        "contract/smoke: fiador_smoke { new(dao: AccountId); file_and_approve(receiver_id: AccountId, amount: U128) -> Promise; on_filed(receiver_id: AccountId, amount: U128) -> PromiseOrValue<u64>; on_voted(proposal_id: u64) -> u64; get_last() -> SmokeView }"
+      ],
+      "gate": {
+        "run": "npm run wasm:check -- contract/res/fiador_smoke.wasm new,file_and_approve,on_filed,on_voted,get_last",
+        "expect": "PASS — `WASM CHECK PASS contract/res/fiador_smoke.wasm <N> bytes, <M> exports`"
+      },
+      "commit": "build(smoke): commit fiador_smoke.wasm",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:7",
+      "subsystem": "smoke",
+      "title": "Script env loading and near-api-js helpers",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:3"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "scripts/lib/env.ts",
+          "scripts/lib/near.ts"
+        ],
+        "modify": [],
+        "test": [
+          "scripts/lib/env.test.ts",
+          "scripts/lib/near.test.ts"
+        ]
+      },
+      "provides": [
+        "scripts/lib/env.ts: interface FiadorEnv { root: string; rootKey: ed25519 secret key string; rpc: string; daoName: string; faucetUrl: string }",
+        "scripts/lib/env.ts: loadDotEnv(path?: string): void",
+        "scripts/lib/env.ts: readEnv(source: Record<string, string | undefined>): FiadorEnv",
+        "scripts/lib/env.ts: readPublicEnv(source: Record<string, string | undefined>): { rpc: string; daoName: string; faucetUrl: string }",
+        "scripts/lib/near.ts: connect(env: FiadorEnv): Near",
+        "scripts/lib/near.ts: interface TxResult { ok: boolean; failures: string[]; value: unknown; raw: unknown }",
+        "scripts/lib/near.ts: callTx(from: Account, receiverId: string, methodName: string, args: Record<string, unknown>, depositYocto?: bigint, gas?: bigint): Promise<TxResult>",
+        "scripts/lib/near.ts: summarizeOutcome(raw: unknown): TxResult",
+        "scripts/lib/near.ts: hasFailure(result: TxResult, needle: string): boolean",
+        "scripts/lib/near.ts: requireOk(result: TxResult, what: string): unknown",
+        "scripts/lib/near.ts: ensureSubAccount(parent: SubAccountCreator, rpc: Pick<RpcClient, 'viewAccount'>, accountId: string, publicKey: string, nearToTransfer: bigint, pollMs?: number): Promise<'created' | 'exists'>",
+        "scripts/lib/near.ts: deployWithInit(account: Account, wasm: Uint8Array, initArgs: Record<string, unknown>): Promise<TxResult>",
+        "scripts/lib/near.ts: waitFor<T>(read: () => Promise<T>, done: (value: T) => boolean, what: string, timeoutMs?: number, intervalMs?: number): Promise<T>",
+        "scripts/lib/near.ts: sleep(ms: number): Promise<void>",
+        "scripts/lib/near.ts: EMPTY_CODE_HASH = '11111111111111111111111111111111'"
+      ],
+      "requires": [
+        "src/lib/rpc.ts: DEFAULT_TESTNET_RPC = 'https://rpc.testnet.fastnear.com'",
+        "src/lib/encoding.ts: base64ToUtf8(b64: string): string",
+        "src/lib/units.ts: YOCTO_PER_NEAR, TGAS, GAS_300_TGAS (bigint)",
+        "src/lib/rpc.ts: interface AccountInfo { amount: string; locked: string; storage_usage: number; code_hash: string }"
+      ],
+      "gate": {
+        "run": "npx vitest run scripts/lib/env.test.ts scripts/lib/near.test.ts",
+        "expect": "PASS — `Test Files  2 passed (2)` and `Tests  12 passed (12)`"
+      },
+      "commit": "feat(scripts): env loading and near-api-js helpers",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:8",
+      "subsystem": "smoke",
+      "title": "CLI args, faucet, gas measurement and the root CLI",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:3",
+        "smoke:7"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "scripts/lib/args.ts",
+          "scripts/lib/faucet.ts",
+          "scripts/lib/gas.ts",
+          "scripts/root.ts"
+        ],
+        "modify": [],
+        "test": [
+          "scripts/lib/args.test.ts",
+          "scripts/lib/faucet.test.ts",
+          "scripts/lib/gas.test.ts"
+        ]
+      },
+      "provides": [
+        "scripts/lib/args.ts: flag(argv: readonly string[], name: string): string | undefined",
+        "scripts/lib/args.ts: hasFlag(argv: readonly string[], name: string): boolean",
+        "scripts/lib/faucet.ts: requestFaucetAccount(faucetUrl: string, newAccountId: string, publicKey: string, post?: PostJson): Promise<void>",
+        "scripts/lib/faucet.ts: randomAccountName(prefix: string, random?: () => number): string",
+        "scripts/lib/faucet.ts: waitForAccount(rpc: { viewAccount(accountId: string): Promise<AccountInfo | null> }, accountId: string, timeoutMs?: number, intervalMs?: number): Promise<AccountInfo>",
+        "scripts/lib/gas.ts: interface ChainGas { addProposal: bigint; onFiled: bigint; actProposal: bigint; onVoted: bigint }",
+        "scripts/lib/gas.ts: measureChain(raw: unknown, daoId: string, contractId: string): ChainGas",
+        "scripts/lib/gas.ts: recommendedGas(measured: bigint): bigint",
+        "npm run root -- create <name> | topup --count <n> | check [--min <near>]"
+      ],
+      "requires": [
+        "scripts/lib/env.ts: loadDotEnv(path?: string): void",
+        "scripts/lib/env.ts: readEnv(source: Record<string, string | undefined>): FiadorEnv",
+        "scripts/lib/env.ts: readPublicEnv(source: Record<string, string | undefined>): { rpc: string; daoName: string; faucetUrl: string }",
+        "scripts/lib/near.ts: connect(env: FiadorEnv): Near",
+        "scripts/lib/near.ts: waitFor<T>(read: () => Promise<T>, done: (value: T) => boolean, what: string, timeoutMs?: number, intervalMs?: number): Promise<T>",
+        "src/lib/units.ts: parseNear(text: string): bigint",
+        "src/lib/units.ts: formatNear(yocto: bigint | string, maxDecimals?: number): string",
+        "src/lib/rpc.ts: class RpcClient { constructor(url?: string, fetchImpl?: FetchLike); view<T>(accountId: string, methodName: string, args?: Record<string, unknown>): Promise<T>; viewAccount(accountId: string): Promise<AccountInfo | null>; accessKeyCount(accountId: string): Promise<number>; status(): Promise<{ protocolVersion: number; chainId: string }> }"
+      ],
+      "gate": {
+        "run": "npx vitest run scripts/lib/args.test.ts scripts/lib/faucet.test.ts scripts/lib/gas.test.ts",
+        "expect": "PASS — `Test Files  3 passed (3)` and `Tests  11 passed (11)`"
+      },
+      "commit": "feat(scripts): CLI args, faucet, gas measurement and root CLI",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:9",
+      "subsystem": "smoke",
+      "title": "Council propose and vote helpers",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:4",
+        "smoke:7"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "scripts/lib/council.ts"
+        ],
+        "modify": [],
+        "test": [
+          "scripts/lib/council.test.ts"
+        ]
+      },
+      "provides": [
+        "scripts/lib/council.ts: type CallFn = (receiverId: string, methodName: string, args: Record<string, unknown>, depositYocto: bigint) => Promise<TxResult>",
+        "scripts/lib/council.ts: interface ViewFn { view<T>(accountId: string, methodName: string, args?: Record<string, unknown>): Promise<T> }",
+        "scripts/lib/council.ts: callerFor(account: Account): CallFn",
+        "scripts/lib/council.ts: readBond(view: ViewFn, daoId: string): Promise<bigint>",
+        "scripts/lib/council.ts: readProposal(view: ViewFn, daoId: string, id: number): Promise<ProposalOutput>",
+        "scripts/lib/council.ts: waitForProposal(view: ViewFn, daoId: string, id: number, done: (p: ProposalOutput) => boolean, pollMs?: number, timeoutMs?: number): Promise<ProposalOutput>",
+        "scripts/lib/council.ts: propose(call: CallFn, view: ViewFn, daoId: string, description: string, kind: ProposalKindInput): Promise<number>",
+        "scripts/lib/council.ts: vote(call: CallFn, view: ViewFn, daoId: string, id: number, action?: VoteAction, pollMs?: number): Promise<TxResult>",
+        "scripts/lib/council.ts: councilAction(callers: readonly CallFn[], view: ViewFn, daoId: string, description: string, kind: ProposalKindInput, pollMs?: number): Promise<ProposalOutput>"
+      ],
+      "requires": [
+        "src/lib/sputnik.ts: addProposalArgs(description: string, kind: ProposalKindInput): { proposal: { description: string; kind: ProposalKindInput } }",
+        "src/lib/sputnik.ts: actProposalArgs(id: number, action: VoteAction, kind: unknown): { id: number; action: VoteAction; proposal: unknown }",
+        "src/lib/sputnik.ts: parseProposal(value: unknown): ProposalOutput",
+        "src/lib/sputnik.ts: types Policy, RolePermission, VotePolicy, RoleKind, ProposalKindInput, TransferKind, FunctionCallKind, FunctionCallSpec, AddMemberKind, RemoveMemberKind, FactoryInfoUpdateKind, ProposalOutput, ProposalStatus, VoteAction",
+        "scripts/lib/near.ts: callTx(from: Account, receiverId: string, methodName: string, args: Record<string, unknown>, depositYocto?: bigint, gas?: bigint): Promise<TxResult>",
+        "scripts/lib/near.ts: interface TxResult { ok: boolean; failures: string[]; value: unknown; raw: unknown }",
+        "scripts/lib/near.ts: requireOk(result: TxResult, what: string): unknown",
+        "scripts/lib/near.ts: waitFor<T>(read: () => Promise<T>, done: (value: T) => boolean, what: string, timeoutMs?: number, intervalMs?: number): Promise<T>"
+      ],
+      "gate": {
+        "run": "npx vitest run scripts/lib/council.test.ts",
+        "expect": "PASS — `Tests  5 passed (5)`"
+      },
+      "commit": "feat(scripts): council propose and vote helpers",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:10",
+      "subsystem": "smoke",
+      "title": "The smoke and smoke:check scripts",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:3",
+        "smoke:4",
+        "smoke:7",
+        "smoke:8",
+        "smoke:9"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "scripts/lib/records.ts",
+          "scripts/smoke.ts",
+          "scripts/smoke-check.ts"
+        ],
+        "modify": [],
+        "test": [
+          "scripts/lib/records.test.ts"
+        ]
+      },
+      "provides": [
+        "scripts/lib/records.ts: interface SmokeRecord",
+        "scripts/lib/records.ts: isSmokeRecord(value: unknown): value is SmokeRecord",
+        "scripts/lib/records.ts: readSmokeRecord(path?: string): SmokeRecord",
+        "scripts/lib/records.ts: writeJson(path: string, value: unknown): void",
+        "npm run smoke",
+        "npm run smoke:check"
+      ],
+      "requires": [
+        "src/lib/rpc.ts: class RpcClient { constructor(url?: string, fetchImpl?: FetchLike); view<T>(accountId: string, methodName: string, args?: Record<string, unknown>): Promise<T>; viewAccount(accountId: string): Promise<AccountInfo | null>; accessKeyCount(accountId: string): Promise<number>; status(): Promise<{ protocolVersion: number; chainId: string }> }",
+        "src/lib/units.ts: parseNear(text: string): bigint",
+        "src/lib/units.ts: formatNear(yocto: bigint | string, maxDecimals?: number): string",
+        "scripts/lib/env.ts: loadDotEnv(path?: string): void",
+        "scripts/lib/env.ts: readEnv(source: Record<string, string | undefined>): FiadorEnv",
+        "src/lib/sputnik.ts: buildFiadorPolicy(input: { council: readonly string[]; deskSeat: readonly string[] }): Policy",
+        "src/lib/sputnik.ts: createDaoArgs(input: { name: string; purpose: string; policy: Policy }): { name: string; args: string }",
+        "src/lib/sputnik.ts: daoAccountId(name: string): string",
+        "src/lib/sputnik.ts: transferKind(receiverId: string, amountYocto: bigint): TransferKind",
+        "src/lib/sputnik.ts: addProposalArgs(description: string, kind: ProposalKindInput): { proposal: { description: string; kind: ProposalKindInput } }",
+        "src/lib/sputnik.ts: isTransferKind(kind: unknown): kind is TransferKind",
+        "src/lib/sputnik.ts: policiesMatch(a: Policy, b: Policy): boolean",
+        "src/lib/sputnik.ts: roleMembers(policy: Policy, roleName: string): string[] | null",
+        "scripts/lib/near.ts: connect(env: FiadorEnv): Near",
+        "scripts/lib/near.ts: callTx(from: Account, receiverId: string, methodName: string, args: Record<string, unknown>, depositYocto?: bigint, gas?: bigint): Promise<TxResult>",
+        "scripts/lib/near.ts: ensureSubAccount(parent: SubAccountCreator, rpc: Pick<RpcClient, 'viewAccount'>, accountId: string, publicKey: string, nearToTransfer: bigint, pollMs?: number): Promise<'created' | 'exists'>",
+        "scripts/lib/near.ts: deployWithInit(account: Account, wasm: Uint8Array, initArgs: Record<string, unknown>): Promise<TxResult>",
+        "scripts/lib/near.ts: waitFor<T>(read: () => Promise<T>, done: (value: T) => boolean, what: string, timeoutMs?: number, intervalMs?: number): Promise<T>",
+        "scripts/lib/near.ts: EMPTY_CODE_HASH = '11111111111111111111111111111111'",
+        "scripts/lib/near.ts: hasFailure(result: TxResult, needle: string): boolean",
+        "scripts/lib/near.ts: requireOk(result: TxResult, what: string): unknown",
+        "src/lib/sputnik.ts: FACTORY_ID = 'sputnikv2.testnet', COUNCIL_ROLE = 'council', DESK_ROLE = 'desk', DESK_PERMISSIONS",
+        "src/lib/sputnik.ts: parseProposal(value: unknown): ProposalOutput",
+        "scripts/lib/council.ts: callerFor(account: Account): CallFn",
+        "scripts/lib/council.ts: propose(call: CallFn, view: ViewFn, daoId: string, description: string, kind: ProposalKindInput): Promise<number>",
+        "scripts/lib/council.ts: vote(call: CallFn, view: ViewFn, daoId: string, id: number, action?: VoteAction, pollMs?: number): Promise<TxResult>",
+        "scripts/lib/council.ts: waitForProposal(view: ViewFn, daoId: string, id: number, done: (p: ProposalOutput) => boolean, pollMs?: number, timeoutMs?: number): Promise<ProposalOutput>",
+        "scripts/lib/council.ts: readBond(view: ViewFn, daoId: string): Promise<bigint>",
+        "scripts/lib/gas.ts: measureChain(raw: unknown, daoId: string, contractId: string): ChainGas",
+        "scripts/lib/gas.ts: recommendedGas(measured: bigint): bigint"
+      ],
+      "gate": {
+        "run": "npm run check",
+        "expect": "PASS — `tsc` prints nothing, then vitest ends with `Test Files  <N> passed (<N>)` and no failed files"
+      },
+      "commit": "feat(scripts): smoke and smoke:check",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:11",
+      "subsystem": "smoke",
+      "title": "[HUMAN GATE] Create and fund the root account",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:8"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        ".env with FIADOR_ROOT and FIADOR_ROOT_KEY (git-ignored) and a root holding >= 21 NEAR"
+      ],
+      "requires": [
+        "npm run root -- create <name> | topup --count <n> | check [--min <near>]"
+      ],
+      "gate": {
+        "run": "npm run root -- check",
+        "expect": "PASS — `ROOT OK <root> <N> NEAR` with N >= 21"
+      },
+      "commit": "chore(gate): root account created and funded",
+      "human_gate": true,
+      "gate_profile": "faucet",
+      "allow_empty": true,
+      "status": "pending"
+    },
+    {
+      "id": "smoke:12",
+      "subsystem": "smoke",
+      "title": "[HUMAN GATE] Live smoke run (creates the real demo DAO)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-smoke.md",
+      "depends_on": [
+        "smoke:6",
+        "smoke:10",
+        "smoke:11"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "deployments/smoke.json",
+          "deployments/smoke-gas.json"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "deployments/smoke.json",
+        "deployments/smoke-gas.json",
+        "live DAO fiador.sputnikv2.testnet with the final policy and the smoke contract in the desk seat"
+      ],
+      "requires": [
+        "contract/res/fiador_smoke.wasm",
+        "npm run smoke",
+        "npm run smoke:check",
+        ".env with FIADOR_ROOT and FIADOR_ROOT_KEY (git-ignored) and a root holding >= 21 NEAR"
+      ],
+      "gate": {
+        "run": "npm run smoke:check",
+        "expect": "PASS — `SMOKE PASS dao=fiador.sputnikv2.testnet version=2.3.1 vote_check=<id> transfer=<id>`"
+      },
+      "commit": "chore(gate): live smoke run records",
+      "human_gate": true,
+      "gate_profile": "deploy",
+      "allow_empty": false,
+      "status": "pending"
+    }
+  ]
+}
