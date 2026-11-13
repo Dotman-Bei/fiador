@@ -38,7 +38,7 @@ The Basanos site returned a Vercel `404: NOT_FOUND` at `/` and `/app/` on 2026-1
 
 ## Identity: the passbook
 
-*Fiador* is Spanish and Portuguese for guarantor, the person who signs for you. A credit union member's record used to be a **passbook**: a small ruled book in a dark cover where every loan and every repayment was written as a line and stamped. Standing in Fiador works the same way: it is earned line by line, and every point traces to a repaid loan and its Sputnik proposal.
+*Fiador* is Spanish and Portuguese for guarantor, the person who signs for you. A credit union member's record used to be a **passbook**: a small ruled book in a dark cover where every loan and every repayment was written as a line and stamped. Standing in Fiador works the same way: a new member starts with the standing the council gave them and earns more line by line; every funded loan carries its Sputnik proposal id, and each member's standing shows the repaid loans behind what they have earned.
 
 So the product looks like that book, set on screen:
 

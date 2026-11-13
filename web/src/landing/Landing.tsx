@@ -104,7 +104,10 @@ export function Landing({ deployment }: { deployment: Deployment | null }) {
           <div className="wrap split">
             <h2 id="proof">Proof you can check</h2>
             <ul className="checks">
-              <li>Every row on the board carries its Sputnik proposal id, so every point of standing traces to a named account and a repaid loan.</li>
+              <li>
+                Every funded loan on the board carries its Sputnik proposal id, and each member's standing shows the repaid loans behind what they have earned. A new
+                member starts with the standing the council gave them.
+              </li>
               <li>
                 <code>npm run verify</code> reads the DAO and the desk through public RPC and checks every loan against its proposal: kind, receiver, amount and
                 status. It needs no wallet and no secrets.
