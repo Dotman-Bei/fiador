@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22.22.2" },
+  "engines": {
+    "node": ">=22.22.2"
+  },
   "scripts": {
     "cargo": "tsx tools/cargo.ts",
     "wasm": "tsx tools/wasm-build.ts",
@@ -11,15 +13,31 @@
     "root": "tsx scripts/root.ts",
     "smoke": "tsx scripts/smoke.ts",
     "smoke:check": "tsx scripts/smoke-check.ts",
+    "seed": "tsx scripts/seed.ts",
+    "seed:check": "tsx scripts/seed-check.ts",
+    "story": "tsx scripts/story.ts",
+    "story:check": "tsx scripts/story-check.ts",
+    "verify": "tsx scripts/verify.ts",
+    "freeze": "tsx scripts/freeze.ts",
+    "visitor": "tsx scripts/visitor.ts",
+    "web": "vite --config web/vite.config.ts",
+    "web:build": "vite build --config web/vite.config.ts",
+    "web:preview": "vite preview --config web/vite.config.ts",
+    "web:check": "vitest run web && vite build --config web/vite.config.ts",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "check": "tsc -p tsconfig.json && vitest run"
   },
   "dependencies": {
-    "near-api-js": "7.5.3"
+    "near-api-js": "7.5.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
     "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vite": "8.3.8",
