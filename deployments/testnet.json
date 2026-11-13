@@ -1,0 +1,16 @@
+{
+  "network": "testnet",
+  "rpc": "https://rpc.testnet.fastnear.com",
+  "factory": "sputnikv2.testnet",
+  "dao": "fiador.sputnikv2.testnet",
+  "desk": "desk.fiador-ops-vmwpxk.testnet",
+  "smoke": "smoke.fiador-ops-vmwpxk.testnet",
+  "council": [
+    "council-1.fiador-ops-vmwpxk.testnet",
+    "council-2.fiador-ops-vmwpxk.testnet",
+    "council-3.fiador-ops-vmwpxk.testnet"
+  ],
+  "root": "fiador-ops-vmwpxk.testnet",
+  "seeded_at": "2026-11-13T17:23:50.991Z",
+  "explorer": "https://testnet.nearblocks.io"
+}
