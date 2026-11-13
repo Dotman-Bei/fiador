@@ -38,8 +38,8 @@ Tier: **A** = agent-runnable once the user says go. **B** = assisted, with one c
 | 1 | **smoke:11** Create and fund the root account (`gate_profile: faucet`, pause 1) | A: the public faucet helper is a plain POST, no CAPTCHA or OAuth | preflight | Bash: `npm run root -- create fiador-ops-<6 letters>`, then `npm run root -- topup --count 2` repeated while `npm run root -- check` prints ROOT LOW, until `ROOT OK <root> <N> NEAR` with N >= 21 | none. Fallback only if the helper refuses: user makes an account in a wallet + https://near-faucet.io, then puts `FIADOR_ROOT` / `FIADOR_ROOT_KEY` into `.env` (Tier B: Chrome and wallet not granted) | testnet burner; key only in `.env`. Drip turned out to be 10 NEAR per claim | **done** 2026-11-13 17:13 UTC (user go): `ROOT OK fiador-ops-vmwpxk.testnet 29.9994 NEAR` (see the evidence log) |
 | 2 | **smoke:12** Live smoke run, creates the real demo DAO (`gate_profile: deploy`, pause 1) | A | preflight | Bash: `npm run smoke` (seven `== n/7` sections → `SMOKE PASS dao=… version=2.3.1 vote_check=<id> transfer=<id>`), then `npm run smoke:check`. If it reports "exists with a different policy", I set `FIADOR_DAO_NAME=fiador-v2` in `.env` and rerun | none | spends ~9.5 testnet NEAR + gas; claims the public DAO name for good (testnet). Writes `deployments/smoke.json` + `smoke-gas.json`, which I leave uncommitted for the orchestrator | **done** 2026-11-13 17:16 UTC (user go): `SMOKE PASS dao=fiador.sputnikv2.testnet version=2.3.1 vote_check=0 transfer=1` (see the evidence log) |
 | 3 | **scripts:46** Seed the demo DAO (`deploy`, pause 2) | A | closing | Bash: `npm run seed -- --desk desk.<root>`, then `npm run seed:check`; if it reports "below the minimum viable float", `npm run root -- topup --count 2` and rerun | none | creates `desk.<root>` (3.5 NEAR) + float; more faucet claims are likely here (B11 puts the total at ~30 NEAR) | **done** 2026-11-13 17:24 UTC (user go): `SEED PASS dao=fiador.sputnikv2.testnet desk=desk.fiador-ops-vmwpxk.testnet`, no top-up needed (see the evidence log) |
-| 4 | **scripts:47** Story run 1 (`wallet`, pause 3) | A: persona accounts are script-made burners | closing | Bash: `npm run story -- --run 1`, then `npm run story:check -- --run 1` (~6 min of chain time) | none | ~1.5 NEAR persona funding + 2 NEAR of float lost to the default beat | blocked on scripts:45/46 |
-| 5 | **tail:92** Live visitor run (`faucet`, pause 3) | A | closing | Bash: `npm run visitor` → `VISITOR PASS …` or `VISITOR SKIPPED` | none | throwaway faucet account; if the faucet is down, record it here and drop Task 94 | blocked on tail:91 + scripts:46 |
+| 4 | **scripts:47** Story run 1 (`wallet`, pause 3) | A: persona accounts are script-made burners | closing | Bash: `npm run story -- --run 1`, then `npm run story:check -- --run 1` (~6 min of chain time) | none | ~1.5 NEAR persona funding + 2 NEAR of float lost to the default beat | **done** 2026-11-13 17:36 UTC (user batch go "scripts:47 then tail:92"): `STORY PASS run=1 loans=0,1,2,3,4` |
+| 5 | **tail:92** Live visitor run (`faucet`, pause 3) | A | closing | Bash: `npm run visitor` → `VISITOR PASS …` or `VISITOR SKIPPED` | none | throwaway faucet account; if the faucet is down, record it here and drop Task 94 | **done** 2026-11-13 17:37 UTC (same batch go): `VISITOR PASS fiador-visitor-k7lsumcc.testnet loan=5` |
 | 6 | **scripts:48** Keyless freeze of the desk (`account`, pause 3, IRREVERSIBLE) | A to execute, but permanent: I run it only on a separate, explicit go | closing | Bash: `npm run freeze -- --yes`, then `npm run verify` | the go itself; restated with "permanent" before running | after this the desk can never be patched (a fix means a new desk). The submission text (B17) claims the freeze, so if it's skipped, that sentence must be edited | blocked on scripts:47 + board:62 |
 | 7 | **Repo public flip** (implicit) | A | closing | Bash/gh: re-read `gh auth status` (expect `Dotman-Bei`); scan history for secrets (`git log -p --all` grep for `ed25519:` secret keys / `FIADOR_ROOT_KEY=`, `.env` never tracked); then `gh repo edit Dotman-Bei/fiador --visibility public --accept-visibility-change-consequences`; verify with `gh api repos/Dotman-Bei/fiador --jq .visibility` | none | exposure is effectively irreversible (forks and caches), so the history scan comes first. Must be public by the deadline and through judging | pending (best after the freeze, so the README matches what shipped) |
 | 8 | **Static hosting of `dist/`** (implicit, B16; see the options below) | A for the recommended option | closing | Recommended: GitHub Pages. (1) the orchestrator makes a one-line build change (`base: './'` in `web/vite.config.ts`, routed through the guide; I don't write product code); (2) after scripts:46, I run `npm run build` and push `dist/` to a `gh-pages` branch from a temporary `git worktree` (no change to the main tree); (3) `gh api -X POST repos/Dotman-Bei/fiador/pages -f source[branch]=gh-pages -f source[path]=/`; (4) verify `https://dotman-bei.github.io/fiador/` and `/fiador/app/` return 200 and load their assets | none | needs the repo public first (Pages on a private repo needs a paid plan; the account's plan didn't show via the API). Rebuild and push again if `deployments/testnet.json` changes | pending; needs the user's choice of option + the build change |
@@ -92,6 +92,8 @@ All before 2026-11-14 23:59 UTC.
 | 17:12:20 | smoke:11 | `fiador-ops-vmwpxk.testnet` (root, created by the helper) | 10 NEAR | create tx `9tndMbAGYxURRDrZCKYyC3EKVmFMNq4ARQXnPnxbUgez` (testnet → root: CREATE_ACCOUNT+TRANSFER+ADD_KEY) |
 | 17:12:34 | smoke:11 | `fiador-topup-j8gybkhl.testnet` (throwaway, deleted into the root) | 10 NEAR | fold-in receipt `HUkMqYKPBznrK7NJLXMfJHVcFVruqksCKyDoKKnbbdcA` (system → root TRANSFER); throwaway now `UNKNOWN_ACCOUNT` |
 | ~17:12:45 | smoke:11 | `fiador-topup-8n6thutr.testnet` (throwaway, deleted into the root) | 10 NEAR | fold-in receipt `7Vh1HQVF5UAP3Hzo3gLvbzo2DK7m3Tj3yj15NNDA5rj7` (system → root TRANSFER); throwaway now `UNKNOWN_ACCOUNT` |
+| 17:30:31 | margin before scripts:47 | `fiador-topup-i356fbtk.testnet` (throwaway, deleted into the root) | 10 NEAR | root 5.5269 → 15.5266 NEAR; throwaway now `UNKNOWN_ACCOUNT` |
+| 17:36:08 | tail:92 | `fiador-visitor-k7lsumcc.testnet` (visitor throwaway, key in memory only, NOT deleted) | 10 NEAR | still holds 9.9475 NEAR, stranded because the key was never persisted (by design: no secrets) |
 
 Faucet: `https://helper.nearprotocol.com/account` (the plans' default `FIADOR_FAUCET_URL`). 3 claims in ~30 s, all
 10 NEAR, with no rate limit or refusal seen. Total granted: 30 NEAR, of which ~0.0006 went to gas.
@@ -172,3 +174,52 @@ Faucet: `https://helper.nearprotocol.com/account` (the plans' default `FIADOR_FA
 - Records: `deployments/testnet.json` written (no `ed25519:` strings), **left uncommitted** for the orchestrator
 - Heads-up for scripts:47: the root is at 5.53 NEAR, and the story run spends ~1.5 NEAR of persona funding from the root
   (the 2 NEAR default comes from the DAO float). A `topup --count 1` before it would add margin; only on the user's go
+
+### Batch scripts:47 → tail:92: done, 2026-11-13 17:37 UTC (user: "run gates scripts:47 and then tail:92, as one named batch. Do NOT run scripts:48")
+
+- Pre-checks: `git pull --ff-only` → up to date at `27c3ba6`, tree clean
+- Margin top-up: `npm run root -- topup --count 1` → `faucet granted 10 NEAR to fiador-topup-i356fbtk.testnet`; the
+  trailing balance line again lagged one receipt (5.5269); `npm run root -- check --min 8` →
+  `ROOT OK fiador-ops-vmwpxk.testnet 15.5266 NEAR`
+- **scripts:47**: `npm run story -- --run 1` (17:30:55 → 17:35:54 UTC, exit 0), ends `STORY PASS run=1`
+  - 0/4 personas `ada-1.`, `bayo-1.`, `chidi-1.fiador-ops-vmwpxk.testnet` created; council proposal 5 Approved: admitted 3
+  - 1/4 Ada (standing 4) asks 6, held; Bayo co-signs 2, so loan #0 is Sputnik proposal 6, approved by the desk seat alone;
+    treasury 17.4215 → 11.4215 → 17.4215 NEAR after repay; Ada 5, Bayo 5
+  - 2/4 loan #1 (proposal 7) approved 2-of-3 by the council, repaid on time; Chidi 5
+  - 3/4 loan #2 (4 NEAR) repaid late inside grace: closed, no gain, no slash. Loan #3 (2 NEAR, Ada pledged 1)
+    defaulted: Chidi 0, Ada 4
+  - 4/4 desk unseated, so loan #4 is Refused by Sputnik (`ERR_PERMISSION_DENIED`, proposals.rs:518); desk re-seated
+  - Gate: `npm run story:check -- --run 1` → **`STORY PASS run=1 loans=0,1,2,3,4`** (exit 0)
+  - Loan ids: money_shot 0, council 1, late 2, defaulted 3, refused 4. `deployments/story-1.json` written (no
+    `ed25519:` strings), **left uncommitted** for the orchestrator
+- **tail:92**: `npm run visitor` (17:36:08 → 17:36:37 UTC, exit 0):
+  ```
+  == 1/5 a throwaway account from the public testnet faucet
+  fiador-visitor-k7lsumcc.testnet created with 10 NEAR (key held in memory only)
+  == 2/5 join the visitor line (attaching the 0.05 NEAR storage deposit)
+  seated with standing 0.1 NEAR
+  == 3/5 ask above the standing: the desk holds it for a co-signer
+  held: needs 0.1 NEAR co-signed; cancelling it
+  == 4/5 ask within the standing: the DAO pays through its own Transfer proposal, no vote
+  loan #5 of 0.1 NEAR paid via Sputnik proposal 12
+  == 5/5 repay on time and watch the standing rise
+  standing 0.1 -> 0.2 NEAR
+  VISITOR PASS fiador-visitor-k7lsumcc.testnet loan=5
+  ```
+- Read-only `npm run verify` (exit 1, as expected before the freeze): 15 PASS, 1 FAIL, and the only FAIL is
+  `desk is keyless (frozen) — 1 access key(s) on desk.fiador-ops-vmwpxk.testnet`. Ends `VERIFY FAIL (16 checks, 6 loans)`.
+  No other failing line, so no findings.
+- Balances after, read myself over public RPC: root **14.0040 NEAR** (story personas + gas ≈ 1.52); desk **3.5479 NEAR**
+  (+0.05 visitor storage deposit); DAO **15.4215 NEAR** (−2 NEAR lost to the loan #3 default beat, as planned)
+- Desk-side tx hashes (testnet explorer, signer-side tx shown):
+  - Admit 3 (council proposal 5 execution): `FCnMuTPrWYtnC6UKDuocXe47osnXDuZWLWa8QQKfTAYC`
+  - Loan #0: ask `HwDiQN2h365UYWL2stWcHm55mG3yXWnaU5iEqmkFWizx`, co-sign → file → approve → payout `FG1CKxCY1U2hTPx3bXD5e2TE5hTViGXE8KKf6fGPo5Ad`, repay `3gAwYN8FBPg9osAetQNi4KUC7xzmZ8UQ3jPLjbPkCFPR`
+  - Loan #1: ask_council `66tC52wdaaj1mozY43EyupJAQqLN2jvP4VF6wpbeyrCo`, payout `B6XBPJjA7wV5us6BYzDhvwk5JKd1pVKjhs1TVvorQ35U`, sync_loan `GYLHHGJnzQvyRE2tRuvtmYE7XJLk7gEk4qjTibKJxtmj`, repay `DLnMaSDR5BeNPZUFpXTGSWrVrTyZpNoJVts5cG2qjTT5`
+  - Loan #2: ask (filed + approved + paid) `9SMv5ZmRzc49aYRK8pRN9FeLV9tYJnmr8VVmPtPqr2aM`, late repay `5tPigvx8fnJKQczyoRY9tYiatRNjYe3Bz5P6saMDibF4`
+  - Loan #3: ask `3v73WiYjLHq9kcAZJa68djP8mfV4LAhYs6EfcaEep19F`, co-sign → paid `CjdbUEaxpoLvAL2P34VnLxbg146oQQ8s6iMM68e5uQoD`, mark_default `9GopnLKWmUhRKVrL9s37htFsfDLMYu6TxHzT84Nt9Bvn`
+  - Loan #4 (refused): `3VWv9j8UeMF9KqDNhSMnYE5EQTXNvikYgWCicF2mfCQN`
+  - Loan #5 (visitor): join `3cUX5yafabQcqZFshNNYwhj5m1zqepsebnzVM7jxcyVp`, held ask `BuzmU97ECL1LmEVpNyUcmbFMfVUD4GBH6dudyCaJT8fZ`, cancel `7y5FGQDipXemSUc3VUUvo121pAW3G8zNYccWeX2eErX5`, ask → paid `HPAJynms16d18rY5z5rVHusVegSwBoXxpK3hDnmoY5iS`, repay `89u4gWVf4ZFeHSQdJJF2wMHSjz811MGWxQ6ikX4Mffex`
+  - (Tx-to-step mapping is inferred from the time order and method names on the explorer.)
+- Note: the visitor throwaway keeps 9.9475 NEAR it can never spend (its key lived only in memory). That's harmless on
+  testnet but uses up one faucet claim per visitor run
+- scripts:48 (freeze) NOT run, per the user's instruction
