@@ -37,7 +37,7 @@ Tier: **A** = agent-runnable once the user says go. **B** = assisted, with one c
 |---|---|---|---|---|---|---|---|
 | 1 | **smoke:11** Create and fund the root account (`gate_profile: faucet`, pause 1) | A: the public faucet helper is a plain POST, no CAPTCHA or OAuth | preflight | Bash: `npm run root -- create fiador-ops-<6 letters>`, then `npm run root -- topup --count 2` repeated while `npm run root -- check` prints ROOT LOW, until `ROOT OK <root> <N> NEAR` with N >= 21 | none. Fallback only if the helper refuses: user makes an account in a wallet + https://near-faucet.io, then puts `FIADOR_ROOT` / `FIADOR_ROOT_KEY` into `.env` (Tier B: Chrome and wallet not granted) | testnet burner; key only in `.env`. Drip turned out to be 10 NEAR per claim | **done** 2026-11-13 17:13 UTC (user go): `ROOT OK fiador-ops-vmwpxk.testnet 29.9994 NEAR` (see the evidence log) |
 | 2 | **smoke:12** Live smoke run, creates the real demo DAO (`gate_profile: deploy`, pause 1) | A | preflight | Bash: `npm run smoke` (seven `== n/7` sections → `SMOKE PASS dao=… version=2.3.1 vote_check=<id> transfer=<id>`), then `npm run smoke:check`. If it reports "exists with a different policy", I set `FIADOR_DAO_NAME=fiador-v2` in `.env` and rerun | none | spends ~9.5 testnet NEAR + gas; claims the public DAO name for good (testnet). Writes `deployments/smoke.json` + `smoke-gas.json`, which I leave uncommitted for the orchestrator | **done** 2026-11-13 17:16 UTC (user go): `SMOKE PASS dao=fiador.sputnikv2.testnet version=2.3.1 vote_check=0 transfer=1` (see the evidence log) |
-| 3 | **scripts:46** Seed the demo DAO (`deploy`, pause 2) | A | closing | Bash: `npm run seed -- --desk desk.<root>`, then `npm run seed:check`; if it reports "below the minimum viable float", `npm run root -- topup --count 2` and rerun | none | creates `desk.<root>` (3.5 NEAR) + float; more faucet claims are likely here (B11 puts the total at ~30 NEAR) | blocked on desk:31 + smoke:12 |
+| 3 | **scripts:46** Seed the demo DAO (`deploy`, pause 2) | A | closing | Bash: `npm run seed -- --desk desk.<root>`, then `npm run seed:check`; if it reports "below the minimum viable float", `npm run root -- topup --count 2` and rerun | none | creates `desk.<root>` (3.5 NEAR) + float; more faucet claims are likely here (B11 puts the total at ~30 NEAR) | **done** 2026-11-13 17:24 UTC (user go): `SEED PASS dao=fiador.sputnikv2.testnet desk=desk.fiador-ops-vmwpxk.testnet`, no top-up needed (see the evidence log) |
 | 4 | **scripts:47** Story run 1 (`wallet`, pause 3) | A: persona accounts are script-made burners | closing | Bash: `npm run story -- --run 1`, then `npm run story:check -- --run 1` (~6 min of chain time) | none | ~1.5 NEAR persona funding + 2 NEAR of float lost to the default beat | blocked on scripts:45/46 |
 | 5 | **tail:92** Live visitor run (`faucet`, pause 3) | A | closing | Bash: `npm run visitor` → `VISITOR PASS …` or `VISITOR SKIPPED` | none | throwaway faucet account; if the faucet is down, record it here and drop Task 94 | blocked on tail:91 + scripts:46 |
 | 6 | **scripts:48** Keyless freeze of the desk (`account`, pause 3, IRREVERSIBLE) | A to execute, but permanent: I run it only on a separate, explicit go | closing | Bash: `npm run freeze -- --yes`, then `npm run verify` | the go itself; restated with "permanent" before running | after this the desk can never be patched (a fix means a new desk). The submission text (B17) claims the freeze, so if it's skipped, that sentence must be edited | blocked on scripts:47 + board:62 |
@@ -136,3 +136,39 @@ Faucet: `https://helper.nearprotocol.com/account` (the plans' default `FIADOR_FA
 - Records: `deployments/smoke.json` and `deployments/smoke-gas.json` written (no `ed25519:` strings in either), **left
   uncommitted** for the orchestrator. Measured gas: add_proposal 2.34 Tgas, on_filed 10.37 Tgas, act_proposal 6.49 Tgas,
   on_voted 1.54 Tgas (×1.3 headroom recommended)
+
+### scripts:46: done, 2026-11-13 17:24 UTC (user: "run gate scripts:46")
+
+- Pre-checks: `git pull --ff-only` → already up to date, desk:31 `2c43767` present (HEAD `e131eed`), tree clean;
+  `npm run root -- check --min 12` → `ROOT OK fiador-ops-vmwpxk.testnet 20.4656 NEAR`
+- `npm run seed -- --desk desk.fiador-ops-vmwpxk.testnet` (17:22:58 → 17:23:51 UTC, exit 0). **No step was skipped**:
+  every step ran fresh.
+  - 1/5 `desk.fiador-ops-vmwpxk.testnet` created; desk deployed and initialised in one transaction
+  - 2/5 factory upgrades locked out (FactoryInfoUpdate auto_update=false): proposal 2 Approved
+  - 3/5 seat swap: unseated `smoke.fiador-ops-vmwpxk.testnet` (proposal 3), seated `desk.fiador-ops-vmwpxk.testnet` (proposal 4)
+  - 4/5 sent 11.4315 NEAR; DAO float now about 12 NEAR (no "below the minimum viable float" stop)
+  - 5/5 wrote `deployments/testnet.json` → `SEED PASS dao=fiador.sputnikv2.testnet desk=desk.fiador-ops-vmwpxk.testnet`
+- Gate: `npm run seed:check` (exit 0):
+  ```
+  PASS  factory auto-upgrade is off — auto_update=false
+  PASS  desk seat holds only the desk, with transfer:AddProposal and transfer:VoteApprove only — seat=["desk.fiador-ops-vmwpxk.testnet"] permissions=["transfer:AddProposal","transfer:VoteApprove"] other roles=none
+  PASS  council is 3 members and every kind needs 2 approvals — council=3 quorum=2 threshold="2"
+  PASS  desk is wired to this DAO — desk.dao=fiador.sputnikv2.testnet
+  PASS  book equals the open principal — book=0 expected=0
+  PASS  treasury holds the loan float — 12 NEAR available
+  SEED PASS dao=fiador.sputnikv2.testnet desk=desk.fiador-ops-vmwpxk.testnet
+  ```
+- Balances after, read myself over public RPC: DAO `fiador.sputnikv2.testnet` **17.4215 NEAR** total (12 NEAR available
+  above storage); desk `desk.fiador-ops-vmwpxk.testnet` **3.4979 NEAR** (code hash `GNKaSKXm…`); root **5.5269 NEAR**
+  (spent 14.9387: desk 3.5 + float 11.4315 + gas)
+- Tx hashes (testnet explorer):
+  - Desk create (root → desk, CREATE_ACCOUNT+TRANSFER+ADD_KEY): `DjfpjXBnT4RNJ1LGduezv6ks6EC1HDvHQGvC6N36ip19`
+  - Desk deploy + `new` (one tx): `Cx8GcvMkuWS42ArfQ1e7TRXaDthcy2y9xR28FXHwA2RA`
+  - Proposal 2 (auto_update off): add `2UhC1J3Upjt6nYxf7ejn82iJMRN5QfS1TJK8B94ERRQV`, approvals `FE1UsKC1MHQ7dJ1BzSGFN8rCRQu6K6CCg4aqBRbAA9fT`, `74DiZ1u5iLMQXeC6FGLHeTTqAPwdmfETYpzsdJtFc9uc`
+  - Proposal 3 (unseat smoke): add `Dfd4heEyCjy6aAxra9vUTBkHPVxLA69njGyFoTQfwYou`, approvals `6SFeMQWvMNMZninNL4zyGfnimJRJpuJBAKKMrhjcrAaZ`, `5owC3Ue82qV6nNpLk9Sc8wxqEvUXWteRsTQzy6pxQuMo`
+  - Proposal 4 (seat desk): add `4iW4Uvr5X9giNPEmLfFqNyWnjU6wM6yYLn4H1AJ8Lo8u`, approvals `AQZRe7FywfvKUPGZPnjVXY22LiCdyRkH3C3itCQwAboV`, `9xPn2SoXt9gZcEMm9ytEZbAHRpaVgRPRsZgcGcNagDQK`
+  - Float transfer root → DAO: `9twVASiGoWtBaqY7WJBmPH9i65uZbgupLRRsmpGeyRCq`
+  - (The proposal-to-tx mapping is inferred from explorer order: add, then the two approvals, per proposal 2 → 3 → 4.)
+- Records: `deployments/testnet.json` written (no `ed25519:` strings), **left uncommitted** for the orchestrator
+- Heads-up for scripts:47: the root is at 5.53 NEAR, and the story run spends ~1.5 NEAR of persona funding from the root
+  (the 2 NEAR default comes from the DAO float). A `topup --count 1` before it would add margin; only on the user's go
