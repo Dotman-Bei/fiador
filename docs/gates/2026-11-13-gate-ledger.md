@@ -36,7 +36,7 @@ Tier: **A** = agent-runnable once the user says go. **B** = assisted, with one c
 | # | Gate | Tier | Pass | Tool plan | Human moment | Risk note | Status |
 |---|---|---|---|---|---|---|---|
 | 1 | **smoke:11** Create and fund the root account (`gate_profile: faucet`, pause 1) | A: the public faucet helper is a plain POST, no CAPTCHA or OAuth | preflight | Bash: `npm run root -- create fiador-ops-<6 letters>`, then `npm run root -- topup --count 2` repeated while `npm run root -- check` prints ROOT LOW, until `ROOT OK <root> <N> NEAR` with N >= 21 | none. Fallback only if the helper refuses: user makes an account in a wallet + https://near-faucet.io, then puts `FIADOR_ROOT` / `FIADOR_ROOT_KEY` into `.env` (Tier B: Chrome and wallet not granted) | testnet burner; key only in `.env`. Drip turned out to be 10 NEAR per claim | **done** 2026-11-13 17:13 UTC (user go): `ROOT OK fiador-ops-vmwpxk.testnet 29.9994 NEAR` (see the evidence log) |
-| 2 | **smoke:12** Live smoke run, creates the real demo DAO (`gate_profile: deploy`, pause 1) | A | preflight | Bash: `npm run smoke` (seven `== n/7` sections → `SMOKE PASS dao=… version=2.3.1 vote_check=<id> transfer=<id>`), then `npm run smoke:check`. If it reports "exists with a different policy", I set `FIADOR_DAO_NAME=fiador-v2` in `.env` and rerun | none | spends ~9.5 testnet NEAR + gas; claims the public DAO name for good (testnet). Writes `deployments/smoke.json` + `smoke-gas.json`, which I leave uncommitted for the orchestrator | pending (deps smoke:6/8/10 committed) |
+| 2 | **smoke:12** Live smoke run, creates the real demo DAO (`gate_profile: deploy`, pause 1) | A | preflight | Bash: `npm run smoke` (seven `== n/7` sections → `SMOKE PASS dao=… version=2.3.1 vote_check=<id> transfer=<id>`), then `npm run smoke:check`. If it reports "exists with a different policy", I set `FIADOR_DAO_NAME=fiador-v2` in `.env` and rerun | none | spends ~9.5 testnet NEAR + gas; claims the public DAO name for good (testnet). Writes `deployments/smoke.json` + `smoke-gas.json`, which I leave uncommitted for the orchestrator | **done** 2026-11-13 17:16 UTC (user go): `SMOKE PASS dao=fiador.sputnikv2.testnet version=2.3.1 vote_check=0 transfer=1` (see the evidence log) |
 | 3 | **scripts:46** Seed the demo DAO (`deploy`, pause 2) | A | closing | Bash: `npm run seed -- --desk desk.<root>`, then `npm run seed:check`; if it reports "below the minimum viable float", `npm run root -- topup --count 2` and rerun | none | creates `desk.<root>` (3.5 NEAR) + float; more faucet claims are likely here (B11 puts the total at ~30 NEAR) | blocked on desk:31 + smoke:12 |
 | 4 | **scripts:47** Story run 1 (`wallet`, pause 3) | A: persona accounts are script-made burners | closing | Bash: `npm run story -- --run 1`, then `npm run story:check -- --run 1` (~6 min of chain time) | none | ~1.5 NEAR persona funding + 2 NEAR of float lost to the default beat | blocked on scripts:45/46 |
 | 5 | **tail:92** Live visitor run (`faucet`, pause 3) | A | closing | Bash: `npm run visitor` → `VISITOR PASS …` or `VISITOR SKIPPED` | none | throwaway faucet account; if the faucet is down, record it here and drop Task 94 | blocked on tail:91 + scripts:46 |
@@ -112,3 +112,27 @@ Faucet: `https://helper.nearprotocol.com/account` (the plans' default `FIADOR_FA
 - Budget: ~30 NEAR vs. smoke:12's ~9.5 NEAR + gas, leaving ~20 NEAR going into seed (desk 3.5 + float). More top-ups
   may be needed at scripts:46
 - Not committed by me: the orchestrator re-runs the gate and makes the empty `chore(gate)` commit
+
+### smoke:12: done, 2026-11-13 17:16 UTC (user: "run gate smoke:12")
+
+- `npm run smoke` (17:14:53 → 17:15:49 UTC, exit 0): all seven `== n/7` sections, ending
+  **`SMOKE PASS dao=fiador.sputnikv2.testnet version=2.3.1 vote_check=0 transfer=1`**. The DAO name was free, so no
+  `FIADOR_DAO_NAME` override was needed.
+  - 1/7 created `smoke.`, `council-1.`, `council-2.`, `council-3.fiador-ops-vmwpxk.testnet`
+  - 4/7 Vote proposal 0: InProgress after 1 approval, Approved after 2
+  - 5/7 root (no role) got `ERR_PERMISSION_DENIED`
+  - 6/7 Transfer proposal 1: 0.01 NEAR to the root, Approved by the seat alone
+- Gate: `npm run smoke:check` → **`SMOKE PASS dao=fiador.sputnikv2.testnet version=2.3.1 vote_check=0 transfer=1`** (exit 0)
+- Verified myself over public RPC: `fiador.sputnikv2.testnet` exists (5.99 NEAR, code hash `AA4nA45v…`), `version()` =
+  `2.3.1`, proposal bond 0. Roles: `council` = Group of the 3 council accounts with `*:*`; `desk` = Group
+  [`smoke.fiador-ops-vmwpxk.testnet`] with exactly `transfer:AddProposal` + `transfer:VoteApprove` (transfer threshold 1).
+  Proposal 0 `Vote` Approved (proposer council-1); proposal 1 `Transfer` 0.01 NEAR → root, Approved (proposer smoke)
+- Tx hashes (testnet explorer):
+  - DAO creation (factory `sputnikv2.testnet` → DAO, CREATE_ACCOUNT+DEPLOY+new): `HoCaDcwsu6VpaMoGrUeQTtbDv9izbKQnqCQCMzrVcV2L`
+  - Vote check: add_proposal `2bPd4nNt18YLzvdv458PwTEHb22w6LX566r3v5dcr8U3`, approval 1 `DzpnAkdPXFiAoFkWAoov9FxrAC1yKKRXqXDUxeL6KC6S`, approval 2 `3oU4Cd3xH9EUbet7fjA3VTUFC8iEjA12dKLKjqRm1g33`
+  - Permission-denied attempt by root: `FYedyBR5knDfDZHXow8suLv2q94obSdQtFHg6rm27D8E`
+  - Seat-alone transfer (file_and_approve → add_proposal → act_proposal → payout): `E6gsqMFUc8dJ1TpteCMXPGqrMaQwnYwWUuaKSmWDUoRy`
+- Spend: the root went from 29.9994 → **20.4656 NEAR** (9.5338 NEAR, matching the plan's ~9.5 + gas)
+- Records: `deployments/smoke.json` and `deployments/smoke-gas.json` written (no `ed25519:` strings in either), **left
+  uncommitted** for the orchestrator. Measured gas: add_proposal 2.34 Tgas, on_filed 10.37 Tgas, act_proposal 6.49 Tgas,
+  on_voted 1.54 Tgas (×1.3 headroom recommended)
