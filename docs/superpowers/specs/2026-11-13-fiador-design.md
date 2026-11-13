@@ -382,13 +382,13 @@ listed under Build & test (Q-005). `LICENSE` is MIT (Q-014).
 
 | # | Plan file | Task ids | Notes |
 |---|---|---|---|
-| 1 | `2026-11-13-fiador-smoke.md` | smoke:1–11 | first; ends in pause 1; Appendix A = Linux CI fallback |
-| 2 | `2026-11-13-fiador-desk.md` | desk:21– | top tier throughout |
-| 3 | `2026-11-13-fiador-chain-scripts.md` | scripts:41– | seed, story, verify, freeze; pauses 2 and 3 |
-| 4 | `2026-11-13-fiador-board.md` | board:61– | `/app` read-only |
-| 5 | `2026-11-13-fiador-readme.md` | readme:71– | right after the board; not droppable |
-| 6 | `2026-11-13-fiador-landing.md` | landing:81– | `/` |
-| 7 | `2026-11-13-fiador-tail.md` | tail:91– | visitor flow + wallet actions (droppable) + README update |
+| 1 | `2026-11-13-fiador-smoke.md` | smoke:1–12 | first; tasks 11–12 are pause 1; Appendix A = Linux CI fallback |
+| 2 | `2026-11-13-fiador-desk.md` | desk:21–31 | top tier throughout; 30 needs the live gas measurement |
+| 3 | `2026-11-13-fiador-chain-scripts.md` | scripts:41–48 | 46 = pause 2 (seed); 47, 48 = pause 3 (story, freeze) |
+| 4 | `2026-11-13-fiador-board.md` | board:61–62 | `/app` read-only |
+| 5 | `2026-11-13-fiador-readme.md` | readme:71 | right after the board; not droppable |
+| 6 | `2026-11-13-fiador-landing.md` | landing:81 | `/` |
+| 7 | `2026-11-13-fiador-tail.md` | tail:91–95 | visitor flow (91, 92 = pause 3) + wallet actions (93), each droppable, with their README updates (94, 95) |
 
 Task numbers are global across plans, so a `Depends on: Task N` reference is unambiguous.
 

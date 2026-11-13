@@ -3,7 +3,12 @@
   "spec": "docs/superpowers/specs/2026-11-13-fiador-design.md",
   "subsystems": [
     "smoke",
-    "desk"
+    "desk",
+    "scripts",
+    "board",
+    "readme",
+    "landing",
+    "tail"
   ],
   "tasks": [
     {
@@ -972,6 +977,724 @@
         "expect": "PASS — `WASM CHECK PASS contract/res/fiador_desk.wasm <N> bytes, <M> exports`"
       },
       "commit": "build(desk): commit fiador_desk.wasm",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "scripts:41",
+      "subsystem": "scripts",
+      "title": "Remaining npm scripts and dependencies; the desk TypeScript mirror",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
+      "depends_on": [
+        "smoke:1",
+        "desk:21"
+      ],
+      "effort": "medium",
+      "files": {
+        "create": [
+          "src/lib/desk.ts",
+          "src/lib/fixtures/desk.ts"
+        ],
+        "modify": [
+          "package.json"
+        ],
+        "test": [
+          "src/lib/desk.test.ts"
+        ]
+      },
+      "provides": [
+        "package.json scripts: seed, seed:check, story, story:check, verify, freeze, visitor, web, web:build, web:preview, web:check (plus react 19.3.1, react-dom 19.3.1, @vitejs/plugin-react 6.3.0, @types/react 19.3.0, @types/react-dom 19.3.0)",
+        "src/lib/desk.ts: types Lane, LoanStatus, DeskParams, ConfigView, SeatView, MemberView, LoanView, RequestView, AskResult, DeskViewer, DeskSnapshot",
+        "src/lib/desk.ts: DEMO_PARAMS: DeskParams (spec §6 demo values)",
+        "src/lib/desk.ts: readDesk(viewer: DeskViewer, deskId: string): Promise<DeskSnapshot>",
+        "src/lib/desk.ts: holdsReservation(loan: LoanView): boolean",
+        "src/lib/desk.ts: loansBehindStanding(memberId: string, loans: readonly LoanView[]): LoanView[]",
+        "src/lib/desk.ts: isHeld(result: AskResult): result is { Held: { gap: string; expires_at_ms: number } }",
+        "src/lib/fixtures/desk.ts: NEAR, DAO, DESK, loan(over), member(over), config(over)"
+      ],
+      "requires": [
+        "contract/desk JSON: Params { starter_standing: U128, max_standing: U128, growth_step: U128, book_cap: U128, loan_term_sec: u64, grace_sec: u64, request_ttl_sec: u64, visitor_slots: u32, visitor_starter: U128, visitor_window_sec: u64, visitor_deposit: U128, proposal_bond: U128 }",
+        "contract/desk JSON: ConfigView { dao: string, params: Params, book: U128, member_count: u32, loan_count: u64, request_count: u32 }",
+        "contract/desk JSON: Lane = \"Standing\" | \"Cosigned\" | \"Council\"; LoanStatus = \"Filing\" | \"Voting\" | \"AwaitingCouncil\" | \"Active\" | \"Repaid\" | \"RepaidLate\" | \"Defaulted\" | \"Refused\" | \"NotFunded\" | \"Voided\"",
+        "contract/desk JSON: AskResult = { \"Held\": { gap: U128, expires_at_ms: u64 } } | { \"Loan\": { loan_id: u64, status: LoanStatus, proposal_id: u64 | null } }",
+        "contract/desk JSON: MemberView { account_id: string, standing: U128, drawn: U128, pledged: U128, unused: U128, open_loans: u32, visitor: SeatView | null, repaid_on_time: u32, defaults: u32 }; SeatView { joined_at_ms: u64, expires_at_ms: u64, deposit: U128, loans_taken: u32 }",
+        "contract/desk JSON: LoanView { id: u64, borrower: string, principal: U128, borrower_part: U128, cosigner: string | null, pledge: U128, lane: Lane, status: LoanStatus, proposal_id: u64 | null, created_at_ms: u64, due_at_ms: u64, closed_at_ms: u64 }",
+        "contract/desk JSON: RequestView { borrower: string, amount: U128, gap: U128, expires_at_ms: u64, expired: bool }"
+      ],
+      "gate": {
+        "run": "npx vitest run src/lib/desk.test.ts",
+        "expect": "PASS — `Tests  5 passed (5)`"
+      },
+      "commit": "feat(lib): desk TypeScript mirror and remaining npm scripts",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "scripts:42",
+      "subsystem": "scripts",
+      "title": "The deployment record and the read-only verify checks",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
+      "depends_on": [
+        "scripts:41",
+        "smoke:4"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "src/lib/deployments.ts",
+          "src/lib/verify.ts"
+        ],
+        "modify": [],
+        "test": [
+          "src/lib/verify.test.ts"
+        ]
+      },
+      "provides": [
+        "src/lib/deployments.ts: interface Deployment { network, rpc, factory, dao, desk, smoke, council, root, seeded_at, explorer }, DEPLOYMENT_PATH, EXPLORER, isDeployment(value: unknown): value is Deployment, accountUrl(deployment, accountId): string",
+        "src/lib/verify.ts: runChecks(input: VerifyInput): Check[], KEYLESS_CHECK, allowedProposalStatuses(status: LoanStatus)"
+      ],
+      "requires": [
+        "src/lib/desk.ts: types Lane, LoanStatus, DeskParams, ConfigView, SeatView, MemberView, LoanView, RequestView, AskResult, DeskViewer, DeskSnapshot",
+        "src/lib/desk.ts: holdsReservation(loan: LoanView): boolean",
+        "src/lib/fixtures/desk.ts: NEAR, DAO, DESK, loan(over), member(over), config(over)",
+        "src/lib/sputnik.ts: FACTORY_ID = 'sputnikv2.testnet', COUNCIL_ROLE = 'council', DESK_ROLE = 'desk', DESK_PERMISSIONS",
+        "src/lib/sputnik.ts: types Policy, RolePermission, VotePolicy, RoleKind, ProposalKindInput, TransferKind, FunctionCallKind, FunctionCallSpec, AddMemberKind, RemoveMemberKind, FactoryInfoUpdateKind, ProposalOutput, ProposalStatus, VoteAction",
+        "src/lib/sputnik.ts: buildFiadorPolicy(input: { council: readonly string[]; deskSeat: readonly string[] }): Policy",
+        "src/lib/sputnik.ts: isTransferKind(kind: unknown): kind is TransferKind",
+        "src/lib/sputnik.ts: roleMembers(policy: Policy, roleName: string): string[] | null"
+      ],
+      "gate": {
+        "run": "npx vitest run src/lib/verify.test.ts",
+        "expect": "PASS — `Tests  8 passed (8)`"
+      },
+      "commit": "feat(lib): deployment record and verify checks",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "scripts:43",
+      "subsystem": "scripts",
+      "title": "Typed desk calls and the story's expected end state",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
+      "depends_on": [
+        "scripts:41",
+        "smoke:9"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "scripts/lib/desk-calls.ts",
+          "scripts/lib/story-expect.ts"
+        ],
+        "modify": [],
+        "test": [
+          "scripts/lib/desk-calls.test.ts",
+          "scripts/lib/story-expect.test.ts"
+        ]
+      },
+      "provides": [
+        "scripts/lib/desk-calls.ts: ask, cosign, askCouncil -> Promise<{ result: AskResult; tx: TxResult }>; cancelRequest, repay, syncLoan, markDefault, joinVisitorLine -> Promise<TxResult>; parseAskResult, loanIdOf",
+        "scripts/lib/story-expect.ts: interface StoryRecord, EXPECTED_STATUS, EXPECTED_STANDING_NEAR, isStoryRecord(value: unknown), checkStory(record, loans, members): string[]"
+      ],
+      "requires": [
+        "src/lib/desk.ts: types Lane, LoanStatus, DeskParams, ConfigView, SeatView, MemberView, LoanView, RequestView, AskResult, DeskViewer, DeskSnapshot",
+        "src/lib/fixtures/desk.ts: NEAR, DAO, DESK, loan(over), member(over), config(over)",
+        "scripts/lib/council.ts: type CallFn = (receiverId: string, methodName: string, args: Record<string, unknown>, depositYocto: bigint) => Promise<TxResult>",
+        "scripts/lib/near.ts: interface TxResult { ok: boolean; failures: string[]; value: unknown; raw: unknown }",
+        "scripts/lib/near.ts: requireOk(result: TxResult, what: string): unknown"
+      ],
+      "gate": {
+        "run": "npx vitest run scripts/lib/desk-calls.test.ts scripts/lib/story-expect.test.ts",
+        "expect": "PASS — `Test Files  2 passed (2)` and `Tests  6 passed (6)`"
+      },
+      "commit": "feat(scripts): typed desk calls and story expectations",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "scripts:44",
+      "subsystem": "scripts",
+      "title": "verify, seed, seed:check and freeze",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
+      "depends_on": [
+        "scripts:42",
+        "scripts:43",
+        "smoke:10"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "scripts/lib/inspect.ts",
+          "scripts/verify.ts",
+          "scripts/seed.ts",
+          "scripts/seed-check.ts",
+          "scripts/freeze.ts"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "scripts/lib/inspect.ts: readDeployment(path?: string): Deployment, gatherVerifyInput(rpc: RpcClient, deployment: Deployment): Promise<VerifyInput>, printChecks(checks): boolean",
+        "npm run verify (read-only; VERIFY PASS / VERIFY FAIL)",
+        "npm run seed -- --desk <account> [--float <near>]; npm run seed:check",
+        "npm run freeze -- --yes (deletes every desk access key, then verifies)"
+      ],
+      "requires": [
+        "src/lib/deployments.ts: interface Deployment { network, rpc, factory, dao, desk, smoke, council, root, seeded_at, explorer }, DEPLOYMENT_PATH, EXPLORER, isDeployment(value: unknown): value is Deployment, accountUrl(deployment, accountId): string",
+        "src/lib/verify.ts: runChecks(input: VerifyInput): Check[], KEYLESS_CHECK, allowedProposalStatuses(status: LoanStatus)",
+        "src/lib/desk.ts: readDesk(viewer: DeskViewer, deskId: string): Promise<DeskSnapshot>",
+        "src/lib/desk.ts: DEMO_PARAMS: DeskParams (spec §6 demo values)",
+        "src/lib/rpc.ts: class RpcClient { constructor(url?: string, fetchImpl?: FetchLike); view<T>(accountId: string, methodName: string, args?: Record<string, unknown>): Promise<T>; viewAccount(accountId: string): Promise<AccountInfo | null>; accessKeyCount(accountId: string): Promise<number>; status(): Promise<{ protocolVersion: number; chainId: string }> }",
+        "src/lib/sputnik.ts: parseProposal(value: unknown): ProposalOutput",
+        "src/lib/sputnik.ts: roleMembers(policy: Policy, roleName: string): string[] | null",
+        "src/lib/sputnik.ts: addMemberKind(memberId: string, role: string): AddMemberKind",
+        "src/lib/sputnik.ts: removeMemberKind(memberId: string, role: string): RemoveMemberKind",
+        "src/lib/sputnik.ts: factoryInfoUpdateKind(autoUpdate: boolean): FactoryInfoUpdateKind",
+        "src/lib/sputnik.ts: FACTORY_ID = 'sputnikv2.testnet', COUNCIL_ROLE = 'council', DESK_ROLE = 'desk', DESK_PERMISSIONS",
+        "src/lib/units.ts: parseNear(text: string): bigint",
+        "src/lib/units.ts: formatNear(yocto: bigint | string, maxDecimals?: number): string",
+        "scripts/lib/args.ts: flag(argv: readonly string[], name: string): string | undefined",
+        "scripts/lib/args.ts: hasFlag(argv: readonly string[], name: string): boolean",
+        "scripts/lib/council.ts: callerFor(account: Account): CallFn",
+        "scripts/lib/council.ts: councilAction(callers: readonly CallFn[], view: ViewFn, daoId: string, description: string, kind: ProposalKindInput, pollMs?: number): Promise<ProposalOutput>",
+        "scripts/lib/env.ts: loadDotEnv(path?: string): void",
+        "scripts/lib/env.ts: readEnv(source: Record<string, string | undefined>): FiadorEnv",
+        "scripts/lib/near.ts: connect(env: FiadorEnv): Near",
+        "scripts/lib/near.ts: deployWithInit(account: Account, wasm: Uint8Array, initArgs: Record<string, unknown>): Promise<TxResult>",
+        "scripts/lib/near.ts: EMPTY_CODE_HASH = '11111111111111111111111111111111'",
+        "scripts/lib/near.ts: ensureSubAccount(parent: SubAccountCreator, rpc: Pick<RpcClient, 'viewAccount'>, accountId: string, publicKey: string, nearToTransfer: bigint, pollMs?: number): Promise<'created' | 'exists'>",
+        "scripts/lib/near.ts: requireOk(result: TxResult, what: string): unknown",
+        "scripts/lib/near.ts: summarizeOutcome(raw: unknown): TxResult",
+        "scripts/lib/near.ts: waitFor<T>(read: () => Promise<T>, done: (value: T) => boolean, what: string, timeoutMs?: number, intervalMs?: number): Promise<T>",
+        "scripts/lib/records.ts: readSmokeRecord(path?: string): SmokeRecord",
+        "scripts/lib/records.ts: writeJson(path: string, value: unknown): void"
+      ],
+      "gate": {
+        "run": "npm run check",
+        "expect": "PASS — `tsc` prints nothing, then vitest ends with `Test Files  <N> passed (<N>)` and no failed files"
+      },
+      "commit": "feat(scripts): verify, seed, seed:check and freeze",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "scripts:45",
+      "subsystem": "scripts",
+      "title": "story and story:check",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
+      "depends_on": [
+        "scripts:44"
+      ],
+      "effort": "high",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "scripts/story.ts",
+          "scripts/story-check.ts"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "npm run story -- --run <id>; npm run story:check -- --run <id>"
+      ],
+      "requires": [
+        "scripts/lib/inspect.ts: readDeployment(path?: string): Deployment, gatherVerifyInput(rpc: RpcClient, deployment: Deployment): Promise<VerifyInput>, printChecks(checks): boolean",
+        "scripts/lib/desk-calls.ts: ask, cosign, askCouncil -> Promise<{ result: AskResult; tx: TxResult }>; cancelRequest, repay, syncLoan, markDefault, joinVisitorLine -> Promise<TxResult>; parseAskResult, loanIdOf",
+        "scripts/lib/story-expect.ts: interface StoryRecord, EXPECTED_STATUS, EXPECTED_STANDING_NEAR, isStoryRecord(value: unknown), checkStory(record, loans, members): string[]",
+        "src/lib/desk.ts: isHeld(result: AskResult): result is { Held: { gap: string; expires_at_ms: number } }",
+        "scripts/lib/council.ts: type CallFn = (receiverId: string, methodName: string, args: Record<string, unknown>, depositYocto: bigint) => Promise<TxResult>",
+        "scripts/lib/council.ts: callerFor(account: Account): CallFn",
+        "scripts/lib/council.ts: councilAction(callers: readonly CallFn[], view: ViewFn, daoId: string, description: string, kind: ProposalKindInput, pollMs?: number): Promise<ProposalOutput>",
+        "scripts/lib/council.ts: vote(call: CallFn, view: ViewFn, daoId: string, id: number, action?: VoteAction, pollMs?: number): Promise<TxResult>",
+        "scripts/lib/council.ts: waitForProposal(view: ViewFn, daoId: string, id: number, done: (p: ProposalOutput) => boolean, pollMs?: number, timeoutMs?: number): Promise<ProposalOutput>",
+        "src/lib/sputnik.ts: functionCallKind(receiverId: string, calls: readonly FunctionCallSpec[]): FunctionCallKind",
+        "src/lib/sputnik.ts: addMemberKind(memberId: string, role: string): AddMemberKind",
+        "src/lib/sputnik.ts: removeMemberKind(memberId: string, role: string): RemoveMemberKind",
+        "src/lib/sputnik.ts: FACTORY_ID = 'sputnikv2.testnet', COUNCIL_ROLE = 'council', DESK_ROLE = 'desk', DESK_PERMISSIONS",
+        "src/lib/rpc.ts: class RpcClient { constructor(url?: string, fetchImpl?: FetchLike); view<T>(accountId: string, methodName: string, args?: Record<string, unknown>): Promise<T>; viewAccount(accountId: string): Promise<AccountInfo | null>; accessKeyCount(accountId: string): Promise<number>; status(): Promise<{ protocolVersion: number; chainId: string }> }",
+        "src/lib/units.ts: formatNear(yocto: bigint | string, maxDecimals?: number): string",
+        "src/lib/units.ts: parseNear(text: string): bigint",
+        "src/lib/units.ts: YOCTO_PER_NEAR, TGAS, GAS_300_TGAS (bigint)",
+        "scripts/lib/args.ts: flag(argv: readonly string[], name: string): string | undefined",
+        "scripts/lib/env.ts: loadDotEnv(path?: string): void",
+        "scripts/lib/env.ts: readEnv(source: Record<string, string | undefined>): FiadorEnv",
+        "scripts/lib/near.ts: connect(env: FiadorEnv): Near",
+        "scripts/lib/near.ts: ensureSubAccount(parent: SubAccountCreator, rpc: Pick<RpcClient, 'viewAccount'>, accountId: string, publicKey: string, nearToTransfer: bigint, pollMs?: number): Promise<'created' | 'exists'>",
+        "scripts/lib/near.ts: hasFailure(result: TxResult, needle: string): boolean",
+        "scripts/lib/near.ts: requireOk(result: TxResult, what: string): unknown",
+        "scripts/lib/near.ts: waitFor<T>(read: () => Promise<T>, done: (value: T) => boolean, what: string, timeoutMs?: number, intervalMs?: number): Promise<T>",
+        "scripts/lib/records.ts: writeJson(path: string, value: unknown): void"
+      ],
+      "gate": {
+        "run": "npm run check",
+        "expect": "PASS — `tsc` prints nothing, then vitest ends with `Test Files  <N> passed (<N>)` and no failed files"
+      },
+      "commit": "feat(scripts): story and story:check",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "scripts:46",
+      "subsystem": "scripts",
+      "title": "[HUMAN GATE] Seed the demo DAO (pause 2)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
+      "depends_on": [
+        "scripts:44",
+        "desk:31",
+        "smoke:12"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "deployments/testnet.json"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "deployments/testnet.json (seeded demo DAO + desk ids)"
+      ],
+      "requires": [
+        "npm run seed -- --desk <account> [--float <near>]; npm run seed:check",
+        "contract/res/fiador_desk.wasm",
+        "deployments/smoke.json",
+        "live DAO fiador.sputnikv2.testnet with the final policy and the smoke contract in the desk seat"
+      ],
+      "gate": {
+        "run": "npm run seed:check",
+        "expect": "PASS — one `PASS` line per check and `SEED PASS dao=<dao> desk=desk.<root>`"
+      },
+      "commit": "chore(gate): seed the demo DAO",
+      "human_gate": true,
+      "gate_profile": "deploy",
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "scripts:47",
+      "subsystem": "scripts",
+      "title": "[HUMAN GATE] Story run 1 (pause 3)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
+      "depends_on": [
+        "scripts:45",
+        "scripts:46"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "deployments/story-1.json"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "deployments/story-1.json (story run 1 loan ids)"
+      ],
+      "requires": [
+        "npm run story -- --run <id>; npm run story:check -- --run <id>",
+        "deployments/testnet.json (seeded demo DAO + desk ids)"
+      ],
+      "gate": {
+        "run": "npm run story:check -- --run 1",
+        "expect": "PASS — `STORY PASS run=1 loans=<five ids>`"
+      },
+      "commit": "chore(gate): story run 1",
+      "human_gate": true,
+      "gate_profile": "wallet",
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "scripts:48",
+      "subsystem": "scripts",
+      "title": "[HUMAN GATE] Keyless freeze of the desk (pause 3, irreversible)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
+      "depends_on": [
+        "scripts:47",
+        "board:62"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "the desk account is keyless and npm run verify passes"
+      ],
+      "requires": [
+        "npm run freeze -- --yes (deletes every desk access key, then verifies)",
+        "deployments/story-1.json (story run 1 loan ids)",
+        "web/src/board/Board.tsx: Board({ deployment }), BoardView, WaitingTable, LoanBook, MembersTable; /app/ page (web/app/index.html + web/src/board/main.tsx)"
+      ],
+      "gate": {
+        "run": "npm run verify",
+        "expect": "PASS — every line `PASS`, ending `VERIFY PASS (<N> checks, <M> loans)`"
+      },
+      "commit": "chore(gate): keyless freeze of the desk",
+      "human_gate": true,
+      "gate_profile": "account",
+      "allow_empty": true,
+      "status": "pending"
+    },
+    {
+      "id": "board:61",
+      "subsystem": "board",
+      "title": "Web scaffold and the board data layer",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-board.md",
+      "depends_on": [
+        "scripts:41",
+        "scripts:42"
+      ],
+      "effort": "medium",
+      "files": {
+        "create": [
+          "web/vite.config.ts",
+          "web/src/vite-env.d.ts",
+          "web/src/deployment.ts",
+          "web/src/board/data.ts"
+        ],
+        "modify": [],
+        "test": [
+          "web/src/board/data.test.ts"
+        ]
+      },
+      "provides": [
+        "web/vite.config.ts (multi-page: / and /app/), web/src/deployment.ts: loadDeployment(): Deployment | null, REPO_URL",
+        "web/src/board/data.ts: loadBoard(rpc, deployment, nowMs): Promise<BoardData>, waitingRows, loanRows, memberRows, timeLeft, near"
+      ],
+      "requires": [
+        "package.json scripts: seed, seed:check, story, story:check, verify, freeze, visitor, web, web:build, web:preview, web:check (plus react 19.3.1, react-dom 19.3.1, @vitejs/plugin-react 6.3.0, @types/react 19.3.0, @types/react-dom 19.3.0)",
+        "src/lib/desk.ts: types Lane, LoanStatus, DeskParams, ConfigView, SeatView, MemberView, LoanView, RequestView, AskResult, DeskViewer, DeskSnapshot",
+        "src/lib/desk.ts: readDesk(viewer: DeskViewer, deskId: string): Promise<DeskSnapshot>",
+        "src/lib/desk.ts: loansBehindStanding(memberId: string, loans: readonly LoanView[]): LoanView[]",
+        "src/lib/fixtures/desk.ts: NEAR, DAO, DESK, loan(over), member(over), config(over)",
+        "src/lib/deployments.ts: interface Deployment { network, rpc, factory, dao, desk, smoke, council, root, seeded_at, explorer }, DEPLOYMENT_PATH, EXPLORER, isDeployment(value: unknown): value is Deployment, accountUrl(deployment, accountId): string",
+        "src/lib/rpc.ts: class RpcClient { constructor(url?: string, fetchImpl?: FetchLike); view<T>(accountId: string, methodName: string, args?: Record<string, unknown>): Promise<T>; viewAccount(accountId: string): Promise<AccountInfo | null>; accessKeyCount(accountId: string): Promise<number>; status(): Promise<{ protocolVersion: number; chainId: string }> }",
+        "src/lib/sputnik.ts: parseProposal(value: unknown): ProposalOutput",
+        "src/lib/sputnik.ts: roleMembers(policy: Policy, roleName: string): string[] | null",
+        "src/lib/sputnik.ts: FACTORY_ID = 'sputnikv2.testnet', COUNCIL_ROLE = 'council', DESK_ROLE = 'desk', DESK_PERMISSIONS",
+        "src/lib/units.ts: formatNear(yocto: bigint | string, maxDecimals?: number): string"
+      ],
+      "gate": {
+        "run": "npx vitest run web/src/board/data.test.ts",
+        "expect": "PASS — `Tests  4 passed (4)`"
+      },
+      "commit": "feat(web): scaffold and board data layer",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "board:62",
+      "subsystem": "board",
+      "title": "Board components and the /app page",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-board.md",
+      "depends_on": [
+        "board:61"
+      ],
+      "effort": "medium",
+      "files": {
+        "create": [
+          "web/app/index.html",
+          "web/src/board/Board.tsx",
+          "web/src/board/main.tsx"
+        ],
+        "modify": [],
+        "test": [
+          "web/src/board/board.test.tsx"
+        ]
+      },
+      "provides": [
+        "web/src/board/Board.tsx: Board({ deployment }), BoardView, WaitingTable, LoanBook, MembersTable; /app/ page (web/app/index.html + web/src/board/main.tsx)"
+      ],
+      "requires": [
+        "web/vite.config.ts (multi-page: / and /app/), web/src/deployment.ts: loadDeployment(): Deployment | null, REPO_URL",
+        "web/src/board/data.ts: loadBoard(rpc, deployment, nowMs): Promise<BoardData>, waitingRows, loanRows, memberRows, timeLeft, near",
+        "src/lib/deployments.ts: interface Deployment { network, rpc, factory, dao, desk, smoke, council, root, seeded_at, explorer }, DEPLOYMENT_PATH, EXPLORER, isDeployment(value: unknown): value is Deployment, accountUrl(deployment, accountId): string",
+        "src/lib/fixtures/desk.ts: NEAR, DAO, DESK, loan(over), member(over), config(over)"
+      ],
+      "gate": {
+        "run": "npx vitest run web/src/board/board.test.tsx",
+        "expect": "PASS — `Tests  3 passed (3)`"
+      },
+      "commit": "feat(web): the /app board",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "readme:71",
+      "subsystem": "readme",
+      "title": "README (R2-contract-protocol v1) and LICENSE",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-readme.md",
+      "depends_on": [
+        "scripts:45",
+        "board:62"
+      ],
+      "effort": "medium",
+      "files": {
+        "create": [
+          "LICENSE",
+          "tools/readme-check.ps1"
+        ],
+        "modify": [
+          "README.md"
+        ],
+        "test": []
+      },
+      "provides": [
+        "README.md (R2-contract-protocol v1) + LICENSE (MIT) + tools/readme-check.ps1"
+      ],
+      "requires": [
+        "npm run verify (read-only; VERIFY PASS / VERIFY FAIL)",
+        "npm run seed -- --desk <account> [--float <near>]; npm run seed:check",
+        "npm run story -- --run <id>; npm run story:check -- --run <id>",
+        "npm run freeze -- --yes (deletes every desk access key, then verifies)",
+        "web/src/board/Board.tsx: Board({ deployment }), BoardView, WaitingTable, LoanBook, MembersTable; /app/ page (web/app/index.html + web/src/board/main.tsx)"
+      ],
+      "gate": {
+        "run": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/readme-check.ps1",
+        "expect": "PASS — prints `PASS`"
+      },
+      "commit": "docs: README (R2-contract-protocol v1) and MIT LICENSE",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "landing:81",
+      "subsystem": "landing",
+      "title": "The landing page at /",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-landing.md",
+      "depends_on": [
+        "board:62"
+      ],
+      "effort": "medium",
+      "files": {
+        "create": [
+          "web/index.html",
+          "web/src/landing/Landing.tsx",
+          "web/src/landing/main.tsx"
+        ],
+        "modify": [],
+        "test": [
+          "web/src/landing/landing.test.tsx"
+        ]
+      },
+      "provides": [
+        "web/src/landing/Landing.tsx: Landing({ deployment }), DEMO_VIDEO_URL; the / page (web/index.html + web/src/landing/main.tsx)"
+      ],
+      "requires": [
+        "web/vite.config.ts (multi-page: / and /app/), web/src/deployment.ts: loadDeployment(): Deployment | null, REPO_URL",
+        "web/src/board/Board.tsx: Board({ deployment }), BoardView, WaitingTable, LoanBook, MembersTable; /app/ page (web/app/index.html + web/src/board/main.tsx)",
+        "src/lib/deployments.ts: interface Deployment { network, rpc, factory, dao, desk, smoke, council, root, seeded_at, explorer }, DEPLOYMENT_PATH, EXPLORER, isDeployment(value: unknown): value is Deployment, accountUrl(deployment, accountId): string"
+      ],
+      "gate": {
+        "run": "npm run web:check",
+        "expect": "PASS — `Test Files  3 passed (3)`, then Vite prints `dist/index.html`, `dist/app/index.html` and `built in`"
+      },
+      "commit": "feat(web): the landing page",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "tail:91",
+      "subsystem": "tail",
+      "title": "The faucet-based visitor flow script (droppable)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-tail.md",
+      "depends_on": [
+        "scripts:44",
+        "scripts:43",
+        "smoke:8"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [
+          "scripts/visitor.ts"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "npm run visitor (no secrets; throwaway faucet account; VISITOR PASS / VISITOR SKIPPED)"
+      ],
+      "requires": [
+        "scripts/lib/inspect.ts: readDeployment(path?: string): Deployment, gatherVerifyInput(rpc: RpcClient, deployment: Deployment): Promise<VerifyInput>, printChecks(checks): boolean",
+        "scripts/lib/desk-calls.ts: ask, cosign, askCouncil -> Promise<{ result: AskResult; tx: TxResult }>; cancelRequest, repay, syncLoan, markDefault, joinVisitorLine -> Promise<TxResult>; parseAskResult, loanIdOf",
+        "src/lib/desk.ts: isHeld(result: AskResult): result is { Held: { gap: string; expires_at_ms: number } }",
+        "src/lib/rpc.ts: class RpcClient { constructor(url?: string, fetchImpl?: FetchLike); view<T>(accountId: string, methodName: string, args?: Record<string, unknown>): Promise<T>; viewAccount(accountId: string): Promise<AccountInfo | null>; accessKeyCount(accountId: string): Promise<number>; status(): Promise<{ protocolVersion: number; chainId: string }> }",
+        "src/lib/units.ts: formatNear(yocto: bigint | string, maxDecimals?: number): string",
+        "scripts/lib/council.ts: callerFor(account: Account): CallFn",
+        "scripts/lib/env.ts: readPublicEnv(source: Record<string, string | undefined>): { rpc: string; daoName: string; faucetUrl: string }",
+        "scripts/lib/faucet.ts: requestFaucetAccount(faucetUrl: string, newAccountId: string, publicKey: string, post?: PostJson): Promise<void>",
+        "scripts/lib/faucet.ts: randomAccountName(prefix: string, random?: () => number): string",
+        "scripts/lib/faucet.ts: waitForAccount(rpc: { viewAccount(accountId: string): Promise<AccountInfo | null> }, accountId: string, timeoutMs?: number, intervalMs?: number): Promise<AccountInfo>",
+        "scripts/lib/near.ts: hasFailure(result: TxResult, needle: string): boolean",
+        "scripts/lib/near.ts: requireOk(result: TxResult, what: string): unknown",
+        "scripts/lib/near.ts: waitFor<T>(read: () => Promise<T>, done: (value: T) => boolean, what: string, timeoutMs?: number, intervalMs?: number): Promise<T>"
+      ],
+      "gate": {
+        "run": "npm run check",
+        "expect": "PASS — `tsc` prints nothing, then vitest ends with `Test Files  <N> passed (<N>)` and no failed files"
+      },
+      "commit": "feat(scripts): faucet-based visitor flow",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "tail:92",
+      "subsystem": "tail",
+      "title": "[HUMAN GATE] Live visitor run (pause 3)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-tail.md",
+      "depends_on": [
+        "tail:91",
+        "scripts:46"
+      ],
+      "effort": "medium",
+      "model_tier": "top",
+      "files": {
+        "create": [],
+        "modify": [],
+        "test": []
+      },
+      "provides": [
+        "a live visitor loan repaid on the demo DAO"
+      ],
+      "requires": [
+        "npm run visitor (no secrets; throwaway faucet account; VISITOR PASS / VISITOR SKIPPED)",
+        "deployments/testnet.json (seeded demo DAO + desk ids)"
+      ],
+      "gate": {
+        "run": "npm run visitor",
+        "expect": "PASS — sections `1/5` … `5/5` ending `VISITOR PASS fiador-visitor-<…>.testnet loan=<id>`"
+      },
+      "commit": "chore(gate): live visitor run",
+      "human_gate": true,
+      "gate_profile": "faucet",
+      "allow_empty": true,
+      "status": "pending"
+    },
+    {
+      "id": "tail:93",
+      "subsystem": "tail",
+      "title": "Wallet-connected member actions in /app (droppable, cut first)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-tail.md",
+      "depends_on": [
+        "landing:81",
+        "board:62"
+      ],
+      "effort": "medium",
+      "files": {
+        "create": [
+          "web/src/wallet/actions.ts",
+          "web/src/wallet/wallet.ts",
+          "web/src/wallet/MemberActions.tsx"
+        ],
+        "modify": [
+          "package.json",
+          "web/src/board/main.tsx"
+        ],
+        "test": [
+          "web/src/wallet/actions.test.ts"
+        ]
+      },
+      "provides": [
+        "web/src/wallet: actions.ts (askCall, cosignCall, cancelCall, repayCall), wallet.ts (MyNearWallet via NEAR Wallet Selector 10.1.4), MemberActions.tsx rendered under the board"
+      ],
+      "requires": [
+        "web/src/board/Board.tsx: Board({ deployment }), BoardView, WaitingTable, LoanBook, MembersTable; /app/ page (web/app/index.html + web/src/board/main.tsx)",
+        "web/vite.config.ts (multi-page: / and /app/), web/src/deployment.ts: loadDeployment(): Deployment | null, REPO_URL",
+        "web/src/landing/Landing.tsx: Landing({ deployment }), DEMO_VIDEO_URL; the / page (web/index.html + web/src/landing/main.tsx)",
+        "src/lib/units.ts: parseNear(text: string): bigint"
+      ],
+      "gate": {
+        "run": "npm run web:check",
+        "expect": "PASS — `Test Files  4 passed (4)`, then Vite prints `dist/index.html`, `dist/app/index.html` and `built in`"
+      },
+      "commit": "feat(web): wallet-connected member actions",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "tail:94",
+      "subsystem": "tail",
+      "title": "README: add the visitor step (only if the visitor flow ships)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-tail.md",
+      "depends_on": [
+        "tail:91",
+        "readme:71"
+      ],
+      "effort": "low",
+      "files": {
+        "create": [],
+        "modify": [
+          "README.md"
+        ],
+        "test": []
+      },
+      "provides": [
+        "README.md with the visitor Quickstart step"
+      ],
+      "requires": [
+        "README.md (R2-contract-protocol v1) + LICENSE (MIT) + tools/readme-check.ps1",
+        "npm run visitor (no secrets; throwaway faucet account; VISITOR PASS / VISITOR SKIPPED)"
+      ],
+      "gate": {
+        "run": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/readme-check.ps1",
+        "expect": "PASS — prints `PASS`"
+      },
+      "commit": "docs(readme): add the visitor flow step",
+      "human_gate": false,
+      "allow_empty": false,
+      "status": "pending"
+    },
+    {
+      "id": "tail:95",
+      "subsystem": "tail",
+      "title": "README: note the wallet actions (only if they ship)",
+      "plan": "docs/superpowers/plans/2026-11-13-fiador-tail.md",
+      "depends_on": [
+        "tail:93",
+        "tail:94"
+      ],
+      "effort": "low",
+      "files": {
+        "create": [],
+        "modify": [
+          "README.md"
+        ],
+        "test": []
+      },
+      "provides": [
+        "README.md with the wallet note"
+      ],
+      "requires": [
+        "README.md with the visitor Quickstart step",
+        "web/src/wallet: actions.ts (askCall, cosignCall, cancelCall, repayCall), wallet.ts (MyNearWallet via NEAR Wallet Selector 10.1.4), MemberActions.tsx rendered under the board"
+      ],
+      "gate": {
+        "run": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/readme-check.ps1",
+        "expect": "PASS — prints `PASS`"
+      },
+      "commit": "docs(readme): note the wallet actions",
       "human_gate": false,
       "allow_empty": false,
       "status": "pending"
