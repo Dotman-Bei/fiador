@@ -35,7 +35,7 @@ Tier: **A** = agent-runnable once the user says go. **B** = assisted, with one c
 
 | # | Gate | Tier | Pass | Tool plan | Human moment | Risk note | Status |
 |---|---|---|---|---|---|---|---|
-| 1 | **smoke:11** Create and fund the root account (`gate_profile: faucet`, pause 1) | A: the public faucet helper is a plain POST, no CAPTCHA or OAuth | preflight | Bash: `npm run root -- create fiador-ops-<6 letters>`, then `npm run root -- topup --count 2` repeated while `npm run root -- check` prints ROOT LOW, until `ROOT OK <root> <N> NEAR` with N >= 21 | none. Fallback only if the helper refuses: user makes an account in a wallet + https://near-faucet.io, then puts `FIADOR_ROOT` / `FIADOR_ROOT_KEY` into `.env` (Tier B: Chrome and wallet not granted) | testnet burner; key only in `.env`. Drip per claim UNVERIFIED: if the first claim grants well under 10 NEAR, I stop and report the number of claims needed and the rate limit before looping | pending |
+| 1 | **smoke:11** Create and fund the root account (`gate_profile: faucet`, pause 1) | A: the public faucet helper is a plain POST, no CAPTCHA or OAuth | preflight | Bash: `npm run root -- create fiador-ops-<6 letters>`, then `npm run root -- topup --count 2` repeated while `npm run root -- check` prints ROOT LOW, until `ROOT OK <root> <N> NEAR` with N >= 21 | none. Fallback only if the helper refuses: user makes an account in a wallet + https://near-faucet.io, then puts `FIADOR_ROOT` / `FIADOR_ROOT_KEY` into `.env` (Tier B: Chrome and wallet not granted) | testnet burner; key only in `.env`. Drip turned out to be 10 NEAR per claim | **done** 2026-11-13 17:13 UTC (user go): `ROOT OK fiador-ops-vmwpxk.testnet 29.9994 NEAR` (see the evidence log) |
 | 2 | **smoke:12** Live smoke run, creates the real demo DAO (`gate_profile: deploy`, pause 1) | A | preflight | Bash: `npm run smoke` (seven `== n/7` sections → `SMOKE PASS dao=… version=2.3.1 vote_check=<id> transfer=<id>`), then `npm run smoke:check`. If it reports "exists with a different policy", I set `FIADOR_DAO_NAME=fiador-v2` in `.env` and rerun | none | spends ~9.5 testnet NEAR + gas; claims the public DAO name for good (testnet). Writes `deployments/smoke.json` + `smoke-gas.json`, which I leave uncommitted for the orchestrator | pending (deps smoke:6/8/10 committed) |
 | 3 | **scripts:46** Seed the demo DAO (`deploy`, pause 2) | A | closing | Bash: `npm run seed -- --desk desk.<root>`, then `npm run seed:check`; if it reports "below the minimum viable float", `npm run root -- topup --count 2` and rerun | none | creates `desk.<root>` (3.5 NEAR) + float; more faucet claims are likely here (B11 puts the total at ~30 NEAR) | blocked on desk:31 + smoke:12 |
 | 4 | **scripts:47** Story run 1 (`wallet`, pause 3) | A: persona accounts are script-made burners | closing | Bash: `npm run story -- --run 1`, then `npm run story:check -- --run 1` (~6 min of chain time) | none | ~1.5 NEAR persona funding + 2 NEAR of float lost to the default beat | blocked on scripts:45/46 |
@@ -89,8 +89,26 @@ All before 2026-11-14 23:59 UTC.
 
 | When (UTC) | Gate | Account | Granted | Evidence |
 |---|---|---|---|---|
-| — | — | — | — | no claims made yet |
+| 17:12:20 | smoke:11 | `fiador-ops-vmwpxk.testnet` (root, created by the helper) | 10 NEAR | create tx `9tndMbAGYxURRDrZCKYyC3EKVmFMNq4ARQXnPnxbUgez` (testnet → root: CREATE_ACCOUNT+TRANSFER+ADD_KEY) |
+| 17:12:34 | smoke:11 | `fiador-topup-j8gybkhl.testnet` (throwaway, deleted into the root) | 10 NEAR | fold-in receipt `HUkMqYKPBznrK7NJLXMfJHVcFVruqksCKyDoKKnbbdcA` (system → root TRANSFER); throwaway now `UNKNOWN_ACCOUNT` |
+| ~17:12:45 | smoke:11 | `fiador-topup-8n6thutr.testnet` (throwaway, deleted into the root) | 10 NEAR | fold-in receipt `7Vh1HQVF5UAP3Hzo3gLvbzo2DK7m3Tj3yj15NNDA5rj7` (system → root TRANSFER); throwaway now `UNKNOWN_ACCOUNT` |
+
+Faucet: `https://helper.nearprotocol.com/account` (the plans' default `FIADOR_FAUCET_URL`). 3 claims in ~30 s, all
+10 NEAR, with no rate limit or refusal seen. Total granted: 30 NEAR, of which ~0.0006 went to gas.
 
 ## Evidence log
 
 (Each executed gate adds an entry here: command result, account ids, NEAR amounts, tx hashes. No secrets.)
+
+### smoke:11: done, 2026-11-13 17:13 UTC (user: "run gate smoke:11")
+
+- `npm run root -- create fiador-ops-vmwpxk` → `ROOT CREATED fiador-ops-vmwpxk.testnet 10 NEAR (key written to the git-ignored .env)`
+- `npm run root -- check` → `ROOT LOW … 10 NEAR < 21 NEAR`
+- `npm run root -- topup --count 2` → two `faucet granted 10 NEAR …; folding it into fiador-ops-vmwpxk.testnet` lines;
+  the trailing balance line read 19.9997 NEAR because the second fold-in receipt hadn't landed yet
+- Gate: `npm run root -- check` → **`ROOT OK fiador-ops-vmwpxk.testnet 29.9994 NEAR`** (N >= 21: PASS)
+- Verified myself: both throwaways return `UNKNOWN_ACCOUNT` over RPC; `.env` holds exactly one `FIADOR_ROOT` and one
+  `FIADOR_ROOT_KEY` (names checked, values never printed), it's git-ignored, and `git status` is clean
+- Budget: ~30 NEAR vs. smoke:12's ~9.5 NEAR + gas, leaving ~20 NEAR going into seed (desk 3.5 + float). More top-ups
+  may be needed at scripts:46
+- Not committed by me: the orchestrator re-runs the gate and makes the empty `chore(gate)` commit
