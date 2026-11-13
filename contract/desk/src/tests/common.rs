@@ -120,3 +120,17 @@ pub fn active_loan(d: &mut Desk, borrower: &str, amount: u128, sec: u64, proposa
     let _ = d.on_voted(id);
     id
 }
+
+/// Ada asks `amount` above her standing, Bayo co-signs the gap, and the chain succeeds: returns the loan id.
+pub fn active_cosigned_loan(d: &mut Desk, borrower: &str, cosigner: &str, amount: u128, sec: u64, proposal_id: u64) -> u64 {
+    at(&acc(borrower), sec, 0, vec![]);
+    let _ = d.ask(U128(amount));
+    at(&acc(cosigner), sec, 0, vec![]);
+    let _ = d.cosign(acc(borrower), U128(amount));
+    let id = last_loan(d).id;
+    as_desk(sec, ok_u64(proposal_id));
+    let _ = d.on_filed(id, true);
+    as_desk(sec, ok_empty());
+    let _ = d.on_voted(id);
+    id
+}
