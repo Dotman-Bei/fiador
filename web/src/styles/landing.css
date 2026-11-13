@@ -1,0 +1,279 @@
+/* / (landing). Tokens only: docs/design/direction.md. */
+.masthead {
+  border-bottom: var(--hair);
+}
+
+.masthead-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block: var(--s-4);
+}
+
+.masthead-row p {
+  margin: 0;
+}
+
+/* Hero */
+.hero {
+  padding-block: var(--s-8) var(--s-8);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--s-7);
+  align-items: end;
+}
+
+.kicker {
+  margin-bottom: var(--s-5);
+}
+
+.hero h1 {
+  margin-bottom: var(--s-5);
+  max-width: 13ch;
+}
+
+.lede {
+  max-width: 34em;
+  font-size: var(--fs-lede);
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+
+.lanes-card .label {
+  margin-bottom: var(--s-3);
+}
+
+.lanes-card .ledger td:first-child {
+  white-space: nowrap;
+}
+
+.lanes-card .ledger td:not(:first-child) {
+  font-family: var(--font-text);
+  font-size: var(--fs-small);
+}
+
+.lanes-card .ledger td:last-child {
+  color: var(--muted);
+}
+
+/* Sections */
+.band {
+  border-top: var(--hair);
+  padding-block: var(--s-8);
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--s-7);
+}
+
+.split > :first-child {
+  padding-right: var(--s-5);
+}
+
+.split > :last-child {
+  border-left: var(--hair);
+  padding-left: var(--s-7);
+}
+
+.prose {
+  display: grid;
+  gap: var(--s-4);
+  max-width: 40em;
+}
+
+.prose p,
+.after-lanes {
+  color: var(--ink);
+}
+
+/* How it works: three lane columns divided by hairlines */
+.lanes {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--s-7);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: var(--hair);
+  border-bottom: var(--hair);
+  counter-reset: lane;
+}
+
+.lanes li {
+  counter-increment: lane;
+  padding: var(--s-6) var(--s-5) var(--s-6);
+  color: var(--muted);
+}
+
+.lanes li + li {
+  border-left: var(--hair);
+}
+
+.lanes li:first-child {
+  padding-left: 0;
+}
+
+.lanes li:last-child {
+  padding-right: 0;
+}
+
+.lanes li::before {
+  content: counter(lane, decimal-leading-zero);
+  display: block;
+  margin-bottom: var(--s-3);
+  font-family: var(--font-figure);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--cover);
+}
+
+.lanes strong {
+  display: block;
+  margin-bottom: var(--s-2);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 400;
+  line-height: var(--lh-heading);
+  letter-spacing: var(--track-display);
+  color: var(--ink);
+}
+
+.after-lanes {
+  margin-top: var(--s-6);
+  max-width: 46em;
+}
+
+/* Proof: a ruled list with check marks */
+.checks {
+  list-style: none;
+  padding: 0;
+  border-top: var(--hair-ink);
+}
+
+.checks li {
+  position: relative;
+  padding: var(--s-4) 0 var(--s-4) var(--s-6);
+  border-bottom: var(--hair);
+}
+
+.checks li::before {
+  content: '\2713';
+  position: absolute;
+  left: 0;
+  top: var(--s-4);
+  font-family: var(--font-figure);
+  font-weight: 500;
+  color: var(--ok);
+}
+
+/* Demo video slot */
+.video-slot {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  padding: var(--s-5);
+  background: var(--leaf);
+  border: var(--hair);
+  border-radius: var(--r-panel);
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--font-figure);
+  font-size: var(--fs-small);
+}
+
+/* Try it: the passbook cover */
+.cover {
+  background: var(--cover);
+  color: var(--cover-ink);
+  padding-block: var(--s-8);
+}
+
+.cover-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--s-5);
+}
+
+.cover h2 {
+  margin-bottom: var(--s-3);
+}
+
+.cover p {
+  max-width: 32em;
+  font-size: var(--fs-lede);
+}
+
+.btn-paper {
+  background: var(--cover-ink);
+  border-color: var(--cover-ink);
+  color: var(--cover);
+}
+
+.btn-paper:hover {
+  background: transparent;
+  border-color: var(--cover-ink);
+  color: var(--cover-ink);
+}
+
+/* Footer */
+#root > footer {
+  padding-block: var(--s-6);
+  font-size: var(--fs-small);
+  color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .hero {
+    padding-block: var(--s-7);
+  }
+
+  .hero-grid,
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-5);
+  }
+
+  .split > :first-child {
+    padding-right: 0;
+  }
+
+  .split > :last-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .band,
+  .cover {
+    padding-block: var(--s-7);
+  }
+
+  .lanes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lanes li,
+  .lanes li:first-child,
+  .lanes li:last-child {
+    padding: var(--s-5) 0;
+  }
+
+  .lanes li + li {
+    border-left: 0;
+    border-top: var(--hair);
+  }
+}

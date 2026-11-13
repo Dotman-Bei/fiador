@@ -1,4 +1,7 @@
 import { createRoot } from 'react-dom/client';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/landing.css';
 import { loadDeployment } from '../deployment';
 import { Landing } from './Landing';
 

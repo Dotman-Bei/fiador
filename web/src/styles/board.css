@@ -1,0 +1,248 @@
+/* /app/ (board and member actions). Tokens only: docs/design/direction.md. */
+.topbar {
+  border-bottom: var(--hair);
+}
+
+.topbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-block: var(--s-4);
+}
+
+.board {
+  padding-block: var(--s-7) var(--s-6);
+}
+
+.board-head {
+  padding-bottom: var(--s-6);
+  border-bottom: var(--hair-ink);
+}
+
+.board-head h1 {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-heading);
+  margin-bottom: var(--s-3);
+}
+
+.board-head p {
+  max-width: 48em;
+  color: var(--muted);
+}
+
+.board-head a {
+  font-family: var(--font-figure);
+  font-size: var(--fs-small);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.notice {
+  margin-top: var(--s-5);
+  padding: var(--s-5);
+  background: var(--leaf);
+  border: var(--hair);
+  border-radius: var(--r-panel);
+  font-family: var(--font-figure);
+  font-size: var(--fs-small);
+  color: var(--muted);
+}
+
+/* Treasury and desk: two summary columns */
+.summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  border-bottom: var(--hair);
+}
+
+.summary > section {
+  padding: var(--s-6) var(--s-6) var(--s-6) 0;
+}
+
+.summary > section + section {
+  border-left: var(--hair);
+  padding: var(--s-6) 0 var(--s-6) var(--s-6);
+}
+
+.board h2 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-heading);
+  margin-bottom: var(--s-4);
+}
+
+.figures {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.figures dt,
+.facts dt {
+  font-family: var(--font-figure);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.figures dd {
+  font-family: var(--font-figure);
+  font-size: var(--fs-figure);
+  line-height: var(--lh-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+.figures dd.small {
+  font-size: var(--fs-body);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.facts dt,
+.facts dd {
+  padding-block: var(--s-2);
+  border-bottom: var(--hair);
+}
+
+.facts dt {
+  padding-right: var(--s-3);
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.facts dd {
+  font-family: var(--font-figure);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ledgers */
+.book {
+  padding-block: var(--s-6);
+  border-bottom: var(--hair);
+}
+
+.book > p {
+  color: var(--muted);
+}
+
+.readout {
+  padding-top: var(--s-5);
+  font-family: var(--font-figure);
+  font-size: var(--fs-label);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+/* Member actions (wallet) */
+.act {
+  padding-block: var(--s-6) var(--s-8);
+}
+
+.act-panel {
+  display: grid;
+  gap: var(--s-5);
+}
+
+.act h2 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-heading);
+}
+
+.act-intro {
+  max-width: 48em;
+  color: var(--muted);
+}
+
+.act-account {
+  font-family: var(--font-figure);
+  font-size: var(--fs-small);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  overflow-wrap: anywhere;
+}
+
+.act-forms {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+
+.act-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  background: var(--paper);
+  border: var(--hair);
+  border-radius: var(--r-panel);
+  padding: var(--s-5);
+}
+
+.act-form label {
+  display: grid;
+  gap: var(--s-2);
+  font-family: var(--font-figure);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.act-form input {
+  width: 100%;
+  padding: var(--s-2) 0;
+  border: 0;
+  border-bottom: var(--hair-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-figure);
+  font-size: var(--fs-body);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.act-form .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: auto;
+}
+
+.act-status {
+  min-height: 1lh;
+  font-family: var(--font-figure);
+  font-size: var(--fs-small);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .act-forms {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .summary > section,
+  .summary > section + section {
+    padding: var(--s-5) 0;
+    border-left: 0;
+  }
+
+  .summary > section + section {
+    border-top: var(--hair);
+  }
+}

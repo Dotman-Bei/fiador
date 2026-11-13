@@ -1,0 +1,266 @@
+/* Shared elements for / and /app/, built only from tokens.css (docs/design/direction.md). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+p,
+ol,
+ul,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: var(--track-display);
+  font-optical-sizing: auto;
+}
+
+h1 {
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+}
+
+h1 em,
+h2 em {
+  font-style: italic;
+  color: var(--cover);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-heading);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-heading);
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--ease), background-color var(--ease), border-color var(--ease), text-decoration-color var(--ease);
+}
+
+a:hover {
+  color: var(--cover);
+  text-decoration-color: currentColor;
+}
+
+code {
+  font-family: var(--font-figure);
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  letter-spacing: var(--track-display);
+  line-height: var(--lh-display);
+  text-decoration: none;
+}
+
+.navlinks {
+  display: flex;
+  gap: var(--s-5);
+  font-size: var(--fs-small);
+}
+
+.navlinks a {
+  text-decoration: none;
+}
+
+.label {
+  font-family: var(--font-figure);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-5);
+  border: 1px solid var(--cover);
+  border-radius: var(--r-pill);
+  background: var(--cover);
+  color: var(--cover-ink);
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  line-height: var(--lh-heading);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--ease), border-color var(--ease), color var(--ease);
+}
+
+.btn:hover {
+  background: var(--cover-deep);
+  border-color: var(--cover-deep);
+  color: var(--cover-ink);
+}
+
+.btn-line {
+  background: transparent;
+  border-color: var(--ink);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.btn-line:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* Panels */
+.panel {
+  background: var(--leaf);
+  border: var(--hair);
+  border-radius: var(--r-panel);
+  padding: var(--s-5);
+}
+
+/* Ledger tables */
+.scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-figure);
+  font-size: var(--fs-small);
+  line-height: var(--lh-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+.ledger th,
+.ledger td {
+  padding: var(--s-3) var(--s-3);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ledger th {
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  border-bottom: var(--hair-ink);
+}
+
+.ledger td {
+  border-bottom: var(--hair);
+}
+
+.ledger th:first-child,
+.ledger td:first-child {
+  padding-left: 0;
+}
+
+.ledger th:last-child,
+.ledger td:last-child {
+  padding-right: 0;
+}
+
+.ledger .n {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ledger .nowrap {
+  white-space: nowrap;
+}
+
+/* Stamps */
+.stamp {
+  display: inline-block;
+  padding: 1px var(--s-2);
+  border: var(--stamp-border) solid currentColor;
+  border-radius: var(--r-stamp);
+  font-family: var(--font-figure);
+  font-size: var(--fs-stamp);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  line-height: var(--lh-tight);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(var(--tilt));
+}
+
+.tone-ok {
+  color: var(--ok);
+}
+
+.tone-open {
+  color: var(--open);
+}
+
+.tone-bad {
+  color: var(--cover);
+}
+
+.tone-quiet {
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

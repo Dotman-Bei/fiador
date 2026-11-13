@@ -1,0 +1,60 @@
+/* Fiador design tokens. The only design values web/ may use; see docs/design/direction.md (direction A, Passbook). */
+:root {
+  /* Color */
+  --paper: #fffdf8;
+  --leaf: #f6f1e7;
+  --ink: #1b1612;
+  --muted: #6e6358;
+  --rule: #e5dccb;
+  --cover: #7b1e2c;
+  --cover-deep: #5e1520;
+  --cover-ink: #fffdf8;
+  --ok: #1d6b45;
+  --open: #a35a00;
+  --focus: #7b1e2c;
+
+  /* Type */
+  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-text: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-figure: 'DM Mono', ui-monospace, 'Cascadia Mono', Menlo, monospace;
+  --track-display: -0.025em;
+  --track-label: 0.06em;
+
+  --fs-stamp: 11px;
+  --fs-label: 12px;
+  --fs-small: 13px;
+  --fs-body: 16px;
+  --fs-lede: 18px;
+  --fs-h3: 22px;
+  --fs-h2: clamp(30px, 4vw, 40px);
+  --fs-figure: clamp(26px, 3vw, 34px);
+  --fs-display: clamp(42px, 7vw, 72px);
+
+  --lh-display: 1.02;
+  --lh-heading: 1.15;
+  --lh-tight: 1.35;
+  --lh-body: 1.55;
+
+  /* Space */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 72px;
+  --s-9: 112px;
+
+  /* Shape and layout */
+  --container: 1120px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --r-stamp: 3px;
+  --r-panel: 4px;
+  --r-pill: 999px;
+  --hair: 1px solid var(--rule);
+  --hair-ink: 1px solid var(--ink);
+  --stamp-border: 1.5px;
+  --tilt: -2deg;
+  --ease: 120ms ease-out;
+}
