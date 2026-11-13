@@ -108,3 +108,15 @@ pub fn with_members(names: &[&str]) -> Desk {
     }
     d
 }
+
+/// Drives a standing-lane ask through add_proposal (id `proposal_id`) and a successful vote: returns the loan id.
+pub fn active_loan(d: &mut Desk, borrower: &str, amount: u128, sec: u64, proposal_id: u64) -> u64 {
+    at(&acc(borrower), sec, 0, vec![]);
+    let _ = d.ask(U128(amount));
+    let id = last_loan(d).id;
+    as_desk(sec, ok_u64(proposal_id));
+    let _ = d.on_filed(id, true);
+    as_desk(sec, ok_empty());
+    let _ = d.on_voted(id);
+    id
+}
