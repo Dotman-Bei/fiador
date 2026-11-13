@@ -45,7 +45,7 @@ Conventions for every task: run every command from the repo root; the executor n
 **Effort:** high
 **Model tier:** top
 **Requires:** `npm run cargo -- <cargo args>`
-**Provides:** `contract/desk: crate fiador_desk (near-sdk =5.30.1): Desk { dao, params, members, loans, requests, book }, new(dao: AccountId, params: Params) -> Self, get_config() -> ConfigView`, `contract/desk JSON: Params { starter_standing: U128, max_standing: U128, growth_step: U128, book_cap: U128, loan_term_sec: u64, grace_sec: u64, request_ttl_sec: u64, visitor_slots: u32, visitor_starter: U128, visitor_window_sec: u64, visitor_deposit: U128, proposal_bond: U128 }`, `contract/desk JSON: ConfigView { dao: string, params: Params, book: U128, member_count: u32, loan_count: u64, request_count: u32 }`, `contract/desk JSON: Lane = "Standing" | "Cosigned" | "Council"; LoanStatus = "Filing" | "Voting" | "AwaitingCouncil" | "Active" | "Repaid" | "RepaidLate" | "Defaulted" | "Refused" | "NotFunded" | "Voided"`, `contract/desk JSON: AskResult = { "Held": { gap: U128, expires_at_ms: u64 } } | { "Loan": { loan_id: u64, status: LoanStatus, proposal_id: u64 | null } }`, `contract/desk JSON: MemberView { account_id: string, standing: U128, drawn: U128, pledged: U128, unused: U128, open_loans: u32, visitor: SeatView | null, repaid_on_time: u32, defaults: u32 }; SeatView { joined_at_ms: u64, expires_at_ms: u64, deposit: U128, loans_taken: u32 }`, `contract/desk JSON: LoanView { id: u64, borrower: string, principal: U128, borrower_part: U128, cosigner: string | null, pledge: U128, lane: Lane, status: LoanStatus, proposal_id: u64 | null, created_at_ms: u64, due_at_ms: u64, closed_at_ms: u64 }`, `contract/desk JSON: RequestView { borrower: string, amount: U128, gap: U128, expires_at_ms: u64, expired: bool }`, `contract/desk/src/errors.rs: every ERR_* refusal string`, `contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, with_members, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)`
+**Provides:** `contract/desk: crate fiador_desk (near-sdk =5.30.1): Desk { dao, params, members, loans, requests, book }, new(dao: AccountId, params: Params) -> Self, get_config() -> ConfigView`, `contract/desk JSON: Params { starter_standing: U128, max_standing: U128, growth_step: U128, book_cap: U128, loan_term_sec: u64, grace_sec: u64, request_ttl_sec: u64, visitor_slots: u32, visitor_starter: U128, visitor_window_sec: u64, visitor_deposit: U128, proposal_bond: U128 }`, `contract/desk JSON: ConfigView { dao: string, params: Params, book: U128, member_count: u32, loan_count: u64, request_count: u32 }`, `contract/desk JSON: Lane = "Standing" | "Cosigned" | "Council"; LoanStatus = "Filing" | "Voting" | "AwaitingCouncil" | "Active" | "Repaid" | "RepaidLate" | "Defaulted" | "Refused" | "NotFunded" | "Voided"`, `contract/desk JSON: AskResult = { "Held": { gap: U128, expires_at_ms: u64 } } | { "Loan": { loan_id: u64, status: LoanStatus, proposal_id: u64 | null } }`, `contract/desk JSON: MemberView { account_id: string, standing: U128, drawn: U128, pledged: U128, unused: U128, open_loans: u32, visitor: SeatView | null, repaid_on_time: u32, defaults: u32 }; SeatView { joined_at_ms: u64, expires_at_ms: u64, deposit: U128, loans_taken: u32 }`, `contract/desk JSON: LoanView { id: u64, borrower: string, principal: U128, borrower_part: U128, cosigner: string | null, pledge: U128, lane: Lane, status: LoanStatus, proposal_id: u64 | null, created_at_ms: u64, due_at_ms: u64, closed_at_ms: u64 }`, `contract/desk JSON: RequestView { borrower: string, amount: U128, gap: U128, expires_at_ms: u64, expired: bool }`, `contract/desk/src/errors.rs: every ERR_* refusal string`, `contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)`
 
 Context: `npm run cargo -- <args>` (Task 1) runs cargo from the repo root with MSYS2 on PATH and `AWS_LC_SYS_PREBUILT_NASM=1`; `rust-toolchain.toml` pins Rust 1.99.0 and `.cargo/config.toml` adds `--cfg near` for wasm builds. The spec is §4 of docs/superpowers/specs/2026-11-13-fiador-design.md. This task writes the complete state, types, errors, params validation and gas constants, plus one-line stub files for every module and test module later tasks fill in, so no later task has to edit `lib.rs` or `tests/mod.rs`. The first cold build takes 2–3 minutes.
 
@@ -566,16 +566,6 @@ pub fn new_desk() -> Desk {
     Desk::new(dao_id(), params())
 }
 
-/// A desk with these members admitted by the DAO (each at starter standing 4 NEAR).
-pub fn with_members(names: &[&str]) -> Desk {
-    let mut d = new_desk();
-    at(&dao_id(), T0, 0, vec![]);
-    for n in names {
-        d.admit_member(acc(n));
-    }
-    d
-}
-
 pub fn ok_u64(v: u64) -> Vec<PromiseResult> {
     vec![PromiseResult::Successful(v.to_string().into_bytes())]
 }
@@ -721,13 +711,14 @@ Message: `feat(desk): crate scaffold, state, types, errors and params`
 
 **Files:**
 - Modify: `contract/desk/src/governance.rs`
+- Modify: `contract/desk/src/tests/common.rs`
 - Test: `contract/desk/src/tests/governance.rs`
 
 **Depends on:** Task 21
 **Effort:** high
 **Model tier:** top
-**Requires:** `contract/desk: crate fiador_desk (near-sdk =5.30.1): Desk { dao, params, members, loans, requests, book }, new(dao: AccountId, params: Params) -> Self, get_config() -> ConfigView`, `contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, with_members, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)`
-**Provides:** `contract/desk: set_params(params: Params); admit_member(account_id: AccountId); remove_member(account_id: AccountId) — callable only by the DAO account stored at init (ERR_ONLY_DAO)`
+**Requires:** `contract/desk: crate fiador_desk (near-sdk =5.30.1): Desk { dao, params, members, loans, requests, book }, new(dao: AccountId, params: Params) -> Self, get_config() -> ConfigView`, `contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)`
+**Provides:** `contract/desk: set_params(params: Params); admit_member(account_id: AccountId); remove_member(account_id: AccountId) — callable only by the DAO account stored at init (ERR_ONLY_DAO)`, `contract/desk/src/tests/common.rs: with_members(names: &[&str]) -> Desk (each admitted by the DAO at starter standing)`
 
 Context: the crate (Task 21) defines, in `contract/desk/src/types.rs`, `Params`, `Member { standing, drawn, pledged, open_loans, visitor: Option<Seat>, repaid_on_time, defaults }` with `Member::new(standing, visitor)` and `Member::unused()`, `Seat { joined_at, deposit, loans_taken }`, `Request { amount, created_at, expires_at }`, `Lane`, `LoanStatus`, `Loan`, `AskResult`, `ReadPurpose` and the view structs; `contract/desk/src/lib.rs` defines `Desk { dao, params, members: IterableMap<AccountId, Member>, loans: Vector<Loan>, requests: IterableMap<AccountId, Request>, book: u128 }` and the helpers `Desk::now()`, `Desk::secs(sec)`, `self.require_dao()`, `Desk::require_callback()`, `self.member(&id)` (panics ERR_NOT_MEMBER), `self.put_member(&id, m)`, `self.loan(id)` (panics ERR_LOAN_NOT_FOUND), `self.put_loan(loan)`, constants `NS_PER_SEC`, `NS_PER_MS`; `contract/desk/src/errors.rs` holds every `ERR_*` string and `contract/desk/src/gas.rs` the gas constants. Every `#[near] impl Desk` block outside lib.rs must `use crate::{Desk, DeskExt};`. Unit tests call methods directly, so near-sdk's `#[private]` is NOT enforced in them; callbacks therefore also call `Desk::require_callback()` (ERR_CALLBACK_ONLY), which the tests exercise. Storage persists across `testing_env!` calls inside one test, so a test builds exactly one `Desk`. D5: no owner, no other admin; a removed visitor's deposit is refunded.
 
@@ -826,12 +817,26 @@ fn removing_a_visitor_refunds_its_deposit() {
 }
 ```
 
-- [ ] **Step 2: Run to confirm it fails**
+- [ ] **Step 2: Append the member-admitting helper to the end of `contract/desk/src/tests/common.rs`**
+
+```rust
+/// A desk with these members admitted by the DAO (each at starter standing 4 NEAR).
+pub fn with_members(names: &[&str]) -> Desk {
+    let mut d = new_desk();
+    at(&dao_id(), T0, 0, vec![]);
+    for n in names {
+        d.admit_member(acc(n));
+    }
+    d
+}
+```
+
+- [ ] **Step 3: Run to confirm it fails**
 
 Run: `npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::governance::`
 Expected: FAIL — compile error "no method named admit_member found for struct Desk"
 
-- [ ] **Step 3: Implement (replace the stub `contract/desk/src/governance.rs`)**
+- [ ] **Step 4: Implement (replace the stub `contract/desk/src/governance.rs`)**
 
 `contract/desk/src/governance.rs`:
 ```rust
@@ -878,12 +883,12 @@ impl Desk {
 }
 ```
 
-- [ ] **Step 4: Run the gate**
+- [ ] **Step 5: Run the gate**
 
 Run: `npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::governance::`
 Expected: PASS — `test result: ok. 10 passed; 0 failed`
 
-- [ ] **Step 5: Commit (kernel-performed — no agent runs this)**
+- [ ] **Step 6: Commit (kernel-performed — no agent runs this)**
 Message: `feat(desk): DAO-only governance`
 
 ---

@@ -612,7 +612,7 @@
         "contract/desk JSON: LoanView { id: u64, borrower: string, principal: U128, borrower_part: U128, cosigner: string | null, pledge: U128, lane: Lane, status: LoanStatus, proposal_id: u64 | null, created_at_ms: u64, due_at_ms: u64, closed_at_ms: u64 }",
         "contract/desk JSON: RequestView { borrower: string, amount: U128, gap: U128, expires_at_ms: u64, expired: bool }",
         "contract/desk/src/errors.rs: every ERR_* refusal string",
-        "contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, with_members, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)"
+        "contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)"
       ],
       "requires": [
         "npm run cargo -- <cargo args>"
@@ -639,18 +639,20 @@
       "files": {
         "create": [],
         "modify": [
-          "contract/desk/src/governance.rs"
+          "contract/desk/src/governance.rs",
+          "contract/desk/src/tests/common.rs"
         ],
         "test": [
           "contract/desk/src/tests/governance.rs"
         ]
       },
       "provides": [
-        "contract/desk: set_params(params: Params); admit_member(account_id: AccountId); remove_member(account_id: AccountId) — callable only by the DAO account stored at init (ERR_ONLY_DAO)"
+        "contract/desk: set_params(params: Params); admit_member(account_id: AccountId); remove_member(account_id: AccountId) — callable only by the DAO account stored at init (ERR_ONLY_DAO)",
+        "contract/desk/src/tests/common.rs: with_members(names: &[&str]) -> Desk (each admitted by the DAO at starter standing)"
       ],
       "requires": [
         "contract/desk: crate fiador_desk (near-sdk =5.30.1): Desk { dao, params, members, loans, requests, book }, new(dao: AccountId, params: Params) -> Self, get_config() -> ConfigView",
-        "contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, with_members, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)"
+        "contract/desk/src/tests/common.rs: base test helpers (NEAR, T0, acc, desk_id, dao_id, params, at, as_desk, new_desk, ok_u64, ok_empty, failed, proposal_with_status, member, last_loan, transfers_to)"
       ],
       "gate": {
         "run": "npm run cargo -- test --manifest-path contract/desk/Cargo.toml tests::governance::",
@@ -988,6 +990,7 @@
       "plan": "docs/superpowers/plans/2026-11-13-fiador-chain-scripts.md",
       "depends_on": [
         "smoke:1",
+        "smoke:10",
         "desk:21"
       ],
       "effort": "medium",
