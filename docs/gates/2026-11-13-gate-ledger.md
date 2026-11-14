@@ -438,3 +438,48 @@ change), 10 (X post, user), 14 (paste sheet), 15 (submitted, user). Still to kee
 - Local leftovers for the builder (not gates): Remotion's Chrome Headless Shell under `demo/node_modules/.remotion`, two
   stray terminal windows, local servers on 5192/5231, the spare desk-only key on `goodkale2741.testnet`.
 
+
+### Brand: the Seat mark, stage 1 (docs and assets), 2026-11-14 (user: the logo task, stage 1)
+
+Outside the gates (not a manifest task). No chain, deployments, contract or demo files touched.
+
+- Seven approved SVGs copied unchanged from the user's local folder (byte-identical) into `docs/brand/`: `mark`,
+  `mark-mono`, `mark-reversed`, `lockup`, `lockup-mono`, `lockup-reversed`, `wordmark`. `docs/brand/README.md` covers
+  the files, the four colors (ink #1f1a15, oxblood #7b1e2c, paper #faf8f3, reversed accent #d4707c), minimum sizes
+  (mark 16 px, lockup 96 px wide), clear space (the seat's width) and do and don't.
+- PNGs rendered with local headless Chrome (device scale 1) into `docs/brand/png/`, each read back and measured:
+  `mark-512.png` 512×512 transparent; `favicon-32.png` 32×32 transparent; `favicon-180.png` 180×180 on #faf8f3, mark
+  108 px with 36 px on every side; `social-preview-1280x640.png` 1280×640 on #faf8f3, lockup 798×144, margins
+  241/244/248/248 px. Sampled colors exact.
+- `README.md`: a `<picture>` (dark: `mark-reversed.svg`, else `mark.svg`, width 84, alt "Fiador mark") above
+  `# Fiador` inside the centered header; 5 lines added, nothing else changed. `tools/readme-check.ps1` → PASS; no em
+  dashes.
+- Commit `89efe8b` (13 files, explicit paths), pushed. The social preview upload in the repo's Settings is the
+  user's (no API).
+
+### Brand: stage 2 (web favicon, board header mark, Pages republish), 2026-11-14 (user: "go stage 2")
+
+- `web/public/`: `favicon.svg` (the mark, with a `prefers-color-scheme: dark` rule inside the SVG: block to #faf8f3,
+  seat to #d4707c), `favicon-32.png`, `apple-touch-icon.png` (the 180 px PNG). `web/index.html` and
+  `web/app/index.html` gained `rel="icon"` (SVG and 32 px PNG) and `rel="apple-touch-icon"`; Vite rewrote them to
+  relative URLs (`./favicon.svg`, `../favicon.svg`), so `base: './'` still holds.
+- Board header (`web/src/board/Shell.tsx`): an inline SVG mark, 22 px, `aria-hidden`, inside the existing wordmark
+  link, left of "Fiador". Fills come from the existing tokens (`--ink`, `--accent`) through two classes in
+  `web/src/styles/app.css`, which also lays the link out with `gap: var(--s-2)`. Wordmark font, tokens and other
+  components unchanged.
+- `npm run check`: 32 files, 176 tests passed. `npm run web:check`: 13 files, 77 tests passed, build OK.
+- Screenshots (local server, `dist/` under `/fiador/`, read back): board at 1440 and 390 shows the mark left of the
+  wordmark, aligned; landing at 1440 and 390 unchanged. The 390 shots were taken through a 390 px iframe, because
+  headless Chrome's minimum window width clips a 390 px window. Favicon at 16 px read back in light (ink + oxblood)
+  and dark (paper + #d4707c).
+- Commit `18a7a8a` (7 files, explicit paths), pushed.
+- Republished as in row 8: clean build from `18a7a8a` (only the known js-sha256 `eval` warning); pre-publish scan of
+  `dist/` (counts): ed25519 keys 0, `FIADOR_` 0, Windows user name 0, Windows user path 0, `@gmail` 0, tokens/PEM 0,
+  key/seed fields 0. Temporary worktree in the session scratchpad on the existing orphan `gh-pages` (no shared
+  history with main; a new commit on top, no force-push); 3 stale assets removed and 13 files added, all by explicit
+  path; commit `bac9996` "chore(pages): publish the board built from main 18a7a8a", pushed. Pages build `built`,
+  commit `bac9996`, 31 s. Worktree removed.
+- Verified read-only with `curl`: `/fiador/` 200, `/fiador/app/` 200, every served file 200 and byte-identical to
+  `dist/` (13 files) plus `.nojekyll` 200. `favicon.svg` answered 503 once during CDN propagation, then 200
+  `image/svg+xml` three times, identical; `favicon-32.png` and `apple-touch-icon.png` 200 `image/png`. Secret scan of
+  every served file: 0. The served app bundle contains the header mark.
