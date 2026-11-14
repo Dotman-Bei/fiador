@@ -11,6 +11,16 @@ import type { CallSpec } from './actions';
 export type WalletId = 'meteor-wallet' | 'my-near-wallet';
 
 /**
+ * The Meteor SDK (and the near-api-js 6 / @near-js 2.2 it bundles) calls a global `Buffer`, as in Node, without
+ * importing it; in the browser `ask` failed with "Buffer is not defined". Sets the `buffer` package's Buffer as the
+ * global once, only on the Meteor path, and leaves any existing global alone.
+ */
+export async function ensureBufferGlobal(): Promise<void> {
+  const g = globalThis as { Buffer?: unknown };
+  if (g.Buffer === undefined) g.Buffer = (await import('buffer')).Buffer;
+}
+
+/**
  * Meteor Wallet, registered by name only. Wallet Selector calls `init` only when Meteor is chosen (or restored as
  * the signed-in wallet after a reload), so its SDK is fetched on that click and never by a read-only visitor.
  */
@@ -27,6 +37,7 @@ export const lazyMeteorWallet: WalletModuleFactory<InjectedWallet> = async () =>
     useUrlAccountImport: true,
   },
   init: async (options) => {
+    await ensureBufferGlobal();
     const { setupMeteorWallet } = await import('@near-wallet-selector/meteor-wallet');
     const module = await setupMeteorWallet()({ options: options.options });
     if (module === null) throw new Error('Meteor Wallet is not available in this browser');
