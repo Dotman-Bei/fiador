@@ -26,12 +26,12 @@ The event publishes **no judging criteria and no weights** (`event.md` §5: "NON
 |---|---|---|
 | Impact: the problem, who it is for (S1) | none published | 12 |
 | Working demo: the live ask and the live repay, the money shot (S2, S3) | none published; screeners check it does what the README says | 38 |
-| Technical implementation: the scripted-run loan and what the desk can do, the board, defaults shown honestly (S4, S5, S6) | none published | 40 |
+| Technical implementation: the scripted-run loan and what the desk can do, the board, defaults shown honestly (S4, S5, S6) | none published | 42 |
 | Reproducibility: the checks in the browser and `npm run verify` (S7, S8) | none published; the screeners' reproducibility check | 21 |
 | Sustainability and honesty: testnet only, frozen desk, what is scripted (S9) | none published | 13 |
 | Design and originality | none published; carried by every screen, no dedicated seconds | 0 |
 
-Scenes total 124 s; a 3 s silent outro card (repo URL) follows S9: 127 s, about 2:07, under the 2:15 ceiling. The trim rule (§4) keeps it there if Kokoro runs slower than the planning rate.
+Scenes total 126 s; a 3 s silent outro card (repo URL) follows S9: 129 s, about 2:09, under the 2:15 ceiling. The trim rule (§4) keeps it there if Kokoro runs slower than the planning rate.
 
 **What is scripted and what is real: said plainly, and kept visible in the film**
 
@@ -84,16 +84,16 @@ Every Playwright browser take waits for the "Live" tag and fails on "unavailable
 | id | seconds | visual (route/action/window) | narration cue | driver | wallet verbs | gate assertion | retakes | take |
 |---|---|---|---|---|---|---|---|---|
 | S1 | 12 | Landing `/fiador/`: the h1 "Short until the payout lands? Your DAO can lend you the gap." held 4 s, then slow scroll to the band "A DAO treasury can only give money away" and its list of what Sputnik DAO and Trezu lack | S1 "A Sputnik DAO can…" | screencast | — | h1 text equals the hero line; the instrument shows "Live" and six station names; the problem band is in view at the end | 3 | |
-| S2 | 20 | **LIVE.** The builder's Chrome on `/fiador/app/`: signed in as `goodkale2741.testnet`, standing 6; "Ask for (NEAR)" set to 2; click Ask; the new loan #10 appears in the loan book (Standing lane, Active) with its Sputnik proposal id; the DAO treasury figure drops by 2 NEAR. Capture clock and tag "Live: a real wallet, a real transaction, NEAR testnet, 14 Nov" burned in | S2 "Now live, on testnet…" | ddagrab | ask (signed in the page by the desk-only key; no approval expected) | by read-only RPC after the take: loan id 10 (the prior `loan_count`), borrower `goodkale2741.testnet`, principal 2 NEAR, lane Standing, proposal id present with `get_proposal` Approved and kind Transfer of 2 NEAR to the borrower, DAO balance before minus 2 NEAR; in the frames: the board's "Live" chip and the new loan row with its proposal id | 3 | |
-| S3 | 18 | **LIVE, same capture.** Click Repay; the Meteor extension popup shows the repay approval (account id and testnet balance only); the builder approves once; the wallet panel shows the transaction hash; the board shows loan #10 Repaid, the standing 7 and the treasury back. Hard cuts only across visible clock jumps | S3 "Repay: one click…" | ddagrab | approveTx (once; repay attaches NEAR) | by read-only RPC: loan 10 status Repaid (not RepaidLate) with `closed_at_ms` ≤ `due_at_ms`, `goodkale2741.testnet` standing 7 and `repaid_on_time` 3, DAO balance equal to the "before" record; in the frames: no recovery phrase or key on screen, the Repaid stamp and standing 7 readable | 3 | |
+| S2 | 20 | **LIVE.** The builder's Chrome on `/fiador/app/`: signed in as `goodkale2741.testnet`, standing 6; "Ask for (NEAR)" set to 2; click Ask; the Meteor approval for the ask; then the Overview (2 NEAR out, treasury 13.4215) and the Loans tab with the new loan (Standing lane, Active) and its Sputnik proposal id. Take 2: loan #11, proposal 21. Capture clock and tag "Live: a real wallet, a real transaction, NEAR testnet, 14 Nov" burned in | S2 "Now live, on testnet…" | ddagrab | approveTx (ask; the wallet shows one approval) | by read-only RPC after the take: the next loan id (the prior `loan_count`; take 2: 11), borrower `goodkale2741.testnet`, principal 2 NEAR, lane Standing, proposal id present with `get_proposal` Approved and kind Transfer of 2 NEAR to the borrower, DAO balance before minus 2 NEAR; in the frames: the board's "Live" chip and the new loan row with its proposal id | 3 | 2 |
+| S3 | 18 | **LIVE, same capture.** Click Repay; the Meteor extension popup shows the repay approval (account id and testnet balance only); the builder approves once; the wallet panel shows the transaction hash; the board shows the Overview with book 0 and the treasury back, and Loans with the loan Repaid. Take 2: loan #11. The Members page after the repay was not captured; S5 shows the standing read afterwards. Hard cuts only across visible clock jumps | S3 "Repay: one click…" | ddagrab | approveTx (once; repay attaches NEAR) | by read-only RPC: the loan Repaid (not RepaidLate) with `closed_at_ms` ≤ `due_at_ms`, `goodkale2741.testnet` standing up by the growth step (take 2: 7 to 8) and `repaid_on_time` +1, DAO balance equal to the "before" record; in the frames: no recovery phrase or key on screen, the Repaid stamp readable | 3 | 2 |
 | S4 | 15 | Landing hero instrument, lane "With a co-signer", loan #0 selected: the title "#0 ada-1 borrowed 6 NEAR", REPAID stamp, six stations read left to right, then the party "Desk" lists (can / cannot, 0 access keys). Tag "Scripted-run loan: made by the scripted story on 13 Nov" | S4 "The same chain…" | screencast | — | the title reads "#0 ada-1 borrowed 6 NEAR"; stamp REPAID; 6 stations; "Sputnik proposal #6" present; no "status unavailable"; the party boundary heads read "The desk can" and "The desk cannot"; "Live" tag | 3 | |
-| S5 | 8 | `/fiador/app/` Overview after the live take: the "Live" chip, scroll to the loan book (each loan's Sputnik proposal id and status, including loan #10 Repaid), then Members with standing and the repaid loans behind it, then hold 2 s on the footer line ("the council is three scripted accounts sharing one operator key") | S5 "The board keeps…" | screencast | — | the status chip aria-label starts "Data status: Live"; the loan book lists #0 to #10 (11 rows); loan #10 reads Repaid; no "Unavailable" or "Stale"; the footer line is visible | 3 | |
+| S5 | 10 | `/fiador/app/` Overview after the live take: the "Live" chip, scroll to the loan book (each loan's Sputnik proposal id and status, including loan #10 Repaid), then Members with standing and the repaid loans behind it, with the on-screen note "loans #10 and #11: live takes, 14 Nov" and the member's standing (8 NEAR, read after the take), then hold 2 s on the footer line ("the council is three scripted accounts sharing one operator key") | S5 "The board keeps…" | screencast | — | the status chip aria-label starts "Data status: Live"; the loan book lists #0 to #10 (11 rows); loan #10 reads Repaid; no "Unavailable" or "Stale"; the footer line is visible | 3 | |
 | S6 | 17 | `/fiador/app/#/loans/3`: DEFAULTED stamp, proposal #9, borrower chidi-1, co-signer ada-1 and the pledge; then `#/loans/7`: DEFAULTED, proposal #15, with the on-screen line "loan #7: a real miss under a 120 s term; the council has since raised the term to 600 s (proposal 16)" | S6 "Loan three, from the scripted run…" | screencast | — | page title "Loan #3", stamp DEFAULTED, "#9" shown; then page title "Loan #7", stamp DEFAULTED, "#15" shown; "Live" chip on both | 3 | |
 | S7 | 11 | `/fiador/app/#/desk` "Desk and proof": the checks run on arrival and the rows turn to Pass one by one | S7 "Desk and proof runs…" | screencast | — | all check rows read Pass, none read Fail, the summary names the live count; waits up to 30 s; "Live" chip | 3 | |
 | S8 | 10 | Terminal window launched by demo-studio (gfxcapture, one window only): `npm run verify` runs in the repo folder; the PASS lines scroll; hold on the last line | S8 "The same checks…" | gfxcapture | — | the teed stdout ends with `VERIFY PASS (N checks, M loans)` and exit code 0; the window frames are not black; no secret pattern in the stdout | 3 | |
 | S9 | 13 | Card: three lines (Testnet only, unaudited, not real money · The desk is frozen: 0 access keys, no admin, no upgrade · The council is three scripted accounts sharing one operator key, and the first loans came from a scripted run), then the outro card with the wordmark and the repo URL (3 s, silent) | S9 "Testnet only…" | N/A (Remotion card) | — | the honesty lines appear as text; the outro shows the repo URL | 1 | |
 
-Seconds sum to 124 (S1 to S9); the outro card adds 3 s.
+Seconds sum to 126 (S1 to S9); the outro card adds 3 s.
 
 ## 4 — Narration script
 
@@ -102,17 +102,17 @@ The single source of the words. Planning rate about 2.4 words per second; the re
 **S1** — A Sputnik DAO can only give money away. A member short until a payout lands asks the whole council for a grant, or goes without. Fiador lets the DAO lend.
 words: 30 · planned: 12s @ ~2.4 w/s · tone: plain, a little dry, the problem in one breath · gloss: Fiador → synthesize as "Fee-ah-DOR"; Sputnik → "SPUT-nik"; DAO → "dow"
 
-**S2** — Now live, on testnet. A member signed in with their own wallet asks the desk for two NEAR, within their standing of six. The desk files a Sputnik transfer and approves it. The DAO pays, and the board shows the new loan with its proposal id.
-words: 46 · planned: 20s @ ~2.4 w/s · tone: steady, present tense, the loudest moment of the film · gloss: NEAR → "near"; Sputnik → "SPUT-nik". Amount (two) and standing (six) are templated from the take
+**S2** — Now live, on testnet. A member signed in with their own wallet asks the desk for two NEAR, within their standing of seven, and approves in the wallet. The desk files a Sputnik transfer and approves it. The DAO pays, and the board shows the new loan with its proposal id.
+words: 51 · planned: 20s @ ~2.4 w/s · tone: steady, present tense, the loudest moment of the film · gloss: NEAR → "near"; Sputnik → "SPUT-nik". Amount (two) and standing (seven) are templated from the take (take 2)
 
-**S3** — Repay: one click, one approval in the wallet. The loan closes repaid on time, and the member's standing goes from six to seven. Waiting is cut only where the clock on screen shows it.
-words: 34 · planned: 18s (the live footage, not the words, sets this scene's length) · tone: matter-of-fact · gloss: none. "six to seven" templated from the take
+**S3** — Repay: one click, one approval in the wallet. The loan closes repaid on time, and the treasury is back where it started. Waiting is cut only where the clock on screen shows it.
+words: 33 · planned: 18s (the live footage, not the words, sets this scene's length) · tone: matter-of-fact · gloss: none. the treasury line is read on screen in the take; the standing change is shown in S5, read after the take
 
 **S4** — The same chain, from the scripted run on the thirteenth: loan zero. ada-1 asked for six NEAR, bayo-1 pledged two from their own standing, and ada-1 repaid on time. The desk itself holds no access keys.
 words: 36 · planned: 15s @ ~2.4 w/s · tone: calm, labelled as scripted · gloss: ada-1 → "ADA one"; bayo-1 → "BAH-yo one"
 
-**S5** — The board keeps every loan with its Sputnik proposal id, the new one included. The council is three scripted accounts.
-words: 20 · planned: 8s @ ~2.4 w/s · tone: calm walk-through · gloss: none
+**S5** — The board keeps every loan with its Sputnik proposal id, the live takes included, and the member's standing now reads eight. The council is three scripted accounts.
+words: 27 · planned: 10s @ ~2.4 w/s · tone: calm walk-through · gloss: none
 
 **S6** — Loan three, from the scripted run, defaulted: chidi-1's standing went to zero, and co-signer ada-1 lost the one NEAR pledged. Loan seven was a real miss under a two-minute term; the council has since raised the term to six hundred seconds.
 words: 41 · planned: 17s @ ~2.4 w/s · tone: level, no drama · gloss: chidi-1 → "CHEE-dee one"
@@ -126,7 +126,7 @@ words: 25 · planned: 10s @ ~2.4 w/s · tone: flat, let the terminal speak · gl
 **S9** — Testnet only, unaudited, not real money. The desk is frozen: no access keys, no admin, no upgrade. The council is three scripted accounts sharing one operator key, and the first loans came from a scripted run.
 words: 36 · planned: 13s @ ~2.4 w/s · tone: plain, unhurried, the honesty lines · gloss: none
 
-Total 297 words, about 124 s at the planning rate. **Trim rule:** if the audio-first timing pushes the cut past 2:15 including the outro, S5 drops to its first sentence, then S4 drops its last sentence, then S6 drops its last sentence, in that order, until the total is at or under 2:15. S2 and S3 are never trimmed.
+Total 308 words, about 128 s at the planning rate. **Trim rule:** if the audio-first timing pushes the cut past 2:15 including the outro, S5 drops to its first sentence, then S4 drops its last sentence, then S6 drops its last sentence, in that order, until the total is at or under 2:15. S2 and S3 are never trimmed.
 
 ## 5 — Assembly plan
 
@@ -168,3 +168,5 @@ Honesty on screen: the tags in §1 and S9's three lines. Mechanics: references/d
 | 2026-11-14 | scripted | demo-studio |
 | 2026-11-14 | approved (v1 call sheet, with the builder's amendments 1 to 3 and the live money shot) | the builder |
 | 2026-11-14 | superseded-edit (S2 and S3 are now the live ask and repay; the loan #0 replay shrinks to S4 context; old S3 merged into S4; old S8 wallet still card dropped; neutral wording; loan #7 mention carries the 600 s term raise; live-take pre-flight and scripted-vs-real list added; optional beat O1 listed; total about 2:07, cap 2:15); fresh approval pending | demo-studio |
+| 2026-11-14 | superseded-edit (live take 2 passed: the ask also needed a wallet approval so S2 says so; S3's standing sentence dropped because the Members page after the repay was not on screen, S5 now carries the standing read after the take; S5 10 s; totals 126 s scenes, about 2:09 with the outro) | demo-studio |
+| 2026-11-14 | approved (rewritten script, storyboard stills, O1 skipped; live take 2 accepted as A) | the builder |
