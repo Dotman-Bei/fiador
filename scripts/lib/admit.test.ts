@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkAdmitIds, MAX_TOP_UP, parseTopUp, topUpAmount } from './admit';
+import { checkAdmitIds, MAX_TOP_UP, parseTopUp, readmitRefusal, topUpAmount } from './admit';
 
 const NEAR = 10n ** 24n;
 const CTX = { desk: 'desk.ops.testnet', dao: 'fiador.sputnikv2.testnet', deskSeat: ['desk.ops.testnet', 'old-desk.ops.testnet'] };
@@ -27,6 +27,21 @@ describe('admit checks', () => {
 
   it('needs at least one id', () => {
     expect(() => checkAdmitIds([], CTX)).toThrow('at least one account id');
+  });
+});
+
+describe('readmit', () => {
+  const idle = { open_loans: 0, drawn: '0', pledged: '0', visitor: null };
+  it('allows a member with nothing open, drawn, pledged or requested', () => {
+    expect(readmitRefusal('kale.testnet', idle, false)).toBeNull();
+  });
+  it('refuses an open loan, a pledge, a waiting request, a visitor seat and a non-member', () => {
+    expect(readmitRefusal('k.testnet', { ...idle, open_loans: 1, drawn: '3' }, false)).toBe('k.testnet: has an open loan');
+    expect(readmitRefusal('k.testnet', { ...idle, drawn: '1' }, false)).toBe('k.testnet: has an open loan');
+    expect(readmitRefusal('k.testnet', { ...idle, pledged: '1' }, false)).toBe('k.testnet: has an open pledge');
+    expect(readmitRefusal('k.testnet', idle, true)).toBe('k.testnet: has a request waiting for a co-signer');
+    expect(readmitRefusal('k.testnet', { ...idle, visitor: { deposit: '1' } }, false)).toBe('k.testnet: holds a visitor seat');
+    expect(readmitRefusal('k.testnet', null, false)).toContain('not a member');
   });
 });
 

@@ -27,6 +27,28 @@ export function checkAdmitIds(ids: readonly string[], ctx: AdmitContext): string
   return out;
 }
 
+/** The fields of a desk member that --readmit inspects. */
+export interface ReadmitMember {
+  open_loans: number;
+  drawn: string;
+  pledged: string;
+  visitor: unknown;
+}
+
+/**
+ * Why a member may not be removed and admitted again (back to the starter standing), or null when it may: nothing
+ * open, nothing drawn, nothing pledged, no request waiting, and not a visitor seat. The desk's remove_member enforces
+ * the loan, pledge and request part too; this refuses before any proposal is filed.
+ */
+export function readmitRefusal(id: string, m: ReadmitMember | null, hasRequest: boolean): string | null {
+  if (m === null) return `${id}: not a member, so there is nothing to re-admit (admit without --readmit)`;
+  if (m.visitor !== null) return `${id}: holds a visitor seat`;
+  if (m.open_loans > 0 || BigInt(m.drawn) > 0n) return `${id}: has an open loan`;
+  if (BigInt(m.pledged) > 0n) return `${id}: has an open pledge`;
+  if (hasRequest) return `${id}: has a request waiting for a co-signer`;
+  return null;
+}
+
 export const MAX_TOP_UP = parseNear('5');
 
 /** `--top-up <NEAR>`: a target balance above zero and at most 5 NEAR (gas money for a wallet test, testnet only). */
