@@ -11,7 +11,8 @@ describe('desk and proof', () => {
   it('lays out every parameter in words with its raw value', () => {
     const rows = paramRows(DEMO_PARAMS);
     expect(rows).toHaveLength(12);
-    expect(rows.find((r) => r.label === 'Loan term')).toEqual({ label: 'Loan term', value: '2 min', raw: '120 s' });
+    expect(rows.find((r) => r.label === 'Loan term')).toEqual({ label: 'Loan term', value: '10 min', raw: '600 s' });
+    expect(rows.find((r) => r.label === 'Grace period after the term')).toEqual({ label: 'Grace period after the term', value: '5 min', raw: '300 s' });
     expect(rows.find((r) => r.label.startsWith('Visitor deposit'))?.value).toBe('0.05 NEAR');
     expect(nsPeriod('604800000000000')).toBe('7 days');
   });

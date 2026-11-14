@@ -56,7 +56,8 @@ async function main(): Promise<void> {
     if (ts === undefined) throw new Error('no block timestamp');
     return Number(BigInt(ts) / 1_000_000n);
   };
-  const untilChainMs = (ms: number, what: string): Promise<number> => waitFor(chainNowMs, (t) => t > ms, what, 420_000, 3_000);
+  // Waits past a loan's term (or term + grace): allow the remaining time plus two minutes, never less than 7 minutes.
+  const untilChainMs = (ms: number, what: string): Promise<number> => waitFor(chainNowMs, (t) => t > ms, what, Math.max(420_000, ms - Date.now() + 120_000), 3_000);
 
   beat('0/4 three fresh personas, admitted by one 2-of-3 council action');
   for (const id of Object.values(ids)) console.log(id, await ensureSubAccount(root, rpc, id, publicKey, PERSONA_FUNDING));

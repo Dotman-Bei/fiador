@@ -320,9 +320,10 @@ exactly; every vote first reads `get_proposal(id).kind` and echoes it in `act_pr
 | `npm run freeze` | 3 | delete every access key on the desk in one transaction, then run `verify` |
 | `npm run verify` | any (read-only) | §7; prints `VERIFY PASS` / `VERIFY FAIL`, exit 0 / 1 |
 
-Demo DAO parameters (seed defaults): starter 4 NEAR, max 10, step 1, book cap 12, term 120 s, grace 60 s,
+Demo DAO parameters (seed defaults): starter 4 NEAR, max 10, step 1, book cap 12, term 600 s, grace 300 s,
 request TTL 600 s, visitor slots 10, visitor starter 0.1 NEAR, visitor window 1800 s, visitor deposit 0.05 NEAR,
-bond 0.
+bond 0. (The live desk was seeded with term 120 s and grace 60 s; on 2026-11-14 the council raised them to 600 s
+and 300 s with Sputnik proposal 16, because a browser-wallet repayment could not land inside two minutes.)
 
 Story run (`--run <id>`, default `1`): Ada asks 6 → held "needs 2 co-signed"; Bayo co-signs 2 → 6 NEAR leaves the
 treasury with no vote; Ada repays 6 → treasury restored; Ada 4→5, Bayo 4→5. Chidi `ask_council(3)` → council

@@ -96,14 +96,18 @@ export interface DeskSnapshot {
 const NEAR = 10n ** 24n;
 const PAGE = 100;
 
-/** Demo DAO parameters (spec §6). */
+/**
+ * Demo DAO parameters (spec §6), as the live desk runs them. The live desk was seeded with a 120 s term and 60 s
+ * grace; on 2026-11-14 the council raised them to 600 s and 300 s (Sputnik proposal 16, `npm run params`) because a
+ * browser-wallet repayment could not land inside two minutes. `npm run seed` deploys a new desk with these values.
+ */
 export const DEMO_PARAMS: DeskParams = {
   starter_standing: (4n * NEAR).toString(),
   max_standing: (10n * NEAR).toString(),
   growth_step: NEAR.toString(),
   book_cap: (12n * NEAR).toString(),
-  loan_term_sec: 120,
-  grace_sec: 60,
+  loan_term_sec: 600,
+  grace_sec: 300,
   request_ttl_sec: 600,
   visitor_slots: 10,
   visitor_starter: (NEAR / 10n).toString(),

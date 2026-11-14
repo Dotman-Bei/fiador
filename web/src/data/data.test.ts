@@ -13,7 +13,7 @@ function fakeReader(opts: { fail?: boolean; failProposal?: number; daoMissing?: 
   const calls: string[] = [];
   const loans = [loan({ id: 0, proposal_id: 6 }), loan({ id: 1, status: 'Active', proposal_id: 7, closed_at_ms: 0 })];
   const table: Record<string, unknown> = {
-    get_config: { dao: DEPLOYMENT.dao, params: { ...{ starter_standing: '1', max_standing: '1', growth_step: '1', book_cap: (12n * NEAR).toString(), loan_term_sec: 120, grace_sec: 60, request_ttl_sec: 600, visitor_slots: 10, visitor_starter: '1', visitor_window_sec: 1800, visitor_deposit: '1', proposal_bond: '0' } }, book: (6n * NEAR).toString(), member_count: 1, loan_count: 2, request_count: 0 },
+    get_config: { dao: DEPLOYMENT.dao, params: { ...{ starter_standing: '1', max_standing: '1', growth_step: '1', book_cap: (12n * NEAR).toString(), loan_term_sec: 600, grace_sec: 300, request_ttl_sec: 600, visitor_slots: 10, visitor_starter: '1', visitor_window_sec: 1800, visitor_deposit: '1', proposal_bond: '0' } }, book: (6n * NEAR).toString(), member_count: 1, loan_count: 2, request_count: 0 },
     get_members: [member({ account_id: 'ada.root.testnet', drawn: (4n * NEAR).toString(), pledged: '0' }), member({ account_id: 'bayo.root.testnet', pledged: (2n * NEAR).toString() })],
     get_loans: loans,
     get_requests: [],
