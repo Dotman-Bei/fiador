@@ -1,4 +1,4 @@
-/* Shared elements for / and /app/, built only from tokens.css (docs/design/direction.md). */
+/* Shared elements for / and /app/, built only from tokens.css (docs/design/direction.md, Counter slip). */
 *,
 *::before,
 *::after {
@@ -77,9 +77,59 @@ a:hover {
 }
 
 code {
-  font-family: var(--font-text);
-  font-weight: var(--w-medium);
+  font-family: var(--font-id);
+  font-size: 0.9em;
+  font-weight: var(--w-regular);
   overflow-wrap: anywhere;
+}
+
+/* Machine strings: account ids, proposal ids, hashes */
+.id {
+  font-family: var(--font-id);
+  font-size: var(--fs-id);
+  font-weight: var(--w-regular);
+  overflow-wrap: anywhere;
+}
+
+/* Visually hidden, still read by assistive technology */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip {
+  position: absolute;
+  left: var(--s-4);
+  top: var(--s-2);
+  z-index: 10;
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-control);
+  background: var(--select);
+  color: var(--on-select);
+  font-weight: var(--w-medium);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+.note {
+  margin-top: var(--s-3);
+  font-size: var(--fs-small);
+  color: var(--ink-3);
+}
+
+.signal {
+  color: var(--signal);
 }
 
 :focus-visible {
@@ -116,10 +166,11 @@ code {
 }
 
 .wordmark {
-  font-family: var(--font-text);
-  font-size: var(--fs-title);
-  font-weight: var(--w-strong);
+  font-family: var(--font-display);
+  font-size: var(--fs-wordmark);
+  font-weight: var(--w-regular);
   line-height: var(--lh-tight);
+  color: var(--ink);
   text-decoration: none;
 }
 
@@ -226,18 +277,24 @@ code {
   white-space: nowrap;
 }
 
-.table th {
+.table thead th {
   font-size: var(--fs-small);
   font-weight: var(--w-regular);
   color: var(--ink-3);
   border-bottom: 1px solid var(--hair-strong);
 }
 
+.table tbody th {
+  font-weight: var(--w-medium);
+  border-bottom: var(--hair);
+}
+
 .table td {
   border-bottom: var(--hair);
 }
 
-.table tr:last-child td {
+.table tr:last-child td,
+.table tr:last-child th {
   border-bottom: 0;
 }
 
@@ -271,6 +328,11 @@ code {
   mix-blend-mode: multiply;
   opacity: var(--stamp-opacity);
   transform: rotate(var(--tilt, var(--tilt-a)));
+}
+
+/* In lists the stamp stands upright so a column scans */
+.stamp.flat {
+  transform: none;
 }
 
 .ink-repaid {

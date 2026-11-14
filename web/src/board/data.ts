@@ -1,53 +1,14 @@
-/** Board data: everything comes from public RPC views (no backend, no indexer). */
-import { loansBehindStanding, readDesk } from '../../../src/lib/desk';
-import type { DeskSnapshot, LoanView, MemberView, RequestView } from '../../../src/lib/desk';
-import type { Deployment } from '../../../src/lib/deployments';
-import type { RpcClient } from '../../../src/lib/rpc';
-import { DESK_ROLE, parseProposal, roleMembers } from '../../../src/lib/sputnik';
-import type { Policy, ProposalStatus } from '../../../src/lib/sputnik';
-import { formatNear } from '../../../src/lib/units';
+/** Board rows: pure shaping of the snapshot that web/src/data/reads.ts reads from public RPC (no backend, no indexer). */
+import { holdsReservation, loansBehindStanding } from '../../../src/lib/desk';
+import type { Lane, LoanStatus, LoanView, MemberView, RequestView } from '../../../src/lib/desk';
+import type { ProposalOutput, ProposalStatus } from '../../../src/lib/sputnik';
+import { countdown, near } from '../data/format';
 
-export interface BoardData {
-  snapshot: DeskSnapshot;
-  treasury: { balance: string; available: string };
-  seated: boolean;
-  frozen: boolean;
-  proposals: Record<number, ProposalStatus>;
-  loadedAtMs: number;
-}
-
-export async function loadBoard(rpc: RpcClient, deployment: Deployment, nowMs: number): Promise<BoardData> {
-  const snapshot = await readDesk(rpc, deployment.desk);
-  const dao = await rpc.viewAccount(deployment.dao);
-  const available = await rpc.view<string>(deployment.dao, 'get_available_amount');
-  const policy = await rpc.view<Policy>(deployment.dao, 'get_policy');
-  const seat = roleMembers(policy, DESK_ROLE) ?? [];
-  const keys = await rpc.accessKeyCount(deployment.desk);
-  const proposals: Record<number, ProposalStatus> = {};
-  for (const loan of snapshot.loans) {
-    if (loan.proposal_id === null || loan.proposal_id in proposals) continue;
-    proposals[loan.proposal_id] = parseProposal(await rpc.view<unknown>(deployment.dao, 'get_proposal', { id: loan.proposal_id })).status;
-  }
-  return {
-    snapshot,
-    treasury: { balance: dao?.amount ?? '0', available },
-    seated: seat.includes(deployment.desk),
-    frozen: keys === 0,
-    proposals,
-    loadedAtMs: nowMs,
-  };
-}
-
-export function near(yocto: string): string {
-  return `${formatNear(yocto)} NEAR`;
-}
+export { near };
 
 /** "2m 05s", "expired" or "—" when there is no deadline. */
 export function timeLeft(targetMs: number, nowMs: number): string {
-  if (targetMs === 0) return '—';
-  const s = Math.floor((targetMs - nowMs) / 1000);
-  if (s <= 0) return 'expired';
-  return `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, '0')}s`;
+  return countdown(targetMs, nowMs);
 }
 
 export interface WaitingRow {
@@ -72,19 +33,44 @@ export interface LoanRow {
   status: string;
   timeLeft: string;
   proposal: string;
+  /** Structured fields for links and slips. */
+  laneKey: Lane;
+  statusKey: LoanStatus;
+  cosignerAccount: string | null;
+  pledge: string;
+  proposalId: number | null;
+  proposalStatus: ProposalStatus | null;
+  closedAtMs: number;
+  dueAtMs: number;
 }
 
-export function loanRows(loans: readonly LoanView[], proposals: Readonly<Record<number, ProposalStatus>>, nowMs: number): LoanRow[] {
-  return [...loans].reverse().map((l) => ({
-    id: l.id,
-    lane: l.lane,
-    borrower: l.borrower,
-    cosigner: l.cosigner === null ? '—' : `${l.cosigner} (${near(l.pledge)})`,
-    amount: near(l.principal),
-    status: l.status,
-    timeLeft: l.status === 'Active' ? timeLeft(l.due_at_ms, nowMs) : '—',
-    proposal: l.proposal_id === null ? '—' : `#${l.proposal_id} ${proposals[l.proposal_id] ?? '…'}`,
-  }));
+export function loanRows(
+  loans: readonly LoanView[],
+  proposals: Readonly<Record<number, ProposalStatus | ProposalOutput>>,
+  nowMs: number,
+): LoanRow[] {
+  return [...loans].reverse().map((l) => {
+    const p = l.proposal_id === null ? undefined : proposals[l.proposal_id];
+    const proposalStatus = p === undefined ? null : typeof p === 'string' ? p : p.status;
+    return {
+      id: l.id,
+      lane: l.lane,
+      borrower: l.borrower,
+      cosigner: l.cosigner === null ? '—' : `${l.cosigner} (${near(l.pledge)})`,
+      amount: near(l.principal),
+      status: l.status,
+      timeLeft: l.status === 'Active' ? timeLeft(l.due_at_ms, nowMs) : '—',
+      proposal: l.proposal_id === null ? '—' : `#${l.proposal_id} ${proposalStatus ?? 'status unavailable'}`,
+      laneKey: l.lane,
+      statusKey: l.status,
+      cosignerAccount: l.cosigner,
+      pledge: near(l.pledge),
+      proposalId: l.proposal_id,
+      proposalStatus,
+      closedAtMs: l.closed_at_ms,
+      dueAtMs: l.due_at_ms,
+    };
+  });
 }
 
 export interface MemberRow {
@@ -95,11 +81,14 @@ export interface MemberRow {
   drawn: string;
   pledged: string;
   behind: string;
+  behindIds: number[];
+  repaidOnTime: number;
+  defaults: number;
 }
 
 export function memberRows(members: readonly MemberView[], loans: readonly LoanView[]): MemberRow[] {
   return members.map((m) => {
-    const behind = loansBehindStanding(m.account_id, loans).map((l) => `#${l.id}`);
+    const behindIds = loansBehindStanding(m.account_id, loans).map((l) => l.id);
     return {
       account: m.account_id,
       kind: m.visitor === null ? 'member' : 'visitor',
@@ -107,7 +96,23 @@ export function memberRows(members: readonly MemberView[], loans: readonly LoanV
       unused: near(m.unused),
       drawn: near(m.drawn),
       pledged: near(m.pledged),
-      behind: behind.length === 0 ? '—' : behind.join(', '),
+      behind: behindIds.length === 0 ? '—' : behindIds.map((id) => `#${id}`).join(', '),
+      behindIds,
+      repaidOnTime: m.repaid_on_time,
+      defaults: m.defaults,
     };
   });
+}
+
+/** The open loans that hold book room, for the book bar. */
+export function bookSegments(loans: readonly LoanView[]): { id: number; principal: bigint }[] {
+  return loans.filter(holdsReservation).map((l) => ({ id: l.id, principal: BigInt(l.principal) }));
+}
+
+/** Room to lend now: the smaller of the room under the book cap and what the treasury can spend. */
+export function roomToLend(bookCap: string, book: string, spendable: string): bigint {
+  const capRoom = BigInt(bookCap) - BigInt(book);
+  const s = BigInt(spendable);
+  const room = capRoom < s ? capRoom : s;
+  return room < 0n ? 0n : room;
 }

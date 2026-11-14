@@ -1,11 +1,14 @@
 /*
- * Fiador design tokens: the only place design values live (docs/design/direction.md, Passbook).
- * Craft pass by the unslop skill by Damir Sokolovsky (@heydamir), CC BY 4.0.
+ * Fiador design tokens: the only place design values live (docs/design/direction.md, Counter slip).
+ * Craft checklist by the unslop skill by Damir Sokolovsky (@heydamir), CC BY 4.0.
  */
 :root {
+  color-scheme: light;
+
   /* Neutral ramp, warm, tinted toward paper and ink */
   --ground: #faf8f3;
   --surface: #ffffff;
+  --slip: #fffcf4;
   --raised: #f1ece2;
   --ink: #1f1a15;
   --ink-2: #5c5248;
@@ -13,19 +16,27 @@
   --hair-color: rgb(31 26 21 / 0.09);
   --hair-strong: rgb(31 26 21 / 0.18);
 
-  /* One accent: the oxblood passbook cover */
+  /* One accent: act, and the focus ring */
   --accent: #7b1e2c;
   --accent-deep: #5e1520;
   --on-accent: #fffdf8;
 
-  /* Stamp inks: only inside the moments (loan lines and their legend) */
+  /* Selection: ink fill, paper text */
+  --select: #1f1a15;
+  --on-select: #ffffff;
+
+  /* System attention: stale, unavailable, overdue. Never an outcome. */
+  --signal: #8a4f00;
+  --signal-wash: #f6efe4;
+
+  /* Stamp inks: loan outcomes only */
   --stamp-repaid: #2f6b45;
   --stamp-late: #8a5a14;
   --stamp-default: #b0251c;
   --stamp-open: #1f1a15;
   --stamp-void: #6f655a;
 
-  /* Passbook materials: only inside the hero object */
+  /* Passbook materials (the landing passbook until stage S2 replaces it, then the member passbook) */
   --cloth: #6e1a27;
   --cloth-deep: #4c111b;
   --thread: #e2cfa9;
@@ -34,17 +45,21 @@
   --margin-rule: rgb(123 30 44 / 0.32);
   --object-shadow: 0 2px 4px rgb(31 26 21 / 0.08), 0 28px 56px -20px rgb(31 26 21 / 0.35);
   --card-shadow: 0 1px 2px rgb(31 26 21 / 0.05);
+  --sheet-shadow: 0 2px 4px rgb(31 26 21 / 0.06), 0 16px 40px -16px rgb(31 26 21 / 0.28);
 
-  /* Type: one interface family plus one display partner */
-  --font-text: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Type: one interface family, a display partner, a mono for machine strings */
+  --font-text: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-id: 'Red Hat Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 
   --fs-meta: 12px;
   --fs-small: 13px;
+  --fs-id: 13px;
   --fs-body: 15px;
   --fs-read: 17px;
   --fs-lede: 19px;
   --fs-title: 18px;
+  --fs-wordmark: 24px;
   --fs-page-title: 36px;
   --fs-figure: 32px;
   --fs-hero-figure: 48px;
@@ -82,38 +97,52 @@
 
   /* Layout */
   --container: 1200px;
-  --container-app: 1440px;
+  --container-app: 1280px;
   --gutter: clamp(16px, 4vw, 32px);
   --measure: 36rem;
   --measure-wide: 44rem;
   --nav-h: 64px;
+  --topbar-h: 56px;
+  --tabbar-h: 56px;
   --row-h: 44px;
+  --touch: 44px;
   --control-h: 40px;
   --hero-control-h: 48px;
+  --stub-w: 56px;
+  --bar-h: 12px;
 
   /* Shape */
   --r-tag: 4px;
-  --r-control: 10px;
-  --r-card: 14px;
+  --r-slip: 6px;
+  --r-control: 8px;
+  --r-card: 12px;
   --r-cover: 12px;
   --r-leaf: 4px;
   --hair: 1px solid var(--hair-color);
+  --rule-strong: 1px solid var(--hair-strong);
+  --perforation: 1px dashed var(--hair-strong);
+  --notch: 5px;
   --stamp-border: 2px;
+  --tab-edge: 2px;
 
   /* Motion: one curve, a few durations */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --dur-fast: 150ms;
+  --dur-fast: 120ms;
+  --dur-select: 180ms;
+  --dur-route: 160ms;
   --dur-enter: 420ms;
-  --stagger: 50ms;
-  --rise: 8px;
+  --dur-stamp: 220ms;
+  --stagger: 40ms;
+  --rise: 6px;
   --press: 0.98;
+  --dim: 0.45;
 
   /* Stamp tilts, cycled by row so no two neighbours sit alike */
   --tilt-a: -2deg;
   --tilt-b: 1.5deg;
   --tilt-c: -3.5deg;
   --object-tilt: -1deg;
-  --stamp-press-from: 1.08;
+  --stamp-press-from: 1.06;
   --stamp-opacity: 0.92;
   --stamp-pad-y: 2px;
   --stitch-opacity: 0.55;

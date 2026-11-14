@@ -35,7 +35,7 @@ export function MemberActions({ deployment }: { deployment: Deployment | null })
   };
 
   return (
-    <section aria-labelledby="act" className="act wrap wrap-app">
+    <section aria-labelledby="act" className="act block">
       <div className="card act-panel">
         <h2 id="act">Act as a member (testnet wallet)</h2>
         <p className="act-intro">Optional. Members admitted by the council can ask, co-sign and repay here. Everything on the board above works without a wallet.</p>
