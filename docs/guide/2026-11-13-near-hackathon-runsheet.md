@@ -68,6 +68,11 @@ Win the Social Money track (1st = $10K), keeping the grand prize in reach.
 | 2.5 | pending | | |
 | 3 | pending | | |
 
+## Next action (updated 2026-11-14 ~17:45 UTC) — Seat logo shipped and verified
+
+- **Verified by the guide:** docs/brand (7 SVGs, 4 PNGs, usage notes) and README header mark at 89efe8b (README +5 lines, `# Fiador` and all `##` headings unchanged, no em dashes); web change 18a7a8a (7 files: favicon SVG with dark rule, 32/180 PNGs, two HTML icon links, 22 px inline mark in Shell.tsx, 15 css lines, tokens untouched); gh-pages republished at bac9996. Live: /fiador/, /fiador/app/, favicon.svg (image/svg+xml), favicon-32.png and apple-touch-icon.png all 200; icon links relative on both pages; rendered hosted board header shows the mark left of "Fiador", board loads live data. Contract, deployments and demo untouched.
+- **Builder-only left:** upload docs/brand/png/social-preview-1280x640.png in the repo Settings, Social preview. Nothing else open; leave the chain and board alone through judging.
+
 ## Next action (updated 2026-11-14 ~17:00 UTC) — README restructure verified at 0808e58
 
 - **Verified by the guide:** commit touches README.md only; locked R2 `##` headings intact and in order; 0 em dashes; no gendered pronouns, no keys, no Windows user path; all relative links and backticked paths resolve; D-numbers and runsheet/evidence anchors exist; all 15 explorer tx links read back from testnet RPC or the explorer API with the claimed signer, method and time (ask/repay for loans 10 and 11, 7 late repay, held ask and cancel, loan 0 cosign, loan 1 ask_council, loan 3 mark_default, loan 4 refused ask, proposal 16 file and two approvals, desk delete-key 2026-11-13 17:42:43 UTC). Test counts (96 Rust, 253 TypeScript) taken from the README's recorded 2026-11-14 run, not re-run by the guide. Mermaid diagram not rendered by the guide (headless GitHub blank); builder to eyeball.
