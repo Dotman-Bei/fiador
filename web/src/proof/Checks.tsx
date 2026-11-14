@@ -80,7 +80,7 @@ export function ChecksView({ state, onRun, nowMs }: { state: ChecksState; onRun:
       <ul className="check-list">
         {checks.map((c) => (
           <li key={c.name} className={c.ok ? 'check check-pass' : 'check check-fail'}>
-            <span className="check-mark">{c.ok ? 'PASS' : 'FAIL'}</span>
+            <span className="check-mark">{c.ok ? 'Pass' : 'Fail'}</span>
             <span className="check-name">{c.name}</span>
             <span className="check-detail id">{c.detail}</span>
           </li>

@@ -1,5 +1,5 @@
 /** /app/: the board as a hash-routed shell. Every page reads the one live store; nothing needs a wallet. */
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Deployment } from '../../../src/lib/deployments';
 import { MemberActions } from '../wallet/MemberActions';
@@ -21,6 +21,9 @@ import { Shell, useRouteEffects } from './Shell';
 import type { Tab } from './Shell';
 import { Loading, NotFound, NotSeeded, StaleBand, Unavailable } from './states';
 import type { Freshness } from './states';
+
+/** The fixture gallery exists only in dev builds: in production this is null and the import is dropped from dist/. */
+const States = import.meta.env.DEV ? lazy(() => import('../dev/States')) : null;
 
 export function freshnessOf(board: BoardView, nowMs: number): Freshness {
   return { phase: board.phase, readAtMs: board.state.lastGoodMs, nowMs };
@@ -144,6 +147,23 @@ export function App() {
         <DeskView deployment={d} snap={s} fresh={fresh} checks={checks.state} onRunChecks={checks.run} />
       ));
       break;
+    case 'states':
+      if (States !== null) {
+        page = (
+          <Suspense fallback={<Loading label="Loading the fixture gallery" rows={2} />}>
+            <States />
+          </Suspense>
+        );
+        break;
+      }
+      page = (
+        <NotFound title="This page is not on the board">
+          <p>
+            The board has no page at <span className="id">#/__states</span>. <a href="#/">Go to the overview</a>.
+          </p>
+        </NotFound>
+      );
+      break;
     default:
       page = (
         <NotFound title="This page is not on the board">
@@ -156,7 +176,9 @@ export function App() {
 
   return (
     <Shell route={route} board={board} nowMs={nowMs} tabs={tabsFor(state.data, nowMs)} search={<Search snap={state.data} root={deployment?.root ?? ''} />}>
-      {page}
+      <div className="page" key={route.name === 'loans' ? 'loans' : JSON.stringify(route)}>
+        {page}
+      </div>
     </Shell>
   );
 }

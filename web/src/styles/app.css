@@ -154,7 +154,11 @@
   color: var(--ink-2);
 }
 
-/* Page */
+/* Page: a short fade when the route changes (the shell stays put) */
+.page {
+  animation: fade var(--dur-route) var(--ease) both;
+}
+
 .board-main {
   padding-block: var(--s-8) var(--s-10);
 }
@@ -752,6 +756,7 @@ ul.narrow-only,
 
 .detail-title .stamp {
   font-size: var(--fs-small);
+  animation: press var(--dur-stamp) var(--ease) both;
 }
 
 .prevnext {

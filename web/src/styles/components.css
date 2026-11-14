@@ -95,7 +95,7 @@
   min-height: calc(var(--control-h) - var(--s-2));
   padding: 0 var(--s-3);
   border: 0;
-  border-radius: var(--r-slip);
+  border-radius: var(--r-tag);
   background: transparent;
   color: var(--ink-2);
   font-family: var(--font-text);
@@ -348,7 +348,6 @@
   border-radius: var(--r-tag);
   font-size: var(--fs-meta);
   font-weight: var(--w-strong);
-  letter-spacing: var(--track-stamp);
 }
 
 .check-fail .check-mark,

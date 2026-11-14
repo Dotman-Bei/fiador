@@ -36,14 +36,9 @@
   --stamp-open: #1f1a15;
   --stamp-void: #6f655a;
 
-  /* Passbook materials (the landing passbook until stage S2 replaces it, then the member passbook) */
-  --cloth: #6e1a27;
-  --cloth-deep: #4c111b;
-  --thread: #e2cfa9;
+  /* The member's passbook page: cream leaf and a red margin rule */
   --leaf: #fdf8ec;
-  --leaf-fold: rgb(76 17 27 / 0.12);
   --margin-rule: rgb(123 30 44 / 0.32);
-  --object-shadow: 0 2px 4px rgb(31 26 21 / 0.08), 0 28px 56px -20px rgb(31 26 21 / 0.35);
   --card-shadow: 0 1px 2px rgb(31 26 21 / 0.05);
   --sheet-shadow: 0 2px 4px rgb(31 26 21 / 0.06), 0 16px 40px -16px rgb(31 26 21 / 0.28);
 
@@ -99,7 +94,6 @@
   --container: 1200px;
   --container-app: 1280px;
   --gutter: clamp(16px, 4vw, 32px);
-  --measure: 36rem;
   --measure-wide: 44rem;
   --nav-h: 64px;
   --topbar-h: 56px;
@@ -116,7 +110,6 @@
   --r-slip: 6px;
   --r-control: 8px;
   --r-card: 12px;
-  --r-cover: 12px;
   --r-leaf: 4px;
   --hair: 1px solid var(--hair-color);
   --rule-strong: 1px solid var(--hair-strong);
@@ -141,15 +134,11 @@
   --tilt-a: -2deg;
   --tilt-b: 1.5deg;
   --tilt-c: -3.5deg;
-  --object-tilt: -1deg;
   --stamp-press-from: 1.06;
   --stamp-opacity: 0.92;
   --stamp-pad-y: 2px;
-  --stitch-opacity: 0.55;
   --rule-double: 3px double var(--margin-rule);
 
-  /* Passbook and legend columns */
-  --pb-col-amount: 96px;
-  --pb-col-outcome: 108px;
+  /* Outcome legend column on the landing */
   --legend-col: 136px;
 }

@@ -9,6 +9,13 @@ import { readSnapshot } from './reads';
 import type { Reader, Snapshot } from './reads';
 
 export const POLL_MS = 5_000;
+/** After failed reads, wait longer before the next (5, 10, 20, then 30 s): a rate-limited endpoint gets room. */
+export const MAX_BACKOFF_MS = 30_000;
+
+export function nextDelay(pollMs: number, failures: number): number {
+  if (failures <= 0) return pollMs;
+  return Math.min(pollMs * 2 ** (failures - 1), MAX_BACKOFF_MS);
+}
 /** A snapshot older than this is stale even if no read has failed (a read may be hanging). */
 export const STALE_MS = 20_000;
 
@@ -65,6 +72,7 @@ export function createBoardStore(
   let timer: ReturnType<typeof setTimeout> | null = null;
   let running = false;
   let inflight: Promise<void> | null = null;
+  let failures = 0;
   const hasDocument = typeof document !== 'undefined';
 
   const set = (patch: Partial<BoardState>): void => {
@@ -76,7 +84,7 @@ export function createBoardStore(
     if (timer !== null) clearTimeout(timer);
     timer = null;
     if (!running || (hasDocument && document.hidden)) return;
-    timer = setTimeout(() => void refresh(), pollMs);
+    timer = setTimeout(() => void refresh(), nextDelay(pollMs, failures));
   };
 
   const refresh = (): Promise<void> => {
@@ -84,8 +92,14 @@ export function createBoardStore(
     if (inflight !== null) return inflight;
     set({ reading: true });
     inflight = readSnapshot(reader, deployment, clock(), cache)
-      .then((data) => set({ data, error: null, lastGoodMs: data.readAtMs, reading: false }))
-      .catch((e: unknown) => set({ error: e instanceof Error ? e.message : String(e), lastFailMs: clock(), reading: false }))
+      .then((data) => {
+        failures = 0;
+        set({ data, error: null, lastGoodMs: data.readAtMs, reading: false });
+      })
+      .catch((e: unknown) => {
+        failures += 1;
+        set({ error: e instanceof Error ? e.message : String(e), lastFailMs: clock(), reading: false });
+      })
       .finally(() => {
         inflight = null;
         schedule();

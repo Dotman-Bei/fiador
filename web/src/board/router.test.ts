@@ -15,6 +15,8 @@ describe('hash router', () => {
     expect(parseHash('#/members/ada-1.fiador-ops-vmwpxk.testnet')).toEqual({ name: 'member', account: 'ada-1.fiador-ops-vmwpxk.testnet' });
     expect(parseHash('#/requests')).toEqual({ name: 'requests' });
     expect(parseHash('#/desk')).toEqual({ name: 'desk' });
+    expect(parseHash('#/__states')).toEqual({ name: 'states' });
+    expect(parseHash('#/states')).toEqual({ name: 'notfound', path: '/states' });
   });
 
   it('sends anything else to not found', () => {

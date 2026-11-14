@@ -57,8 +57,9 @@ export function parseHash(hash: string): Route {
       return arg === undefined ? { name: 'members' } : { name: 'member', account: arg };
     case 'requests':
     case 'desk':
-    case 'states':
       return arg === undefined ? { name: head } : { name: 'notfound', path: rawPath };
+    case '__states':
+      return arg === undefined ? { name: 'states' } : { name: 'notfound', path: rawPath };
     default:
       return { name: 'notfound', path: rawPath };
   }
@@ -82,6 +83,8 @@ export function hrefOf(route: Route): string {
       return `#/members/${encodeURIComponent(route.account)}`;
     case 'notfound':
       return `#/${route.path}`;
+    case 'states':
+      return '#/__states';
     default:
       return `#/${route.name}`;
   }

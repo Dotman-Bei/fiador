@@ -78,7 +78,7 @@ a:hover {
 
 code {
   font-family: var(--font-id);
-  font-size: 0.9em;
+  font-size: inherit;
   font-weight: var(--w-regular);
   overflow-wrap: anywhere;
 }
@@ -383,6 +383,12 @@ code {
   to {
     opacity: var(--stamp-opacity);
     transform: rotate(var(--tilt, var(--tilt-a))) scale(1);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
   }
 }
 

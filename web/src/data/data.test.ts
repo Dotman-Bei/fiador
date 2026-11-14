@@ -4,7 +4,7 @@ import { DEPLOYMENT, loan, member, NEAR, NOW, POLICY, proposal } from '../test/f
 import { ago, countdown, duration, nsToMs, utcTime } from './format';
 import { readSnapshot } from './reads';
 import type { Reader } from './reads';
-import { createBoardStore, errorWords, INITIAL, phaseOf, STALE_MS } from './store';
+import { createBoardStore, errorWords, INITIAL, nextDelay, phaseOf, STALE_MS } from './store';
 import { gatherVerifyInputWeb, loanCheck } from './verify';
 import type { ReadStep } from './verify';
 
@@ -101,6 +101,10 @@ describe('store', () => {
     expect(s.data?.readAtMs).toBe(NOW);
     expect(s.error).toBe('Failed to fetch');
     expect(phaseOf(true, s, t)).toBe('stale');
+  });
+
+  it('backs off after failed reads, and returns to the normal pace after a good one', () => {
+    expect([0, 1, 2, 3, 4, 9].map((f) => nextDelay(5_000, f))).toEqual([5_000, 5_000, 10_000, 20_000, 30_000, 30_000]);
   });
 
   it('puts RPC failures into words', () => {

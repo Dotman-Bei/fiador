@@ -127,7 +127,7 @@ export function LoanDetailView({ deployment, snap, fresh, id, checks, onRunCheck
             {check !== undefined ? (
               <ul className="check-list">
                 <li className={check.ok ? 'check check-pass' : 'check check-fail'}>
-                  <span className="check-mark">{check.ok ? 'PASS' : 'FAIL'}</span>
+                  <span className="check-mark">{check.ok ? 'Pass' : 'Fail'}</span>
                   <span className="check-name">{check.name}</span>
                   <span className="check-detail id">{check.detail}</span>
                 </li>

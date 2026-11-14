@@ -74,9 +74,10 @@ All in `web/src/styles/tokens.css`. Contrast ratios were computed with the WCAG 
 | `--select` / `--on-select` | `#1f1a15` / `#ffffff` | selection fill, the testnet line, the skip link (17.3:1) |
 | `--signal` / `--signal-wash` | `#8a4f00` / `#f6efe4` | system attention only: stale, unavailable, overdue (6.2:1 on ground, 5.8:1 on its wash) |
 | `--stamp-repaid` / `--stamp-late` / `--stamp-default` / `--stamp-open` / `--stamp-void` | `#2f6b45` / `#8a5a14` / `#b0251c` / `#1f1a15` / `#6f655a` | stamp inks, only for loan outcomes and their legend (all ≥ 5:1 on ground and slip) |
-| `--leaf` / `--margin-rule` | `#fdf8ec` / accent at 32% | the passbook page and its red margin rule |
-| `--cloth` / `--cloth-deep` / `--thread` / `--leaf-fold` / `--object-shadow` | as before | the landing passbook cover, retired when stage S2 replaces the hero |
-| `--card-shadow` / `--sheet-shadow` | ink 5% / ink 6% and 28% | cards; the status panel and sheets |
+| `--leaf` / `--margin-rule` | `#fdf8ec` / accent at 32% | the member's passbook page and its double red margin rule |
+| `--card-shadow` / `--sheet-shadow` | ink 5% / ink 6% and 28% | cards; the status panel and the search list |
+
+The passbook cover tokens (`--cloth`, `--cloth-deep`, `--thread`, `--leaf-fold`, `--object-shadow`, `--r-cover`, `--object-tilt`, `--stitch-opacity`, the passbook column widths) were removed in S5: the hero is the live chain now, and the passbook lives on the member page as a ruled leaf.
 
 ### Type
 
@@ -99,7 +100,7 @@ Fonts load from Google Fonts with `display=swap`: Public Sans 400/500/600, Newsr
 | `--s-1` … `--s-13` | 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128 px |
 | `--container` / `--container-app` | 1200px landing / 1280px board |
 | `--gutter` | `clamp(16px, 4vw, 32px)` (16px at phone width) |
-| `--measure` / `--measure-wide` | 36rem / 44rem |
+| `--measure-wide` | 44rem (reading width for leads and notes) |
 | `--nav-h` / `--topbar-h` / `--tabbar-h` | 64 / 56 / 56 px |
 | `--row-h` / `--touch` / `--control-h` / `--hero-control-h` | 44 / 44 / 40 / 48 px |
 | `--stub-w` / `--bar-h` | 56px slip stub / 12px book bar |
@@ -116,6 +117,7 @@ Lists are tables above 900px and slips below; the phone tab bar appears under 72
 | `--tab-edge` | 2px ink top edge on the active index tab and phone tab |
 | `--stamp-border` / `--stamp-pad-y` / `--stamp-opacity` | 2px / 2px / 0.92 |
 | `--tilt-a` / `--tilt-b` / `--tilt-c` | −2° / 1.5° / −3.5° (tilted stamps only) |
+| `--rule-double` / `--legend-col` | 3px double margin rule (passbook header and edge) / 136px outcome legend column |
 
 ### Motion
 
@@ -125,7 +127,7 @@ Lists are tables above 900px and slips below; the phone tab bar appears under 72
 | `--dur-fast` / `--dur-select` / `--dur-route` / `--dur-stamp` / `--dur-enter` | 120 / 180 / 160 / 220 / 420 ms |
 | `--stagger` / `--rise` / `--press` / `--dim` | 40ms (six at most) / 6px / 0.98 / 0.45 |
 
-Hovers change color or background only; buttons scale to 0.98 on press; transitions are named, never `all`; no layout property is animated. Under `prefers-reduced-motion` every animation and transition is removed and every state still appears at once.
+Where each duration is used: `--dur-fast` hovers and presses; `--dur-select` the segmented selection and the party dimming; `--dur-route` the page fade when the route changes (the shell stays mounted; a filter change on Loans does not fade); `--dur-enter` with `--stagger` the chain's stations rising in when a loan is chosen; `--dur-stamp` the stamp pressed in when a loan page opens. Hovers change color or background only; buttons scale to 0.98 on press; transitions are named, never `all`; no layout property is animated; nothing loops. Under `prefers-reduced-motion` every animation and transition is removed and every state still appears at once.
 
 ## Components
 
@@ -146,10 +148,12 @@ Hovers change color or background only; buttons scale to 0.98 on press; transiti
 
 ## Page map
 
-- **`/`:** navigation → hero (headline, one sentence from the README, the live chain instrument with the lane and party controls) → `#problem` "A DAO treasury can only give money away" → `#how` the three lanes and how a loan closes, each outcome linked to its real loan → `#proof` the desk's checks run live in the browser → `#try` open the board, the visitor line → footer with the repo link. No demo-video section (frontend contract, item 1). *Until stage S2 lands, `/` is the Passbook landing.*
+- **`/`:** testnet line → navigation → hero (headline, one sentence from the README, the live chain instrument with the lane and party controls) → `#problem` "A DAO treasury can only give money away" → `#how` "Three lanes, and how a loan closes", each lane and each outcome linked into the instrument → `#proof` "Run the desk's checks here", the checks run live in the browser → `#try` "Open the board", the visitor line → footer with the repo link. No demo-video section (frontend contract, item 1).
 - **`/app/`** (hash routes, so every deep link works from a subpath with no server rewrite):
   - `#/` Overview: the book (one large figure, the book bar, treasury balance and spendable, room to lend), the desk's state, what needs a hand, "Waiting for a co-signer", the loan book with each loan's Sputnik proposal id and status, the members with the repaid loans behind each standing, and the optional wallet panel. README step 3 is true on this route with no hash.
-  - `#/loans` (filters in the hash), `#/loans/:id` with the proposal chain, `#/requests`, `#/members`, `#/members/:account` with the passbook and the derived standing trail, `#/desk` with the live checks and the policy as read. Each tab appears in the stage that builds its page.
+  - `#/loans` (lane, outcome and member filters in the hash), `#/loans/:id` with the proposal chain, the proposal as read and the loan's check, `#/requests`, `#/members`, `#/members/:account` with the passbook and the derived standing trail, `#/desk` with the live checks, the policy as read and the twelve parameters. Index tabs: Overview, Loans, Requests (with the waiting count), Members, Desk & proof.
+  - `#/__states`: the fixture gallery, in dev builds only (absent from `dist/`).
+  - Cut from the redesign by the builder's amendment (2026-11-14): Activity, the operations dock, the review sheet for wallet actions, and the permissionless actions. The wallet panel stays as it was, re-hosted on Overview and Requests, with repay taking the principal from the chosen loan.
 
 ## Data honesty
 
@@ -167,3 +171,7 @@ Hovers change color or background only; buttons scale to 0.98 on press; transiti
 - Stamp inks only on loan outcomes; signal amber only on system attention; oxblood only on actions and focus.
 - No shadows beyond `--card-shadow` and `--sheet-shadow` (and the passbook's while it lives); no gradients outside the passbook; no italic; no uppercase outside stamps; mono only for machine strings.
 - A design change styles the board's data, wallet actions and links; it does not change what they say. A figure without a provenance tag is a bug.
+
+## Page check
+
+Stage S5 (2026-11-14) checked both pages against this file and the unslop checklist at 390, 768, 1440 and 1920 wide, on the production build served from a `/fiador/` subpath. The results, with screenshots, are in [ACCEPTANCE_EVIDENCE.md](ACCEPTANCE_EVIDENCE.md).
