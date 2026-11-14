@@ -68,7 +68,9 @@ Win the Social Money track (1st = $10K), keeping the grand prize in reach.
 | 2.5 | pending | | |
 | 3 | pending | | |
 
-## Next action (updated 2026-11-14 ~16:40 UTC) — demo cut verified, awaiting the builder's watch
+## Next action (updated 2026-11-14 ~15:35 UTC) — demo cut APPROVED by the builder; Step 3 closing pass next
+
+- **Builder approved the cut ("approved") at ~15:35 UTC.** Step 2.5 done. Next: gate-concierge closing pass (opus, high): history secret scan, then the repo public flip (builder's explicit go), Pages hosting, README/submission-draft TBDs and Known-limitations bullets, neutral wording in submission-draft line 61, HACKATHON.md re-fetch, paste sheet. Builder-only: X post, form fields, Submit. Times below said ~16:40 in the first draft; the real clock was ~15:30 UTC.
 
 - **Verified by the guide (chain + repo, 150a9cc):** `npm run verify` = VERIFY PASS (24 checks, 12 loans). Live take 1 = loan #10 (2 NEAR, Standing, proposal 20, Repaid in 36 s, not in the film). Live take 2 = loan #11 (2 NEAR, Standing, proposal 21 Approved/Transfer, Repaid in 41 s, closed_at before due_at). goodkale2741.testnet: standing 8, repaid_on_time 4, 0 open, 0 defaults. DAO back at 15.42154 NEAR, book 0. `demo/out/*` and `demo/node_modules` git-ignored; no video, key or .env tracked; tracked-file secret grep clean (only `FIADOR_ROOT_KEY=` names).
 - **Cut:** `demo/out/fiador-demo.mp4`, 1920x1080 h264, 2:09.3 (cap 2:15), -14.1 LUFS, 18.9 MB. Script has no gendered pronouns.
