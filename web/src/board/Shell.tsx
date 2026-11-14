@@ -12,6 +12,8 @@ export interface Tab {
   key: string;
   label: string;
   href: string;
+  /** Shown beside the label when above zero (Requests waiting). */
+  count?: number;
 }
 
 /** The routes this build ships; a tab appears in the stage that builds its page. */
@@ -91,7 +93,15 @@ function Tabs({ route, tabs, className, label }: { route: Route; tabs: readonly 
       <ul>
         {tabs.map((t) => (
           <li key={t.key}>
-            <a href={t.href} aria-current={t.key === current ? 'page' : undefined}>{t.label}</a>
+            <a href={t.href} aria-current={t.key === current ? 'page' : undefined}>
+              {t.label}
+              {t.count !== undefined && t.count > 0 ? (
+                <span className="tab-count">
+                  {t.count}
+                  <span className="vh"> waiting</span>
+                </span>
+              ) : null}
+            </a>
           </li>
         ))}
       </ul>
@@ -169,19 +179,27 @@ const TITLES: Record<Route['name'], string> = {
 
 export function titleOf(route: Route): string {
   if (route.name === 'loan') return `Loan #${route.id} · Fiador board`;
+  if (route.name === 'member') return `${route.account.split('.')[0] ?? route.account} · Fiador board`;
   return TITLES[route.name];
 }
 
-/** After a navigation (not the first paint): top of the page, focus on the page title, the document title. */
+/**
+ * After a navigation (not the first paint): top of the page, focus on the page title, the document title.
+ * A filter change on the same list keeps focus where it is, so arrow keys in a filter keep working.
+ */
 export function useRouteEffects(route: Route): void {
   const first = useRef(true);
+  const prev = useRef<Route['name']>(route.name);
   const key = JSON.stringify(route);
   useEffect(() => {
     document.title = titleOf(route);
+    const sameList = prev.current === route.name && route.name === 'loans';
+    prev.current = route.name;
     if (first.current) {
       first.current = false;
       return;
     }
+    if (sameList) return;
     window.scrollTo(0, 0);
     const h = document.querySelector<HTMLElement>('[data-page-title]');
     h?.focus({ preventScroll: true });

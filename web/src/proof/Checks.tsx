@@ -2,7 +2,8 @@
  * The desk's checks, run in the browser: the same reads as `npm run verify` and the same pure checks (src/lib/verify.ts).
  * Shared by the landing's proof section and the board's Desk and proof page.
  */
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from 'react';
+import type { ReactNode } from 'react';
 import type { Deployment } from '../../../src/lib/deployments';
 import { RpcClient } from '../../../src/lib/rpc';
 import type { Check } from '../../../src/lib/verify';
@@ -95,27 +96,65 @@ export function ChecksView({ state, onRun, nowMs }: { state: ChecksState; onRun:
   );
 }
 
-export function useChecks(deployment: Deployment | null, auto: boolean): { state: ChecksState; run: () => void } {
-  const [state, setState] = useState<ChecksState>({ phase: 'idle' });
-  const busy = useRef(false);
-  const run = (): void => {
-    if (deployment === null || busy.current) return;
-    busy.current = true;
-    let steps: ReadStep[] = [];
-    setState({ phase: 'running', steps });
-    runVerifyWeb(new RpcClient(deployment.rpc), deployment, Date.now, (s) => {
-      steps = s;
-      setState({ phase: 'running', steps: s });
-    })
-      .then((r) => setState({ phase: 'done', steps, run: r }))
-      .catch((e: unknown) => setState({ phase: 'failed', steps, error: e instanceof Error ? e.message : String(e) }))
-      .finally(() => {
-        busy.current = false;
-      });
+/** One run of the checks per page visit, shared by every view that shows them. */
+export interface ChecksStore {
+  getState(): ChecksState;
+  subscribe(l: () => void): () => void;
+  run(): void;
+}
+
+export function createChecksStore(deployment: Deployment | null): ChecksStore {
+  let state: ChecksState = { phase: 'idle' };
+  const listeners = new Set<() => void>();
+  const set = (s: ChecksState): void => {
+    state = s;
+    for (const l of listeners) l();
   };
+  let busy = false;
+  return {
+    getState: () => state,
+    subscribe(l) {
+      listeners.add(l);
+      return () => listeners.delete(l);
+    },
+    run() {
+      if (deployment === null || busy) return;
+      busy = true;
+      let steps: ReadStep[] = [];
+      set({ phase: 'running', steps });
+      runVerifyWeb(new RpcClient(deployment.rpc), deployment, Date.now, (st) => {
+        steps = st;
+        set({ phase: 'running', steps: st });
+      })
+        .then((r) => set({ phase: 'done', steps, run: r }))
+        .catch((e: unknown) => set({ phase: 'failed', steps, error: e instanceof Error ? e.message : String(e) }))
+        .finally(() => {
+          busy = false;
+        });
+    },
+  };
+}
+
+const IDLE: ChecksState = { phase: 'idle' };
+const ChecksCtx = createContext<ChecksStore | null>(null);
+
+export function ChecksProvider({ store, children }: { store: ChecksStore; children: ReactNode }) {
+  return <ChecksCtx.Provider value={store}>{children}</ChecksCtx.Provider>;
+}
+
+export function useChecksStore(store?: ChecksStore | null): { state: ChecksState; run: () => void } {
+  const ctx = useContext(ChecksCtx);
+  const s = store ?? ctx;
+  const state = useSyncExternalStore(s?.subscribe ?? (() => () => undefined), s?.getState ?? (() => IDLE), () => IDLE);
+  return { state, run: () => s?.run() };
+}
+
+/** For a page that owns its own run (the landing): a store made once for the page. */
+export function useChecks(deployment: Deployment | null, auto: boolean): { state: ChecksState; run: () => void } {
+  const [store] = useState(() => createChecksStore(deployment));
+  const result = useChecksStore(store);
   useEffect(() => {
-    if (auto) run();
-    // run once on mount when asked to
-  }, []);
-  return { state, run };
+    if (auto) store.run();
+  }, [auto, store]);
+  return result;
 }

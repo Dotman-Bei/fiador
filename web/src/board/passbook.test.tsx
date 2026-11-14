@@ -1,22 +1,12 @@
+/**
+ * The passbook. Updated for the redesign (S3): the landing hero no longer renders the passbook, so the PassbookView
+ * case moves to the member's passbook on the member page; the stamp, naming and entry tests are unchanged.
+ */
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import type { Deployment } from '../../../src/lib/deployments';
-import { loan, NEAR } from '../../../src/lib/fixtures/desk';
-import { shortAccount, stampInk, stampWords } from '../ledger';
-import { entryDetail, PassbookView, proposalWords } from './Passbook';
-
-const DEPLOYMENT: Deployment = {
-  network: 'testnet',
-  rpc: 'https://rpc.testnet.fastnear.com',
-  factory: 'sputnikv2.testnet',
-  dao: 'fiador.sputnikv2.testnet',
-  desk: 'desk.root.testnet',
-  smoke: 'smoke.root.testnet',
-  council: ['c1', 'c2', 'c3'],
-  root: 'root.testnet',
-  seeded_at: '2026-11-14T08:00:00.000Z',
-  explorer: 'https://testnet.nearblocks.io',
-};
+import { entryDetail, proposalWords, shortAccount, stampInk, stampWords } from '../ledger';
+import { loan, NEAR } from '../test/fixtures';
+import { MemberPassbook } from './pages/Members';
 
 describe('passbook', () => {
   it('stamps each outcome in its own ink and words', () => {
@@ -38,11 +28,13 @@ describe('passbook', () => {
     expect([entryDetail(refused, 'root.testnet'), proposalWords(refused)]).toEqual(['within standing', 'no proposal']);
   });
 
-  it('shows only real lines: none while loading, the read lines once loaded', () => {
-    expect(renderToStaticMarkup(<PassbookView deployment={DEPLOYMENT} data={null} error={null} />)).not.toContain('<td');
-    const html = renderToStaticMarkup(<PassbookView deployment={DEPLOYMENT} data={{ loans: [loan({ id: 0 })], total: 6 }} error={null} />);
+  it("shows only the member's real lines, as borrower and as co-signer", () => {
+    const book = [loan({ id: 0 }), loan({ id: 1, borrower: 'chidi.root.testnet', cosigner: 'ada.root.testnet', status: 'Defaulted' }), loan({ id: 2, borrower: 'bayo.root.testnet', cosigner: null })];
+    const html = renderToStaticMarkup(<MemberPassbook account="ada.root.testnet" loans={book} root="root.testnet" />);
     expect(html).toContain('#0');
-    expect(html).toContain('Loans #0 to #0 of 6, read live from NEAR testnet. Accounts under root.testnet are shown by their first label.');
-    expect(html).toContain('stamp ink-repaid');
+    expect(html).toContain('co-signed for chidi');
+    expect(html).not.toContain('#2');
+    expect(html).toContain('stamp ink-default');
+    expect(renderToStaticMarkup(<MemberPassbook account="nobody.root.testnet" loans={book} root="root.testnet" />)).toContain('No loans yet as borrower or co-signer.');
   });
 });

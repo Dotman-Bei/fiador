@@ -8,6 +8,8 @@ import { DESK_ROLE, roleMembers } from '../../../../src/lib/sputnik';
 import type { Snapshot } from '../../data/reads';
 import { duration, near } from '../../data/format';
 import { Id, NamingNote } from '../bits';
+import type { Check } from '../../../../src/lib/verify';
+import { attentionItems, lastMovement } from '../attention';
 import { bookSegments, loanRows, memberRows, roomToLend, waitingRows } from '../data';
 import { LoanList, MemberList, WaitingList } from '../lists';
 import { Empty, Prov } from '../states';
@@ -19,6 +21,41 @@ export interface Links {
 }
 
 export const NO_LINKS: Links = { loan: null, member: null };
+export const LINKS: Links = { loan: (id) => `#/loans/${id}`, member: (a) => `#/members/${encodeURIComponent(a)}` };
+
+/** Overview shows the whole book while it is short, then the latest rows and a link to Loans. */
+export const OVERVIEW_LOANS = 12;
+
+export function AttentionList({ snap, deployment, fresh, checks }: { snap: Snapshot; deployment: Deployment; fresh: Freshness; checks: readonly Check[] | null }) {
+  const clock = fresh.phase === 'stale' ? snap.readAtMs : fresh.nowMs;
+  const items = attentionItems(snap, deployment, clock, checks);
+  const last = lastMovement(snap);
+  return (
+    <section className="block" aria-labelledby="attention">
+      <h2 id="attention" className="section-title">Needs a hand</h2>
+      {items.length === 0 ? (
+        <Empty>
+          Nothing needs a hand. No request is waiting and no loan is open.{last === null ? '' : ` Last movement: ${last}.`}
+        </Empty>
+      ) : (
+        <ul className="slips attention" aria-label="Needs a hand, most urgent first">
+          {items.map((a) => (
+            <li key={a.key} className={`slip attn-${a.severity}`}>
+              <span className="slip-stub">{a.severity === 'critical' ? 'now' : a.severity}</span>
+              <div className="slip-body">
+                <p>{a.text}</p>
+                <p className="slip-meta">
+                  <a href={a.href}>{a.action}</a>
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      <Prov kind="live" fresh={fresh} />
+    </section>
+  );
+}
 
 export function PageHead({ deployment }: { deployment: Deployment }) {
   return (
@@ -96,11 +133,12 @@ export function DeskCard({ deployment, snap, fresh }: { deployment: Deployment; 
   );
 }
 
-export function OverviewView({ deployment, snap, fresh, links }: { deployment: Deployment; snap: Snapshot; fresh: Freshness; links: Links }) {
+export function OverviewView({ deployment, snap, fresh, links, checks = null }: { deployment: Deployment; snap: Snapshot; fresh: Freshness; links: Links; checks?: readonly Check[] | null }) {
   // While stale, countdowns stay where the last good read left them.
   const clock = fresh.phase === 'stale' ? snap.readAtMs : fresh.nowMs;
   const waiting = waitingRows(snap.desk.requests, clock);
-  const loans = loanRows(snap.desk.loans, snap.proposals, clock);
+  const allLoans = loanRows(snap.desk.loans, snap.proposals, clock);
+  const loans = links.loan === null ? allLoans : allLoans.slice(0, OVERVIEW_LOANS);
   const members = memberRows(snap.desk.members, snap.desk.loans);
   const root = deployment.root;
   return (
@@ -109,6 +147,8 @@ export function OverviewView({ deployment, snap, fresh, links }: { deployment: D
         <BookSummary snap={snap} fresh={fresh} />
         <DeskCard deployment={deployment} snap={snap} fresh={fresh} />
       </div>
+
+      {links.loan === null ? null : <AttentionList snap={snap} deployment={deployment} fresh={fresh} checks={checks} />}
 
       <section className="block" aria-labelledby="waiting">
         <h2 id="waiting" className="section-title">Waiting for a co-signer</h2>
@@ -126,6 +166,11 @@ export function OverviewView({ deployment, snap, fresh, links }: { deployment: D
         ) : (
           <LoanList rows={loans} root={root} caption="Every loan on the desk, newest first" loanHref={links.loan} memberHref={links.member} />
         )}
+        {loans.length < allLoans.length ? (
+          <p className="note">
+            The latest {loans.length} of {allLoans.length} loans. <a href="#/loans">All loans</a>
+          </p>
+        ) : null}
         <Prov kind="live" fresh={fresh}>each loan's Sputnik proposal id and status, read from the DAO</Prov>
       </section>
 

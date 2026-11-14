@@ -3,11 +3,12 @@ import type { Lane } from '../../../src/lib/desk';
 import type { Deployment } from '../../../src/lib/deployments';
 import type { Snapshot } from '../data/reads';
 import { errorWords } from '../data/store';
-import { ago, near, utcTime } from '../data/format';
+import { ago, near } from '../data/format';
 import { shortAccount, stampWords } from '../ledger';
 import { Stamp } from '../board/bits';
 import { Prov } from '../board/states';
 import type { Freshness } from '../board/states';
+import { ChainView } from '../ui/ChainView';
 import { Segmented } from '../ui/Segmented';
 import { boundaryOf, laneLoans, LANES, PARTIES, partyNote, stationsOf } from './chain';
 import type { Party } from './chain';
@@ -135,7 +136,7 @@ export function InstrumentView({
               </p>
               <Stamp status={loan.status} />
             </div>
-            <Chain loan={loan} snap={snap} deployment={deployment} party={sel.party} />
+            <ChainView stations={stationsOf(loan, loan.proposal_id === null ? undefined : snap.proposals[loan.proposal_id], { deployment, params: snap.desk.config.params })} loanId={loan.id} party={sel.party} />
           </>
         )}
 
@@ -152,33 +153,6 @@ export function InstrumentView({
         </div>
       </div>
     </div>
-  );
-}
-
-function Chain({ loan, snap, deployment, party }: { loan: NonNullable<ReturnType<typeof laneLoans>['pick']>; snap: Snapshot; deployment: Deployment; party: Party }) {
-  const proposal = loan.proposal_id === null ? undefined : snap.proposals[loan.proposal_id];
-  const stations = stationsOf(loan, proposal, { deployment, params: snap.desk.config.params });
-  const anyByParty = stations.some((s) => s.party === party);
-  return (
-    <ol className="chain" key={`${loan.id}`} aria-label={`The steps of loan ${loan.id}`}>
-      {stations.map((s, i) => {
-        const mine = s.party === party;
-        return (
-          <li key={s.key} className={`station done-${s.done}${anyByParty && !mine ? ' dim' : ''}${mine ? ' mine' : ''}`} style={{ ['--i' as string]: i }}>
-            <span className="station-dot" aria-hidden="true" />
-            <p className="station-name">
-              {s.name}
-              {mine ? <span className="vh"> (a step by the selected party)</span> : null}
-            </p>
-            {s.lines.map((line) => (
-              <p key={line} className="station-line">{line}</p>
-            ))}
-            {s.time === null ? (s.timeNote === null ? null : <p className="station-note">{s.timeNote}</p>) : <p className="station-time">{utcTime(s.time)}</p>}
-            <p className="station-src">{s.source}</p>
-          </li>
-        );
-      })}
-    </ol>
   );
 }
 

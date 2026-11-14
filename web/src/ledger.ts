@@ -1,5 +1,6 @@
 /** How a loan line reads on / and /app/: the stamp ink and words for its status, its lane, and short account names. */
 import { OPEN_STATUSES } from '../../src/lib/desk';
+import { formatNear } from '../../src/lib/units';
 
 export type Ink = 'repaid' | 'late' | 'default' | 'open' | 'void';
 
@@ -26,4 +27,15 @@ export function laneWords(lane: string): string {
 export function shortAccount(account: string, root: string): string {
   const suffix = `.${root}`;
   return root !== '' && account.endsWith(suffix) ? account.slice(0, -suffix.length) : account;
+}
+
+/** The second line of a passbook entry: how the loan was approved, and who co-signed. Moved from the landing passbook. */
+export function entryDetail(loan: { lane: string; cosigner: string | null; pledge: string }, root: string): string {
+  if (loan.lane === 'Cosigned' && loan.cosigner !== null) return `co-signed by ${shortAccount(loan.cosigner, root)} for ${formatNear(loan.pledge)} NEAR`;
+  return loan.lane === 'Council' ? 'council vote' : 'within standing';
+}
+
+/** The Sputnik proposal that paid the loan, or that none was filed. */
+export function proposalWords(loan: { proposal_id: number | null }): string {
+  return loan.proposal_id === null ? 'no proposal' : `proposal #${loan.proposal_id}`;
 }
