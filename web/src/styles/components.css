@@ -1,0 +1,437 @@
+/* Components shared by / and /app/: testnet line, provenance tags, segmented selectors, the chain, checks. Tokens only. */
+
+/* Testnet line: one ink line of facts above the navigation */
+.testnet-line {
+  background: var(--select);
+  color: var(--on-select);
+  font-size: var(--fs-small);
+}
+
+.testnet-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  min-height: var(--s-7);
+}
+
+.testnet-row a {
+  color: var(--on-select);
+  white-space: nowrap;
+}
+
+.testnet-short {
+  display: none;
+}
+
+/* Provenance tags: a word plus a shape */
+.prov {
+  display: block;
+  margin-top: var(--s-3);
+  font-size: var(--fs-meta);
+  color: var(--ink-3);
+}
+
+.prov + .prov {
+  margin-top: var(--s-1);
+}
+
+.prov-mark {
+  display: inline-block;
+  margin-right: var(--s-2);
+  vertical-align: middle;
+  width: var(--s-2);
+  height: var(--s-2);
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.prov-live .prov-mark {
+  background: currentColor;
+}
+
+.prov-stale {
+  color: var(--signal);
+}
+
+.prov-stale .prov-mark {
+  border-radius: 0;
+  background: currentColor;
+}
+
+.prov-rules .prov-mark {
+  border-radius: 0;
+}
+
+.prov-recorded .prov-mark {
+  border-width: 2px;
+}
+
+.prov-fixture,
+.prov-illustrative {
+  color: var(--signal);
+}
+
+.prov-fixture .prov-mark,
+.prov-illustrative .prov-mark {
+  border-style: dashed;
+}
+
+/* Segmented selector (a radio group): the selected option is an ink fill */
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  padding: var(--s-1);
+  border: var(--rule-strong);
+  border-radius: var(--r-control);
+  background: var(--surface);
+}
+
+.seg-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: calc(var(--control-h) - var(--s-2));
+  padding: 0 var(--s-3);
+  border: 0;
+  border-radius: var(--r-slip);
+  background: transparent;
+  color: var(--ink-2);
+  font-family: var(--font-text);
+  font-size: var(--fs-small);
+  font-weight: var(--w-medium);
+  cursor: pointer;
+  transition: background-color var(--dur-select) var(--ease), color var(--dur-select) var(--ease);
+}
+
+.seg-opt:hover {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+.seg-opt[aria-checked='true'] {
+  background: var(--select);
+  color: var(--on-select);
+}
+
+.seg-opt[aria-checked='true'] .stamp {
+  color: var(--on-select);
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
+.seg-opt .stamp {
+  font-size: var(--fs-meta);
+}
+
+/* The chain: a loan's stations on a ruled line */
+.chain {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.station {
+  position: relative;
+  min-width: 0;
+  padding-top: var(--s-7);
+  transition: opacity var(--dur-select) var(--ease);
+  animation: rise var(--dur-enter) var(--ease) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+.station::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--s-2) - 1px);
+  left: 0;
+  right: calc(-1 * var(--s-4));
+  border-top: var(--rule-strong);
+}
+
+.station:last-child::before {
+  right: 0;
+}
+
+.station-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--s-4);
+  height: var(--s-4);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--slip);
+}
+
+.done-yes .station-dot {
+  background: var(--ink);
+}
+
+.done-pending .station-dot {
+  border-style: dashed;
+  border-color: var(--ink-3);
+}
+
+.done-no .station-dot {
+  border-color: var(--ink-3);
+}
+
+.station.mine .station-dot {
+  box-shadow: 0 0 0 3px var(--slip), 0 0 0 4px var(--accent);
+}
+
+.station.dim {
+  opacity: var(--dim);
+}
+
+.station-name {
+  font-weight: var(--w-strong);
+}
+
+.station-line {
+  margin-top: var(--s-1);
+  font-size: var(--fs-small);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+.station-time {
+  margin-top: var(--s-2);
+  font-size: var(--fs-small);
+  font-weight: var(--w-medium);
+}
+
+.station-note {
+  margin-top: var(--s-2);
+  font-size: var(--fs-meta);
+  color: var(--ink-3);
+}
+
+.station-src {
+  margin-top: var(--s-1);
+  font-family: var(--font-id);
+  font-size: var(--fs-meta);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.chain-empty .station-name {
+  color: var(--ink-3);
+}
+
+/* Vertical chain: the app's loan page, and every chain under 900px */
+.chain.chain-v {
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  gap: var(--s-5);
+}
+
+.chain.chain-v .station {
+  padding-top: 0;
+  padding-left: var(--s-8);
+}
+
+.chain.chain-v .station::before {
+  top: var(--s-4);
+  bottom: calc(-1 * var(--s-5));
+  left: calc(var(--s-2) - 1px);
+  right: auto;
+  border-top: 0;
+  border-left: var(--rule-strong);
+}
+
+.chain.chain-v .station:last-child::before {
+  display: none;
+}
+
+/* Boundary card: what a party can and cannot do */
+.party-note {
+  margin-top: var(--s-4);
+  font-weight: var(--w-medium);
+}
+
+.boundary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-6);
+  margin-top: var(--s-4);
+}
+
+.boundary-head {
+  font-size: var(--fs-small);
+  color: var(--ink-3);
+}
+
+.boundary ul {
+  margin: var(--s-2) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--rule-strong);
+}
+
+.boundary li {
+  padding-block: var(--s-2);
+  border-bottom: var(--hair);
+  overflow-wrap: anywhere;
+}
+
+/* Checks run in the browser */
+.checks > * + * {
+  margin-top: var(--s-4);
+}
+
+.checks-lede {
+  color: var(--ink-2);
+  line-height: var(--lh-read);
+}
+
+.checks-summary {
+  font-size: var(--fs-title);
+  font-weight: var(--w-medium);
+}
+
+.read-steps,
+.check-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--rule-strong);
+}
+
+.read-steps li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: var(--s-8);
+  border-bottom: var(--hair);
+  font-size: var(--fs-small);
+}
+
+.read-mark {
+  width: var(--s-2);
+  height: var(--s-2);
+  border: 1px dashed var(--ink-3);
+  border-radius: 50%;
+}
+
+.read-done .read-mark {
+  border-style: solid;
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.read-word {
+  margin-left: auto;
+  color: var(--ink-3);
+}
+
+.check {
+  display: grid;
+  grid-template-columns: var(--s-10) minmax(0, 1fr);
+  gap: 0 var(--s-3);
+  padding-block: var(--s-2);
+  border-bottom: var(--hair);
+}
+
+.check-mark {
+  grid-row: span 2;
+  align-self: start;
+  justify-self: start;
+  padding: 0 var(--s-1);
+  border: 1px solid currentColor;
+  border-radius: var(--r-tag);
+  font-size: var(--fs-meta);
+  font-weight: var(--w-strong);
+  letter-spacing: var(--track-stamp);
+}
+
+.check-fail .check-mark,
+.check-fail .check-name {
+  color: var(--signal);
+}
+
+.check-name {
+  font-size: var(--fs-small);
+  font-weight: var(--w-medium);
+  overflow-wrap: anywhere;
+}
+
+.check-detail {
+  font-size: var(--fs-meta);
+  color: var(--ink-3);
+}
+
+.checks-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.checks-foot .prov {
+  margin-top: 0;
+}
+
+/* A button that reads as a link */
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .chain {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    gap: var(--s-5);
+  }
+
+  .chain .station {
+    padding-top: 0;
+    padding-left: var(--s-8);
+  }
+
+  .chain .station::before {
+    top: var(--s-4);
+    bottom: calc(-1 * var(--s-5));
+    left: calc(var(--s-2) - 1px);
+    right: auto;
+    border-top: 0;
+    border-left: var(--rule-strong);
+  }
+
+  .chain .station:last-child::before {
+    display: none;
+  }
+
+  .boundary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .testnet-long {
+    display: none;
+  }
+
+  .testnet-short {
+    display: inline;
+  }
+}

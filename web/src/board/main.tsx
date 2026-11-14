@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import '../styles/tokens.css';
 import '../styles/base.css';
+import '../styles/components.css';
 import '../styles/app.css';
 import { RpcClient } from '../../../src/lib/rpc';
 import { loadDeployment } from '../deployment';

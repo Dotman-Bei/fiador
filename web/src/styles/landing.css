@@ -1,277 +1,106 @@
 /* / (landing). Tokens only: docs/design/direction.md. */
 
-/* Hero: an asymmetric split, the copy centered against the passbook */
+/* Hero: a left-aligned headline over the full-width live chain */
 .hero {
-  display: grid;
-  align-items: center;
-  min-height: calc(100svh - var(--nav-h));
-  padding-block: var(--s-8);
+  padding-block: var(--s-9) var(--s-11);
 }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 9fr) minmax(0, 15fr);
-  gap: var(--s-9);
-  align-items: center;
+.hero-copy h1 {
+  max-width: 24ch;
 }
 
 .lede {
-  max-width: var(--measure);
-  margin-top: var(--s-6);
+  max-width: var(--measure-wide);
+  margin-top: var(--s-5);
   font-size: var(--fs-lede);
   line-height: var(--lh-read);
   color: var(--ink-2);
+}
+
+.hero-instrument {
+  margin-top: var(--s-7);
+  scroll-margin-top: var(--s-6);
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-3);
-  margin-top: var(--s-8);
+  margin-top: var(--s-7);
 }
 
-/* The passbook: an oxblood cloth cover, stitched, holding two cream pages */
-.passbook {
-  transform: rotate(var(--object-tilt));
-}
-
-.pb-cover {
-  position: relative;
-  padding: var(--s-3);
-  border-radius: var(--r-cover);
-  background: linear-gradient(160deg, var(--cloth), var(--cloth-deep));
-  box-shadow: var(--object-shadow);
-}
-
-.pb-cover::before {
-  content: '';
-  position: absolute;
-  inset: var(--s-1);
-  border: 1px dashed var(--thread);
-  border-radius: calc(var(--r-cover) - var(--s-1));
-  opacity: var(--stitch-opacity);
-  pointer-events: none;
-}
-
-.pb-spread {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 0.55fr) minmax(0, 1.7fr);
-  border-radius: var(--r-leaf);
-  background: var(--leaf);
-  overflow: hidden;
-}
-
-.pb-page {
-  padding: var(--s-6);
-}
-
-.pb-left {
+/* The instrument */
+.inst-controls {
   display: flex;
-  flex-direction: column;
-  gap: var(--s-4);
-  background: linear-gradient(to left, var(--leaf-fold), transparent var(--s-8));
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-4) var(--s-7);
+  margin-bottom: var(--s-4);
 }
 
-.pb-right {
-  position: relative;
-  padding-left: var(--s-9);
-  border-left: 1px dashed var(--margin-rule);
-  background: linear-gradient(to right, var(--leaf-fold), transparent var(--s-6));
-}
-
-/* The red double margin rule of a ledger page */
-.pb-right::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--s-7);
-  width: var(--s-1);
-  border-inline: 1px solid var(--margin-rule);
-}
-
-.pb-mark {
-  font-family: var(--font-display);
-  font-size: var(--fs-figure);
-  line-height: var(--lh-tight);
-  letter-spacing: var(--track-h2);
-  color: var(--accent);
-}
-
-.pb-kind {
-  font-size: var(--fs-small);
-  color: var(--ink-2);
-}
-
-.pb-note {
-  margin-top: auto;
-  font-size: var(--fs-meta);
-  line-height: var(--lh-ui);
-  color: var(--ink-3);
-  overflow-wrap: anywhere;
-}
-
-.pb-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-.pb-table th {
-  height: var(--s-8);
-  padding: 0 var(--s-2);
-  font-size: var(--fs-meta);
-  font-weight: var(--w-regular);
-  text-align: left;
-  color: var(--ink-3);
-  border-bottom: var(--rule-double);
-}
-
-.pb-table td {
-  height: var(--s-10);
-  padding: var(--s-1) var(--s-2);
-  border-bottom: 1px solid var(--hair-strong);
-  vertical-align: middle;
-}
-
-.pb-table th:first-child,
-.pb-table td:first-child {
-  padding-left: 0;
-}
-
-.pb-table th:last-child,
-.pb-table td:last-child {
-  padding-right: 0;
-}
-
-.pb-table .n {
-  text-align: right;
-  white-space: nowrap;
-}
-
-.pb-no {
-  width: var(--s-8);
+.inst-label {
+  margin-bottom: var(--s-2);
   font-size: var(--fs-small);
   color: var(--ink-3);
 }
 
-.pb-out {
-  width: var(--pb-col-outcome);
-  text-align: center;
+.inst-card {
+  padding: var(--s-7);
+  border: var(--rule-strong);
+  border-radius: var(--r-card);
+  background: var(--slip);
 }
 
-.pb-amt {
-  width: var(--pb-col-amount);
+.inst-down {
+  border-left: var(--s-1) solid var(--signal);
 }
 
-.pb-amt span {
-  display: block;
+.inst-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-6);
 }
 
-.pb-sum {
+.inst-title {
+  font-size: var(--fs-lede);
   font-weight: var(--w-medium);
+  line-height: var(--lh-heading);
 }
 
-.pb-prop {
-  margin-top: var(--s-1);
-  font-size: var(--fs-meta);
-  color: var(--ink-3);
+.inst-card > .inst-title {
+  margin-bottom: var(--s-6);
 }
 
-.pb-entry span {
-  display: block;
+.inst-head .stamp {
+  font-size: var(--fs-small);
 }
 
-.pb-who {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* The party control sits behind a perforation, like a slip's stub */
+.inst-party {
+  margin-top: var(--s-7);
+  padding-top: var(--s-6);
+  border-top: var(--perforation);
 }
 
-.pb-who {
-  font-weight: var(--w-medium);
+.inst-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+  padding-top: var(--s-3);
+  border-top: var(--hair);
 }
 
-.pb-how {
-  margin-top: var(--s-1);
-  font-size: var(--fs-meta);
-  color: var(--ink-3);
+.inst-foot .prov {
+  margin-top: 0;
 }
 
-.pb-foot {
-  margin-top: var(--s-4);
-  font-size: var(--fs-meta);
-  color: var(--ink-3);
-}
-
-/* Stamps sit at different angles, like a hand pressed them */
-.pb-table tr:nth-child(3n + 2) .stamp,
-.book-ledger tr:nth-child(3n + 2) .stamp,
-.outcomes > div:nth-child(3n + 2) .stamp {
-  --tilt: var(--tilt-b);
-}
-
-.pb-table tr:nth-child(3n) .stamp,
-.book-ledger tr:nth-child(3n) .stamp,
-.outcomes > div:nth-child(3n) .stamp {
-  --tilt: var(--tilt-c);
-}
-
-/* The one entrance: lines are written in, then stamped */
-.pb-table tbody tr {
-  animation: rise var(--dur-enter) var(--ease) both;
-}
-
-.pb-table .stamp {
-  animation: press var(--dur-enter) var(--ease) both;
-}
-
-.pb-table tbody tr:nth-child(2) {
-  animation-delay: calc(var(--stagger) * 1);
-}
-
-.pb-table tbody tr:nth-child(3) {
-  animation-delay: calc(var(--stagger) * 2);
-}
-
-.pb-table tbody tr:nth-child(4) {
-  animation-delay: calc(var(--stagger) * 3);
-}
-
-.pb-table tbody tr:nth-child(5) {
-  animation-delay: calc(var(--stagger) * 4);
-}
-
-.pb-table tbody tr:nth-child(6) {
-  animation-delay: calc(var(--stagger) * 5);
-}
-
-.pb-table tbody tr:nth-child(1) .stamp {
-  animation-delay: calc(var(--stagger) * 6);
-}
-
-.pb-table tbody tr:nth-child(2) .stamp {
-  animation-delay: calc(var(--stagger) * 7);
-}
-
-.pb-table tbody tr:nth-child(3) .stamp {
-  animation-delay: calc(var(--stagger) * 8);
-}
-
-.pb-table tbody tr:nth-child(4) .stamp {
-  animation-delay: calc(var(--stagger) * 9);
-}
-
-.pb-table tbody tr:nth-child(5) .stamp {
-  animation-delay: calc(var(--stagger) * 10);
-}
-
-.pb-table tbody tr:nth-child(6) .stamp {
-  animation-delay: calc(var(--stagger) * 11);
-}
-
-/* Sections */
+/* Bands below the hero */
 .band {
   padding-block: var(--s-12);
   border-top: var(--hair);
@@ -285,14 +114,14 @@
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   gap: var(--s-10);
-  margin-top: var(--s-8);
-  align-items: start;
+  align-items: end;
 }
 
 .prose {
   display: grid;
   gap: var(--s-4);
   max-width: var(--measure-wide);
+  margin-top: var(--s-7);
   font-size: var(--fs-read);
   line-height: var(--lh-read);
 }
@@ -300,7 +129,7 @@
 .missing {
   list-style: none;
   padding: 0;
-  border-top: 1px solid var(--hair-strong);
+  border-top: var(--rule-strong);
 }
 
 .missing li {
@@ -327,18 +156,21 @@
 }
 
 .lanes {
-  list-style: none;
-  padding: 0;
-  margin-top: var(--s-9);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid var(--hair-strong);
+  margin-top: var(--s-9);
+  padding: 0;
+  list-style: none;
+  border-top: var(--rule-strong);
   counter-reset: lane;
 }
 
 .lanes li {
-  counter-increment: lane;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   padding: var(--s-6) var(--s-6) 0;
+  counter-increment: lane;
 }
 
 .lanes li + li {
@@ -367,15 +199,19 @@
   line-height: var(--lh-read);
 }
 
+.lanes .btn {
+  margin-top: var(--s-4);
+}
+
 .closes {
-  margin-top: var(--s-11);
   display: grid;
   grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
   gap: var(--s-6) var(--s-10);
+  margin-top: var(--s-11);
 }
 
 .outcomes {
-  border-top: 1px solid var(--hair-strong);
+  border-top: var(--rule-strong);
 }
 
 .outcomes > div {
@@ -392,6 +228,19 @@
   color: var(--ink-2);
 }
 
+.outcomes dd .link-btn {
+  margin-top: var(--s-1);
+  font-size: var(--fs-small);
+}
+
+.outcomes > div:nth-child(3n + 2) .stamp {
+  --tilt: var(--tilt-b);
+}
+
+.outcomes > div:nth-child(3n) .stamp {
+  --tilt: var(--tilt-c);
+}
+
 .council {
   grid-column: 2;
   max-width: var(--measure-wide);
@@ -399,25 +248,25 @@
   line-height: var(--lh-read);
 }
 
-.checks {
-  list-style: none;
-  padding: 0;
-  margin-top: var(--s-8);
+/* Proof: the checks, live */
+.proof-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 var(--s-10);
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-10);
+  align-items: start;
 }
 
-.checks li {
-  padding-block: var(--s-6);
-  border-top: 1px solid var(--hair-strong);
-}
-
-.checks p {
-  margin-top: var(--s-2);
-  max-width: var(--measure);
+.ids {
+  margin-top: var(--s-5);
+  font-size: var(--fs-small);
   color: var(--ink-2);
-  line-height: var(--lh-read);
+}
+
+.proof-panel {
+  padding: var(--s-6);
+  border: var(--rule-strong);
+  border-radius: var(--r-card);
+  background: var(--surface);
 }
 
 .try {
@@ -445,14 +294,9 @@
 }
 
 @media (max-width: 960px) {
-  .hero {
-    min-height: 0;
-    padding-block: var(--s-9) var(--s-10);
-  }
-
-  .hero-grid,
   .problem-grid,
-  .closes {
+  .closes,
+  .proof-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--s-8);
   }
@@ -460,93 +304,8 @@
   .council {
     grid-column: 1;
   }
-}
 
-@media (max-width: 1180px) {
-  .pb-spread {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .pb-left {
-    display: none;
-  }
-
-  .pb-right {
-    border-left: 0;
-  }
-}
-
-@media (max-width: 720px) {
-  .band {
-    padding-block: var(--s-10);
-  }
-
-  .passbook {
-    transform: none;
-  }
-
-  .pb-spread {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .pb-right {
-    padding: var(--s-4) var(--s-4) var(--s-4) var(--s-8);
-    border-left: 0;
-  }
-
-  .pb-right::before {
-    left: var(--s-5);
-  }
-
-  /* On a phone each line is a small card: the entry on the left, the amount and its stamp on the right */
-  .pb-table,
-  .pb-table tbody {
-    display: block;
-  }
-
-  .pb-table thead {
-    display: none;
-  }
-
-  .pb-table tbody tr {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      'entry amount'
-      'entry outcome';
-    gap: var(--s-1) var(--s-3);
-    padding-block: var(--s-3);
-    border-bottom: 1px solid var(--hair-strong);
-  }
-
-  .pb-table td {
-    display: block;
-    height: auto;
-    padding: 0;
-    border: 0;
-  }
-
-  .pb-no {
-    display: none;
-  }
-
-  .pb-entry {
-    grid-area: entry;
-  }
-
-  .pb-amt {
-    grid-area: amount;
-    width: auto;
-  }
-
-  .pb-out {
-    grid-area: outcome;
-    width: auto;
-    text-align: right;
-  }
-
-  .lanes,
-  .checks {
+  .lanes {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -560,11 +319,30 @@
     border-left: 0;
     border-top: var(--hair);
   }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    padding-block: var(--s-8) var(--s-10);
+  }
+
+  .band {
+    padding-block: var(--s-10);
+  }
+
+  .inst-card,
+  .proof-panel {
+    padding: var(--s-5);
+  }
+
+  .inst-controls .seg,
+  .inst-party .seg {
+    display: flex;
+  }
 
   .outcomes > div {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--s-2);
-    justify-items: start;
   }
 
   .try {

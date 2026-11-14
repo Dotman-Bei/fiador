@@ -3,30 +3,6 @@
   max-width: var(--container-app);
 }
 
-/* Testnet line: one line of facts above the topbar */
-.testnet-line {
-  background: var(--select);
-  color: var(--on-select);
-  font-size: var(--fs-small);
-}
-
-.testnet-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-4);
-  min-height: var(--s-7);
-}
-
-.testnet-row a {
-  color: var(--on-select);
-  white-space: nowrap;
-}
-
-.testnet-short {
-  display: none;
-}
-
 /* Topbar: wordmark, ledger index tabs, tools */
 .topbar {
   background: var(--surface);
@@ -330,59 +306,6 @@
 
 .cell-id a {
   color: var(--ink);
-}
-
-/* Provenance tags: a word plus a shape */
-.prov {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  margin-top: var(--s-3);
-  font-size: var(--fs-meta);
-  color: var(--ink-3);
-}
-
-.prov + .prov {
-  margin-top: var(--s-1);
-}
-
-.prov-mark {
-  flex: none;
-  width: var(--s-2);
-  height: var(--s-2);
-  border: 1px solid currentColor;
-  border-radius: 50%;
-}
-
-.prov-live .prov-mark {
-  background: currentColor;
-}
-
-.prov-stale {
-  color: var(--signal);
-}
-
-.prov-stale .prov-mark {
-  border-radius: 0;
-  background: currentColor;
-}
-
-.prov-rules .prov-mark {
-  border-radius: 0;
-}
-
-.prov-recorded .prov-mark {
-  border-width: 2px;
-}
-
-.prov-fixture,
-.prov-illustrative {
-  color: var(--signal);
-}
-
-.prov-fixture .prov-mark,
-.prov-illustrative .prov-mark {
-  border-style: dashed;
 }
 
 /* Data states */
@@ -699,14 +622,6 @@ ul.narrow-only,
 }
 
 @media (max-width: 720px) {
-  .testnet-long {
-    display: none;
-  }
-
-  .testnet-short {
-    display: inline;
-  }
-
   .tabs {
     display: none;
   }
