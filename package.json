@@ -20,6 +20,7 @@
     "verify": "tsx scripts/verify.ts",
     "freeze": "tsx scripts/freeze.ts",
     "visitor": "tsx scripts/visitor.ts",
+    "admit": "tsx scripts/admit.ts",
     "web": "vite --config web/vite.config.ts",
     "web:build": "vite build --config web/vite.config.ts",
     "web:preview": "vite preview --config web/vite.config.ts",
