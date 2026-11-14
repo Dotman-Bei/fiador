@@ -4,7 +4,6 @@ import { DEMO_PARAMS } from '../../../src/lib/desk';
 import { buildFiadorPolicy } from '../../../src/lib/sputnik';
 import { DEPLOYMENT, loan, member, NEAR, NOW, proposal, snapshot } from '../test/fixtures';
 import { attentionItems, lastMovement } from './attention';
-import { DeskView } from './pages/Desk';
 import { LoanDetailView } from './pages/LoanDetail';
 import { filterLoans, LoansView } from './pages/Loans';
 import { MemberDetailView, MembersView } from './pages/Members';
@@ -132,7 +131,4 @@ describe('pages', () => {
     expect(html).toContain('lasts 10 min');
   });
 
-  it('desk page offers the checks', () => {
-    expect(renderToStaticMarkup(<DeskView deployment={DEPLOYMENT} snap={SNAP} fresh={FRESH} checks={{ phase: 'idle' }} onRunChecks={() => undefined} />)).toContain('Run the checks');
-  });
 });

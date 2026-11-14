@@ -1,5 +1,5 @@
 /** /app/: the board as a hash-routed shell. Every page reads the one live store; nothing needs a wallet. */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Deployment } from '../../../src/lib/deployments';
 import { MemberActions } from '../wallet/MemberActions';
@@ -53,6 +53,7 @@ export function tabsFor(snap: Snapshot | null, nowMs: number): Tab[] {
     { key: 'loans', label: 'Loans', href: '#/loans' },
     { key: 'requests', label: 'Requests', href: '#/requests', count: waiting },
     { key: 'members', label: 'Members', href: '#/members' },
+    { key: 'desk', label: 'Desk & proof', short: 'Desk', href: '#/desk' },
   ];
 }
 
@@ -73,6 +74,11 @@ export function App() {
   const checks = useChecksStore();
   const [bootMs] = useState(() => Date.now());
   useRouteEffects(route);
+  // The proof page runs the checks on its first visit; they are then shared with every loan page.
+  const checksIdle = checks.state.phase === 'idle';
+  useEffect(() => {
+    if (route.name === 'desk' && checksIdle) checks.run();
+  }, [route.name, checksIdle]);
   const { deployment, state } = board;
   const fresh = freshnessOf(board, nowMs);
   const checkList = checks.state.phase === 'done' ? checks.state.run.checks : null;

@@ -14,13 +14,15 @@ export interface Tab {
   href: string;
   /** Shown beside the label when above zero (Requests waiting). */
   count?: number;
+  /** A shorter label for the phone tab bar. */
+  short?: string;
 }
 
 /** The routes this build ships; a tab appears in the stage that builds its page. */
 export const TABS: readonly Tab[] = [{ key: 'overview', label: 'Overview', href: '#/' }];
 
-/** Where "What this means" points: the in-app proof page once it exists, else the landing's proof section. */
-export const FACTS_HREF = '../#proof';
+/** Where "What this means" points: the board's proof page. */
+export const FACTS_HREF = '#/desk';
 
 const CHIP: Record<BoardView['phase'], string> = {
   unseeded: 'Not seeded',
@@ -86,7 +88,7 @@ function StatusChip({ board, nowMs }: { board: BoardView; nowMs: number }) {
   );
 }
 
-function Tabs({ route, tabs, className, label }: { route: Route; tabs: readonly Tab[]; className: string; label: string }) {
+function Tabs({ route, tabs, className, label, short = false }: { route: Route; tabs: readonly Tab[]; className: string; label: string; short?: boolean }) {
   const current = tabOf(route);
   return (
     <nav className={className} aria-label={label}>
@@ -94,7 +96,7 @@ function Tabs({ route, tabs, className, label }: { route: Route; tabs: readonly 
         {tabs.map((t) => (
           <li key={t.key}>
             <a href={t.href} aria-current={t.key === current ? 'page' : undefined}>
-              {t.label}
+              {short ? t.short ?? t.label : t.label}
               {t.count !== undefined && t.count > 0 ? (
                 <span className="tab-count">
                   {t.count}
@@ -160,7 +162,7 @@ export function Shell({ route, board, nowMs, tabs = TABS, factsHref = FACTS_HREF
           </p>
         </div>
       </footer>
-      {tabs.length > 1 ? <Tabs route={route} tabs={tabs} className="tabbar" label="Board, phone" /> : null}
+      {tabs.length > 1 ? <Tabs route={route} tabs={tabs} className="tabbar" label="Board, phone" short /> : null}
     </>
   );
 }

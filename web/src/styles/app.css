@@ -1030,3 +1030,69 @@ ul.narrow-only,
     flex-wrap: wrap;
   }
 }
+
+/* Desk and proof */
+.policy-table td,
+.policy-table tbody th {
+  height: auto;
+  padding-block: var(--s-3);
+  vertical-align: top;
+  white-space: normal;
+}
+
+.id-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.block-line {
+  display: block;
+}
+
+.params {
+  display: block;
+}
+
+.param {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.param:last-child dt,
+.param:last-child dd {
+  border-bottom: 0;
+}
+
+.param-raw {
+  margin-left: var(--s-3);
+  color: var(--ink-3);
+  font-size: var(--fs-meta);
+}
+
+.detail-main > .card + .block {
+  margin-top: var(--s-9);
+}
+
+@media (max-width: 720px) {
+  .param {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .param dt {
+    border-bottom: 0;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .param dd {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .slip-stub {
+    overflow-wrap: anywhere;
+    padding-inline: var(--s-1);
+    text-align: center;
+  }
+}
