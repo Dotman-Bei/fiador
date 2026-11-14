@@ -68,6 +68,11 @@ Win the Social Money track (1st = $10K), keeping the grand prize in reach.
 | 2.5 | pending | | |
 | 3 | pending | | |
 
+## Next action (updated 2026-11-14 ~16:05 UTC) — closing pass verified through gate 13; gate 14 handover next
+
+- **Verified by the guide (GitHub + live URL, main 389927f):** repo public (gh api: visibility public); history scan 7.1 recorded two findings (Windows user name in 5 doc lines and 2 wasm files; personal email in commit metadata), both accepted by the builder (option A, no rewrite) before the flip at 15:40 UTC. GitHub Pages built from gh-pages, https://dotman-bei.github.io/fiador/ and /app/ return 200; headless render of /app/#/loans shows all 12 loans (#11 and #10 Repaid, #7 Defaulted) with live chip. README: only TBD left is the demo post URL; Known-limitations bullets added; no gendered pronouns in README or submission-draft. HACKATHON.md unchanged (gate 12).
+- **Left:** gate 14 paste sheet and X post text, then builder-only: five form fields, X post with video, post URL to concierge (last commit), Submit. Guide amendment: the X post should describe what the video shows (live wallet ask and repay), not only the scripted Ada/Bayo story.
+
 ## Next action (updated 2026-11-14 ~15:35 UTC) — demo cut APPROVED by the builder; Step 3 closing pass next
 
 - **Builder approved the cut ("approved") at ~15:35 UTC.** Step 2.5 done. Next: gate-concierge closing pass (opus, high): history secret scan, then the repo public flip (builder's explicit go), Pages hosting, README/submission-draft TBDs and Known-limitations bullets, neutral wording in submission-draft line 61, HACKATHON.md re-fetch, paste sheet. Builder-only: X post, form fields, Submit. Times below said ~16:40 in the first draft; the real clock was ~15:30 UTC.
