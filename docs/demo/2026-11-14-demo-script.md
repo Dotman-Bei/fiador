@@ -105,14 +105,14 @@ words: 30 · planned: 12s @ ~2.4 w/s · tone: plain, a little dry, the problem i
 **S2** — Now live, on testnet. A member signed in with their own wallet asks the desk for two NEAR, within their standing of seven, and approves in the wallet. The desk files a Sputnik transfer and approves it. The DAO pays, and the board shows the new loan with its proposal id.
 words: 51 · planned: 20s @ ~2.4 w/s · tone: steady, present tense, the loudest moment of the film · gloss: NEAR → "near"; Sputnik → "SPUT-nik". Amount (two) and standing (seven) are templated from the take (take 2)
 
-**S3** — Repay: one click, one approval in the wallet. The loan closes repaid on time, and the treasury is back where it started. Waiting is cut only where the clock on screen shows it.
-words: 33 · planned: 18s (the live footage, not the words, sets this scene's length) · tone: matter-of-fact · gloss: none. the treasury line is read on screen in the take; the standing change is shown in S5, read after the take
+**S3** — Repay: one click, one approval in the wallet. The loan closes repaid on time, the treasury is back where it started, and the member's standing goes from seven to eight. Waiting is cut only where the clock on screen shows it.
+words: 41 · planned: 18s (the live footage, not the words, sets this scene's length) · tone: matter-of-fact · gloss: none. both standings are on screen in the live take: 7 on the Members page before the repay, 8 on the Overview's Members table after it
 
-**S4** — The same chain, from the scripted run on the thirteenth: loan zero. ada-1 asked for six NEAR, bayo-1 pledged two from their own standing, and ada-1 repaid on time. The desk itself holds no access keys.
-words: 36 · planned: 15s @ ~2.4 w/s · tone: calm, labelled as scripted · gloss: ada-1 → "ADA one"; bayo-1 → "BAH-yo one"
+**S4** — The same chain, from the scripted run on the thirteenth: loan zero. ada-1 asked for six NEAR, bayo-1 pledged two from their own standing, and ada-1 repaid on time.
+words: 29 · planned: 15s @ ~2.4 w/s · tone: calm, labelled as scripted · gloss: ada-1 → "ADA one"; bayo-1 → "BAH-yo one"
 
-**S5** — The board keeps every loan with its Sputnik proposal id, the live takes included, and the member's standing now reads eight. The council is three scripted accounts.
-words: 27 · planned: 10s @ ~2.4 w/s · tone: calm walk-through · gloss: none
+**S5** — The board keeps every loan with its Sputnik proposal id, the live takes included, and the member's standing now reads eight.
+words: 21 · planned: 10s @ ~2.4 w/s · tone: calm walk-through · gloss: none
 
 **S6** — Loan three, from the scripted run, defaulted: chidi-1's standing went to zero, and co-signer ada-1 lost the one NEAR pledged. Loan seven was a real miss under a two-minute term; the council has since raised the term to six hundred seconds.
 words: 41 · planned: 17s @ ~2.4 w/s · tone: level, no drama · gloss: chidi-1 → "CHEE-dee one"
@@ -120,13 +120,13 @@ words: 41 · planned: 17s @ ~2.4 w/s · tone: level, no drama · gloss: chidi-1 
 **S7** — Desk and proof runs the checks in your browser, against public RPC: a two-of-three council, a narrow desk seat, no access keys, every loan matching its proposal. All pass.
 words: 29 · planned: 11s (live recount) · tone: confident, short · gloss: RPC → "R P C". "All pass" is spoken only if every row passed in the take
 
-**S8** — The same checks run from a terminal. npm run verify reads public testnet and prints one line per check. Twenty-three checks, eleven loans: verify pass.
-words: 25 · planned: 10s @ ~2.4 w/s · tone: flat, let the terminal speak · gloss: npm → "N P M"; the two numbers are templated from the recorded `VERIFY PASS (N checks, M loans)` line (the loan count is 11 and the check count 23 if the live take adds loan #10)
+**S8** — The same checks run from a terminal. npm run verify reads public testnet and prints one line per check. Twenty-four checks, twelve loans: verify pass.
+words: 25 · planned: 10s @ ~2.4 w/s · tone: flat, let the terminal speak · gloss: npm → "N P M"; the two numbers are templated from the recorded `VERIFY PASS (N checks, M loans)` line (recorded: 24 checks, 12 loans, after live takes 1 and 2 added loans #10 and #11)
 
 **S9** — Testnet only, unaudited, not real money. The desk is frozen: no access keys, no admin, no upgrade. The council is three scripted accounts sharing one operator key, and the first loans came from a scripted run.
 words: 36 · planned: 13s @ ~2.4 w/s · tone: plain, unhurried, the honesty lines · gloss: none
 
-Total 308 words, about 128 s at the planning rate. **Trim rule:** if the audio-first timing pushes the cut past 2:15 including the outro, S5 drops to its first sentence, then S4 drops its last sentence, then S6 drops its last sentence, in that order, until the total is at or under 2:15. S2 and S3 are never trimmed.
+Total 303 words, about 126 s at the planning rate. **Trim rule:** if the audio-first timing pushes the cut past 2:15 including the outro, S5 drops to its first sentence, then S4 drops its last sentence, then S6 drops its last sentence, in that order, until the total is at or under 2:15. S2 and S3 are never trimmed.
 
 ## 5 — Assembly plan
 
@@ -137,16 +137,25 @@ Honesty on screen: the tags in §1 and S9's three lines. Mechanics: references/d
 
 ## 6 — QC record
 
+Final render `demo/out/fiador-demo.mp4`: 1920×1080 h264 30 fps, AAC 48 kHz, 129.3 s (2:09.3, cap 2:15), −14.1 LUFS integrated, −1.9 dBTP (two-pass loudnorm). Keyframes of every scene and the first and last frames were read as images at full resolution (live scenes at several moments, including both Meteor popups). Narration was not listened to by the assembler (no audio playback in this seat): Kokoro's word alignment succeeded for every scene, but pronunciation (Fiador, DAO, the member names) is for the builder's ears at the watch.
+
 | check | scene(s) | pass/fail | note |
 |---|---|---|---|
-| money shot visible | | | |
-| text legible at 1080p | | | |
-| captions present + synced | | | |
-| no capture yellow border | | | |
-| no secret / no address that shouldn't be on screen | | | |
-| per-scene duration within budget | | | |
-| total duration within ±10% | | | |
-| audio present, loudness sane | | | |
+| money shot visible | S2, S3 | pass | the live ask (typing 2, Ask, Meteor approval, executing, hash, Overview with 2 NEAR out and treasury 13.4215, Loans with loan #11 Active and proposal #21), then the live repay (Repay, Meteor approval of Send 2 NEAR, executing, hash with the Members row at 8 NEAR, Overview with book 0 and treasury 15.4215, Loans with #11 Repaid). The chain checks of take 2 passed 14 of 14 |
+| text legible at 1080p | all | pass | board text is small but crisp at 1920 wide (captured at 1920×980, no scaling); terminal ending is punched in 1.9x for the last 3.6 s so "VERIFY PASS (24 checks, 12 loans)" is large; live scenes are scaled to 95% |
+| captions present + synced | all | pass | word-timed from Kokoro token timestamps, one line at a time in a 100 px strip; spot checks matched the footage (the "one approval in the wallet" line lands on the Meteor Approve popup; "its proposal id" on the Loans row with #21; "standing goes from seven to eight" on the Members row at 8 NEAR). Residual: not verified by ear |
+| no capture yellow border | S2, S3, S8 | pass | no Windows.Graphics.Capture border in the ddagrab display frames or the gfxcapture terminal frames |
+| no secret / no address that shouldn't be on screen | all | pass | the only account id shown is `goodkale2741.testnet` (public); Meteor popups show that id and a fee line, no phrase or key; no `.env` content; the taskbar (Telegram badge) is cropped; other Chrome extension icons and the profile avatar are covered with a flat bar in S2 and S3 (disclosed here); the terminal prompt is a plain `$` and the window title shows `cmd.exe`, no Windows user name; secrets sweep of every written file: clean |
+| per-scene duration within budget | all | pass | S1 11.4, S2 19.0, S3 18.0, S4 12.8, S5 8.4, S6 16.6, S7 12.6, S8 11.7, S9 15.7, outro 3.0 s (budget table 124 s scenes plus 3 s; actual 126.2 s plus 3 s because S5 and S3 were re-timed as logged in §8) |
+| total duration within ±10% | all | pass | 129.3 s against 127 s planned at the rewrite and about 129 s after the S5 edit; under the 2:15 hard cap by 5.7 s |
+| audio present, loudness sane | all | pass | stereo AAC, −14.1 LUFS, LRA 4.4, true peak −1.9 dBTP, mean −17.9 dB |
+
+Residual notes carried to the watch:
+1. S8's terminal footage is cut (about 6 s of `npm run verify`'s streaming output is skipped between the command and the final lines); the terminal has no clock, so this cut is not self-evident on screen. The real run took about 13 s and passed 24 of 24.
+2. S2 and S3 are five hard-cut segments each of the single live take 2, every cut visible as a jump of the capture clock (14:28:57 to 14:30:08 UTC); footage is never sped up.
+3. Live take 1 (loan #10) failed its frame gate and is not in the film; its loan is real and shows in the board scenes (S5 notes it on screen).
+4. S5 keeps only its first narration sentence and S4 drops its last (the trim rule), as logged.
+5. The Chrome Headless Shell (131 MB, 303 MB unpacked) was downloaded by Remotion during the render although the installed Chrome had been supplied: reported to the builder.
 
 ## 7 — Publish block
 
@@ -170,3 +179,7 @@ Honesty on screen: the tags in §1 and S9's three lines. Mechanics: references/d
 | 2026-11-14 | superseded-edit (S2 and S3 are now the live ask and repay; the loan #0 replay shrinks to S4 context; old S3 merged into S4; old S8 wallet still card dropped; neutral wording; loan #7 mention carries the 600 s term raise; live-take pre-flight and scripted-vs-real list added; optional beat O1 listed; total about 2:07, cap 2:15); fresh approval pending | demo-studio |
 | 2026-11-14 | superseded-edit (live take 2 passed: the ask also needed a wallet approval so S2 says so; S3's standing sentence dropped because the Members page after the repay was not on screen, S5 now carries the standing read after the take; S5 10 s; totals 126 s scenes, about 2:09 with the outro) | demo-studio |
 | 2026-11-14 | approved (rewritten script, storyboard stills, O1 skipped; live take 2 accepted as A) | the builder |
+| 2026-11-14 | superseded-edit (frame review found the Overview's Members table shows standing 8 after the repay, so S3 says it again; the trim rule was applied to S5 and S4 to stay under 2:15: S5 keeps its first sentence, S4 drops its last; S8 numbers templated to 24 checks, 12 loans) | demo-studio |
+| 2026-11-14 | recorded (9/9 scenes: S2 and S3 from live take 2; S1, S4 to S7 headless Playwright, S8 terminal gfxcapture; none BLOCKED) | demo-studio |
+| 2026-11-14 | assembled (Remotion 4.0.543, Kokoro narration, captions, 1080p h264, 129.3 s) | demo-studio |
+| 2026-11-14 | QC passed [residuals: narration not heard by the assembler; S8 streaming output cut; toolbar icons masked in S2 and S3; Headless Shell downloaded by Remotion] | demo-studio |

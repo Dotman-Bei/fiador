@@ -64,4 +64,4 @@ Built at NEAR HACKATHON on NEAR testnet. Repo: https://github.com/Dotman-Bei/fia
 
 @NEARProtocol #NEARHackathon
 ```
-Attach: TBD-post-build:demo-video-file. Then paste the post's URL into `demoUrl` above.
+Attach: the local file `demo/out/fiador-demo.mp4` (git-ignored; 1080p h264, 2:09, rendered 2026-11-14; awaiting the builder's watch). Then paste the post's URL into `demoUrl` above.

@@ -15,10 +15,10 @@ const firstLine = (text: string): { words: string[]; active: number } => ({ word
 
 const short = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
 
-const Honesty = () => (
+export const Honesty = () => (
   <AbsoluteFill style={{ background: C.ground, fontFamily: SERIF, color: C.ink }}>
-    <div style={{ position: 'absolute', left: 140, top: 100, fontSize: 56, letterSpacing: -0.5 }}>Fiador</div>
-    <div style={{ position: 'absolute', left: 140, top: 230, right: 140 }}>
+    <div style={{ position: 'absolute', left: 140, top: 70, fontSize: 56, letterSpacing: -0.5 }}>Fiador</div>
+    <div style={{ position: 'absolute', left: 140, top: 190, right: 140 }}>
       {[
         'Testnet only. Unaudited. Not real money.',
         'The desk is frozen: 0 access keys, no admin, no upgrade.',
