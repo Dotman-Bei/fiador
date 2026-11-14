@@ -74,10 +74,11 @@ export function Landing({ deployment }: { deployment: Deployment | null }) {
         <section aria-labelledby="hero" className="hero">
           <div className="wrap">
             <div className="hero-copy">
-              <h1 id="hero">A credit union seat for Sputnik DAOs</h1>
+              <h1 id="hero">Short until the payout lands? Your DAO can lend you the gap.</h1>
               <p className="lede">
-                Members borrow treasury NEAR at once within their standing, a council grant that grows with every on-time repayment. A co-signer covers more and
-                anything larger goes to a council vote. Every payout is a native Sputnik proposal, and every repayment returns to the treasury.
+                Fiador is a credit union for your Sputnik DAO. Members borrow treasury NEAR at once within their standing, a council grant that grows with every
+                on-time repayment. A co-signer covers more and anything larger goes to a council vote. Every payout is a native Sputnik proposal, and every
+                repayment returns to the treasury.
               </p>
             </div>
             <div id="instrument" className="hero-instrument">

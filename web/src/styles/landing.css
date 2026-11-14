@@ -15,6 +15,7 @@
   font-size: var(--fs-lede);
   line-height: var(--lh-read);
   color: var(--ink-2);
+  text-wrap: pretty;
 }
 
 .hero-instrument {
