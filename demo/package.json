@@ -1,0 +1,23 @@
+{
+  "name": "fiador-demo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fiador demo video project (demo-studio, Step 2.5). Own package; the root package.json is not touched.",
+  "dependencies": {
+    "@remotion/bundler": "4.0.543",
+    "@remotion/captions": "4.0.543",
+    "@remotion/cli": "4.0.543",
+    "@remotion/media": "4.0.543",
+    "@remotion/renderer": "4.0.543",
+    "mediabunny": "1.64.0",
+    "playwright-core": "1.65.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.543"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "typescript": "5.9.3"
+  }
+}

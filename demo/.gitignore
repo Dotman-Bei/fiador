@@ -1,0 +1,15 @@
+node_modules/
+.venv/
+.serve/
+capture/
+audio/
+frames/
+qc/
+out/
+tmp/
+*.mp4
+*.wav
+*.webm
+*.log
+.env
+.env.*
