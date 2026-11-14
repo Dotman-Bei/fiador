@@ -11,6 +11,19 @@ import { shortAccount } from '../ledger';
 import { askCall, cancelCall, cosignCall, repayCall } from './actions';
 import type { CallSpec } from './actions';
 import { currentAccount, send, signIn, signOut } from './wallet';
+import type { WalletId } from './wallet';
+
+/** The two testnet wallets, said plainly: MyNearWallet no longer creates accounts. */
+export function WalletChooser({ onChoose, busy = false }: { onChoose: (walletId: WalletId) => void; busy?: boolean }) {
+  return (
+    <p className="act-connect">
+      <button type="button" className="btn" disabled={busy} onClick={() => onChoose('meteor-wallet')}>Connect with Meteor Wallet</button>
+      <button type="button" className="btn btn-quiet" disabled={busy} onClick={() => onChoose('my-near-wallet')}>Connect with MyNearWallet (existing accounts only)</button>
+    </p>
+  );
+}
+
+const WALLET_NAME: Record<WalletId, string> = { 'meteor-wallet': 'Meteor Wallet', 'my-near-wallet': 'MyNearWallet' };
 
 export function MemberActions({ deployment, loans = [] }: { deployment: Deployment | null; loans?: readonly LoanView[] }) {
   const [account, setAccount] = useState<string | null>(null);
@@ -19,6 +32,7 @@ export function MemberActions({ deployment, loans = [] }: { deployment: Deployme
   const [borrower, setBorrower] = useState('');
   const [maxPledge, setMaxPledge] = useState('1');
   const [loanId, setLoanId] = useState('');
+  const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
     currentAccount()
@@ -30,6 +44,17 @@ export function MemberActions({ deployment, loans = [] }: { deployment: Deployme
   const desk = deployment.desk;
   const open = loans.filter((l) => l.status === 'Active');
   const chosen = open.find((l) => String(l.id) === loanId) ?? open[0];
+  const connect = (walletId: WalletId): void => {
+    setConnecting(true);
+    setStatus(`Opening ${WALLET_NAME[walletId]}…`);
+    signIn(desk, walletId)
+      .then((id) => {
+        setAccount(id);
+        setStatus(id === null ? `${WALLET_NAME[walletId]} returned without an account.` : '');
+      })
+      .catch((e: unknown) => setStatus(`${WALLET_NAME[walletId]} did not sign in: ${e instanceof Error ? e.message : String(e)}`))
+      .finally(() => setConnecting(false));
+  };
   const run = (build: () => CallSpec): void => {
     try {
       const spec = build();
@@ -48,9 +73,7 @@ export function MemberActions({ deployment, loans = [] }: { deployment: Deployme
         <h2 id="act">Act as a member (testnet wallet)</h2>
         <p className="act-intro">Optional. Members admitted by the council can ask, co-sign and repay here. Everything on the board above works without a wallet.</p>
         {account === null ? (
-          <p className="act-connect">
-            <button type="button" className="btn" onClick={() => void signIn(desk)}>Connect a testnet wallet</button>
-          </p>
+          <WalletChooser busy={connecting} onChoose={connect} />
         ) : (
           <>
             <p className="act-account">
