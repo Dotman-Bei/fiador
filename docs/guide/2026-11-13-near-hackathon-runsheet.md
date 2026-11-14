@@ -68,6 +68,12 @@ Win the Social Money track (1st = $10K), keeping the grand prize in reach.
 | 2.5 | pending | | |
 | 3 | pending | | |
 
+## Next action (updated 2026-11-14 ~16:30 UTC) — SUBMITTED (builder-reported); judging 16–18 Nov UTC
+
+- **Builder reported the form submitted** (their word; no confirmation screenshot read by the guide). X post URL is in README line 8 and the draft's `demoUrl` (commit 2b7ac94); closing pass closed at 901bc0e. Repo public, board live on GitHub Pages.
+- **Open, optional, before 2026-11-14 23:59 UTC:** README restructure to the Ambit layout inside the locked R2 headings (block handed to the concierge; guide verifies facts, links, conformance on return). Do not touch the chain, the desk or the deployed board for the rest of the window except by a deliberate, verified change.
+- **Housekeeping (builder/demo-studio, none urgent):** close the two stray "exit $code" terminal windows; stop the static server on 5231 and the python server on 5192; optionally delete demo/node_modules/.remotion (Headless Shell, 131 MB); spare desk-only keys on goodkale2741.testnet are harmless. Fixes to submitted form fields go through the site's request route, never a resubmit (409).
+
 ## Next action (updated 2026-11-14 ~16:05 UTC) — closing pass verified through gate 13; gate 14 handover next
 
 - **Verified by the guide (GitHub + live URL, main 389927f):** repo public (gh api: visibility public); history scan 7.1 recorded two findings (Windows user name in 5 doc lines and 2 wasm files; personal email in commit metadata), both accepted by the builder (option A, no rewrite) before the flip at 15:40 UTC. GitHub Pages built from gh-pages, https://dotman-bei.github.io/fiador/ and /app/ return 200; headless render of /app/#/loans shows all 12 loans (#11 and #10 Repaid, #7 Defaulted) with live chip. README: only TBD left is the demo post URL; Known-limitations bullets added; no gendered pronouns in README or submission-draft. HACKATHON.md unchanged (gate 12).
