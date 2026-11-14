@@ -43,7 +43,7 @@ council. The desk never holds the money.
 
 ## Demo
 
-[![The Fiador board's overview at the redesign: the book, the desk panel and loans #0 to #5, read live from testnet](docs/design/screenshots/acceptance/overview-1440.jpg)](https://x.com/Heisbei02/status/2121636848644563439)
+[![The Fiador landing page: Short until the payout lands? Your DAO can lend you the gap, above a live loan timeline read from testnet](docs/design/screenshots/landing-hero-1440.png)](https://x.com/Heisbei02/status/2121636848644563439)
 
 **[Watch the demo on X](https://x.com/Heisbei02/status/2121636848644563439)** (2:09). The landing page's
 problem, then a live ask and repay from a real testnet wallet on the board (loan #11, Sputnik proposal 21),
@@ -52,7 +52,7 @@ checks turning to Pass, and `npm run verify` in a terminal.
 
 - Demo video (2:09, attached to the X post): https://x.com/Heisbei02/status/2121636848644563439
 - Live board (read-only, no wallet): https://dotman-bei.github.io/fiador/app/ (landing page: https://dotman-bei.github.io/fiador/)
-- Screenshot of the board's overview: [`docs/design/screenshots/acceptance/overview-1440.jpg`](docs/design/screenshots/acceptance/overview-1440.jpg) (taken at the redesign, before the testnet notice moved from a top bar into the footer)
+- Screenshot of the landing page's hero: [`docs/design/screenshots/landing-hero-1440.png`](docs/design/screenshots/landing-hero-1440.png) (taken 2026-11-14 from the hosted site)
 
 ### Explore without a wallet
 
@@ -362,8 +362,6 @@ Written here before anyone has to ask:
 - Loan #11's 41 s repayment was a demo take, not a usage pattern.
 - The 96 cargo tests run in near-sdk's mocked unit environment, not a sandbox. The cross-contract paths are
   proven live only where the evidence table says so.
-- The screenshot above was taken at the redesign, under the old 2 min term, and shows loans #0 to #5 only. The
-  hosted board shows the current book.
 
 ### Trust boundaries
 
