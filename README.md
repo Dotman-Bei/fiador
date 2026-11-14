@@ -5,9 +5,9 @@ A credit union seat for Sputnik DAOs: members borrow treasury NEAR within a limi
 
 ## Demo
 
-- Demo video: TBD-post-build:demo-video-url
-- Live board (read-only, no wallet): TBD-post-build:hosted-board-url
-- Screenshot of the board: TBD-post-build:board-screenshot
+- Demo video (2:09, attached to the X post): TBD-post-build:x-demo-post-url
+- Live board (read-only, no wallet): https://dotman-bei.github.io/fiador/app/ (landing page: https://dotman-bei.github.io/fiador/)
+- Screenshot of the board's overview: [`docs/design/screenshots/acceptance/overview-1440.jpg`](docs/design/screenshots/acceptance/overview-1440.jpg) (taken at the redesign, before the testnet notice moved from a top bar into the footer)
 
 ## What it does
 
@@ -19,7 +19,7 @@ Needs Node 22.22.2 or newer. No wallet, no keys, no secrets.
 
 1. Do `npm ci` - see the install finish with no errors.
 2. Do `npm run verify` - see one `PASS` line per check (factory upgrades off, the desk seat holds only the desk with transfer rights only, a 2-of-3 council, the desk has no access keys, every loan matches its Sputnik proposal) and a final `VERIFY PASS (N checks, M loans)`. It reads public testnet RPC only.
-3. Do `npm run web`, then open `http://localhost:5173/app/` - see the treasury, the "Waiting for a co-signer" list, the loan book with each loan's Sputnik proposal id and status, and every member's standing with the repaid loans behind it, read live from testnet. (The same board is hosted: TBD-post-build:hosted-board-url.)
+3. Do `npm run web`, then open `http://localhost:5173/app/` - see the treasury, the "Waiting for a co-signer" list, the loan book with each loan's Sputnik proposal id and status, and every member's standing with the repaid loans behind it, read live from testnet. (The same board is hosted at https://dotman-bei.github.io/fiador/app/.)
 4. Do `npm run visitor` - see a throwaway testnet account created from the public faucet join the visitor line, get its first ask held for a co-signer, borrow within its standing (paid by the DAO through a Sputnik proposal), repay, then `standing 0.1 -> 0.2 NEAR` and `VISITOR PASS`. Its key lives only in memory. If the public faucet or the visitor line is unavailable, it says so and exits without error; use step 2 instead.
 5. Do `npm run cargo -- test --manifest-path contract/desk/Cargo.toml` (needs Rust 1.99.0; on Windows the launcher also needs MSYS2 at `C:\msys64`) - see `test result: ok. 96 passed`.
 
@@ -39,8 +39,8 @@ If testnet RPC is unreachable, step 2 prints the RPC error; set `FIADOR_RPC` to 
 | Network | Account | What it is | Explorer |
 |---|---|---|---|
 | testnet | `sputnikv2.testnet` | Sputnik DAO factory (not ours) | https://testnet.nearblocks.io/address/sputnikv2.testnet |
-| testnet | TBD-post-build:dao-account | the demo DAO (Sputnik 2.3.1, bond 0, 3-member council) | TBD-post-build:dao-explorer-url |
-| testnet | TBD-post-build:desk-account | the Fiador desk contract (keyless) | TBD-post-build:desk-explorer-url |
+| testnet | `fiador.sputnikv2.testnet` | the demo DAO (Sputnik 2.3.1, bond 0, 3-member council) | https://testnet.nearblocks.io/address/fiador.sputnikv2.testnet |
+| testnet | `desk.fiador-ops-vmwpxk.testnet` | the Fiador desk contract (keyless) | https://testnet.nearblocks.io/address/desk.fiador-ops-vmwpxk.testnet |
 
 `deployments/testnet.json` holds the same ids; `verify` and the board read them from there.
 
@@ -70,7 +70,7 @@ If testnet RPC is unreachable, step 2 prints the RPC error; set `FIADOR_RPC` to 
 ## Build & test
 
 - Contract: Rust 1.99.0 (pinned in `rust-toolchain.toml`), `near-sdk` 5.30.1, built for `wasm32-unknown-unknown` with `--cfg near` (set in `.cargo/config.toml`). Do `npm run cargo -- test --manifest-path contract/desk/Cargo.toml` for the 96 unit tests and `npm run wasm -- desk` to rebuild `contract/res/fiador_desk.wasm`. `tools/cargo.ts` puts MSYS2's mingw64 tools on PATH and sets `AWS_LC_SYS_PREBUILT_NASM=1` on Windows.
-- TypeScript: do `npm run check` (strict `tsc`, then every vitest suite) and `npm run web:check` (web tests, then the production build of `/` and `/app/` into `dist/`).
+- TypeScript: do `npm run check` (strict `tsc`, then every vitest suite: 32 files, 176 tests) and `npm run web:check` (web tests: 13 files, 77 tests, then the production build of `/` and `/app/` into `dist/`). Counts as re-run on 2026-11-14, all passing.
 
 ### Libraries and tools
 
@@ -92,7 +92,13 @@ A fix after the freeze is a new desk: `npm run seed -- --desk desk2.<root>` depl
 
 Known limitations:
 
-- The demo council is scripted (three accounts, one operator key).
+- The demo council is three scripted accounts sharing one operator key: it shows the on-chain 2-of-3 mechanism, not three independent people.
+- Standing can be pumped instantly: there is no minimum loan age, so an admitted member can borrow a tiny amount and repay it at once, again and again, gaining standing on every round trip until the maximum. Exposure is bounded by the maximum standing per member and the book cap.
+- The visitor line is anonymous credit: a visitor can take its 0.1 NEAR and never repay, and the seat recycles after the default, so the DAO can lose up to the visitor starter per seat per cycle. Kill switch: the council passes `set_params` with `visitor_slots = 0`.
+- A loan can be stranded in `Filing` or `Voting` if one of its callbacks fails (out of gas or storage): `repay` and `mark_default` need an `Active` loan, so there is no on-chain recovery path for it. The council can still vote the proposal itself. Every static gas is set at least 1.3x the live measurement to make this unlikely.
+- `npm audit` reports 5 high-severity advisories (`nanoid`, `decode-uri-component`) in browser code that is loaded only when someone picks Meteor Wallet on the board. None of it runs in `verify`, the scripts or the contract.
+- The live loan term is 600 s with a 300 s grace period, set by council proposal 16. Loan #7 defaulted under the earlier 120 s term and 60 s grace; it stays in the book as an honest record.
+- Co-signing from the browser board was not exercised with a real wallet. The co-signed lane is proven by the scripted run (loan #0, Sputnik proposal 6).
 - Testnet only.
 - Unaudited.
 - The keyless freeze is permanent: the deployed desk can never be patched, only replaced by a new desk the council seats.

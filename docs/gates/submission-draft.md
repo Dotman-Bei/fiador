@@ -21,7 +21,7 @@ once; fix mistakes via https://nearhackathon.com/request-changes, never by resub
 | Team size * | `size` | one of `1`, `2 - 4`, `4 - 6`, `6 - 8`, `8+` | `1` |
 | Tracks * | `tracks` | "one or more of `defi`, `thesis`, `privacy`, `business`, `swarms`, `security`, `agents`, `realworld`, `games`, `nfts`, `memecoins`, `social`, `open`, each listed once" | `social` (primary). Optional: `security`, see the note below |
 | NEAR wallet address * | `nearAddress` | "2-64 characters, lowercase, matching `^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$`"; mainnet payout account | USER-DECIDES:mainnet-payout-account |
-| Repository link * | `projectUrl` | "http(s) URL of the public repository, max 300 characters, unique" | `https://github.com/Dotman-Bei/fiador` (must be public first: TBD-post-build:repo-public-flip) |
+| Repository link * | `projectUrl` | "http(s) URL of the public repository, max 300 characters, unique" | `https://github.com/Dotman-Bei/fiador` (public since 2026-11-14 15:40 UTC) |
 | Demo post link * | `demoUrl` | "http(s) URL of the public demo post, max 300 characters" | TBD-post-build:x-demo-post-url |
 | What did you build? * | `idea` | 20–2,000 characters | the text below (about 1,600 characters) |
 | Website (hidden) | `website` | spam trap: "any non-empty value rejects the submission" | leave empty |
@@ -46,9 +46,13 @@ It does not involve AI agents." USER-DECIDES:tick-security-or-not.
   `sputnikv2.testnet`, DAO version 2.3.1, unmodified); TypeScript (strict, ESM, Node 22) scripts on near-api-js 7.5.3;
   React 19 + Vite 8 static web app reading public RPC; no backend, no indexer.
 - Network: NEAR testnet only (rule Q-010: testnet-only projects are eligible in every track).
-- Demo DAO: TBD-post-build:dao-account · desk contract: TBD-post-build:desk-account
-- Live board: TBD-post-build:hosted-board-url (a static host; keep it up to 2026-11-18, ideally 2026-11-25, per Q-012)
-- Demo video: TBD-post-build:demo-video-url
+- Demo DAO: `fiador.sputnikv2.testnet` · desk contract: `desk.fiador-ops-vmwpxk.testnet` (keyless since 2026-11-13)
+- Live board: https://dotman-bei.github.io/fiador/app/ (landing https://dotman-bei.github.io/fiador/; GitHub Pages from
+  the `gh-pages` branch; keep it up to 2026-11-18, ideally 2026-11-25, per Q-012)
+- Demo video: attached to the X post (TBD-post-build:x-demo-post-url); the file is `demo/out/fiador-demo.mp4`
+  (git-ignored, not in the repo)
+- Tests (re-run 2026-11-14, all passing): `npm run check` 32 files / 176 tests; `npm run web:check` 13 files / 77
+  tests + build; desk contract 96 cargo tests
 - Built during the event: everything in the repository (created 2026-11-13). Libraries are listed in the README's
   Build & test section (Q-005). Code was written with Claude Code.
 - License: MIT (`LICENSE`, Q-014).
@@ -58,10 +62,10 @@ It does not involve AI agents." USER-DECIDES:tick-security-or-not.
 ```
 A Sputnik DAO can only give money away. Fiador lets it lend.
 
-Ada asks the treasury for 6 NEAR. Her standing covers 4, so the desk holds the request. Bayo co-signs 2 from his own standing, and 6 NEAR leaves the DAO as a native Sputnik proposal, approved in the same transaction with no council vote. She repays: the treasury is back where it started and both standings tick up.
+Ada asks the treasury for 6 NEAR. Ada's standing covers 4, so the desk holds the request. Bayo co-signs the other 2, and 6 NEAR leaves the DAO as a native Sputnik proposal, approved in the same transaction with no council vote. Ada repays: the treasury is back where it started and both standings tick up.
 
-Built at NEAR HACKATHON on NEAR testnet. Repo: https://github.com/Dotman-Bei/fiador · board: TBD-post-build:hosted-board-url
+Built at NEAR HACKATHON on NEAR testnet. Repo: https://github.com/Dotman-Bei/fiador · board: https://dotman-bei.github.io/fiador/app/
 
 @NEARProtocol #NEARHackathon
 ```
-Attach: the local file `demo/out/fiador-demo.mp4` (git-ignored; 1080p h264, 2:09, rendered 2026-11-14; awaiting the builder's watch). Then paste the post's URL into `demoUrl` above.
+Attach: the local file `demo/out/fiador-demo.mp4` (git-ignored; 1080p h264, 2:09, rendered 2026-11-14; approved by the builder). Then paste the post's URL into `demoUrl` above.
