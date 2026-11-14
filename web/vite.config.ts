@@ -12,6 +12,8 @@ export default defineConfig({
   root: here('.'),
   base: './',
   plugins: [react()],
+  // The Meteor Wallet SDK's randombytes needs Node's Buffer, which the browser build stubs; see web/src/wallet/randombytes.ts.
+  resolve: { alias: [{ find: /^randombytes$/, replacement: here('./src/wallet/randombytes.ts') }] },
   build: {
     outDir: here('../dist'),
     emptyOutDir: true,
