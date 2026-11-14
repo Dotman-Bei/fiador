@@ -23,7 +23,7 @@ Needs Node 22.22.2 or newer. No wallet, no keys, no secrets.
 4. Do `npm run visitor` - see a throwaway testnet account created from the public faucet join the visitor line, get its first ask held for a co-signer, borrow within its standing (paid by the DAO through a Sputnik proposal), repay, then `standing 0.1 -> 0.2 NEAR` and `VISITOR PASS`. Its key lives only in memory. If the public faucet or the visitor line is unavailable, it says so and exits without error; use step 2 instead.
 5. Do `npm run cargo -- test --manifest-path contract/desk/Cargo.toml` (needs Rust 1.99.0; on Windows the launcher also needs MSYS2 at `C:\msys64`) - see `test result: ok. 96 passed`.
 
-Optional: members admitted by the council can also ask, co-sign and repay from the board with a testnet wallet (MyNearWallet, via NEAR Wallet Selector). None of the steps above needs it.
+Optional: members admitted by the council can also ask, co-sign and repay from the board with a testnet wallet via NEAR Wallet Selector: Meteor Wallet, or MyNearWallet for accounts that already exist (it no longer creates new ones). Asking, repaying on time, a request held for a co-signer and cancelling it were run end to end with Meteor Wallet on testnet; co-signing from the board was not (see "Wallet run" in `docs/design/ACCEPTANCE_EVIDENCE.md`). None of the steps above needs a wallet.
 
 If testnet RPC is unreachable, step 2 prints the RPC error; set `FIADOR_RPC` to another public testnet endpoint (https://docs.near.org/api/rpc/providers) and retry.
 
@@ -74,7 +74,7 @@ If testnet RPC is unreachable, step 2 prints the RPC error; set `FIADOR_RPC` to 
 
 ### Libraries and tools
 
-`near-sdk` 5.30.1 (Rust), `near-api-js` 7.5.3, NEAR Wallet Selector 10.1.4 (`@near-wallet-selector/core`, `@near-wallet-selector/my-near-wallet`) with `@near-js/transactions` 2.5.1, React 19.3, Vite 8.3, vitest 5.1, tsx 4.23, TypeScript 5.9. The Sputnik DAO v2 contract and factory are used as deployed on testnet. Code was written with Claude Code.
+`near-sdk` 5.30.1 (Rust), `near-api-js` 7.5.3, NEAR Wallet Selector 10.1.4 (`@near-wallet-selector/core`, `@near-wallet-selector/meteor-wallet`, `@near-wallet-selector/my-near-wallet`) with `@near-js/transactions` 2.5.1 and `buffer` 6.0.3 (for the Meteor SDK), React 19.3, Vite 8.3, vitest 5.1, tsx 4.23, TypeScript 5.9. The Sputnik DAO v2 contract and factory are used as deployed on testnet. Code was written with Claude Code.
 
 ## Deploy
 

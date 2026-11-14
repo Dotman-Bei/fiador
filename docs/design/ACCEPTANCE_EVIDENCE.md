@@ -147,11 +147,60 @@ Measured from computed styles on the landing, Overview, Loan #3, member ada-1 an
 
 ## Not verified here
 
-- **Wallet flows.** Sign-in, ask, co-sign, repay and cancel were not run (the builder ruled out a wallet run). The repay form now attaches the principal read from the chosen loan; that is unit-tested (`web/src/wallet/actions.test.ts`), not exercised with a wallet. The panel claims no transaction state: after the wallet returns it says only that.
+- **Wallet flows.** Not run in S5 (the builder had ruled out a wallet run then). Sign-in, ask, repay, a held request and cancel were run later with Meteor Wallet on testnet; see [Wallet run](#wallet-run). Co-sign from the browser has still not been run.
 - No screen-reader walkthrough, no 200% browser zoom, no 320px width, no real phone or keyboard-open test.
 - Timings are from one machine and one network; no LCP, INP or CLS traces.
-- Populated live states (a held request, an active or overdue loan) do not exist on the frozen desk; they were checked from fixtures (the gallery and the tests), not live. No command that writes to testnet was run.
+- Populated live states (a held request, an active or overdue loan) did not exist on the desk during S5; they were checked from fixtures (the gallery and the tests), not live, and no command that writes to testnet was run in S5. The later [Wallet run](#wallet-run) put a live held request on the board.
 
 ## What the amendment cut
 
 From the proposal's S4: Activity, the operations dock, the review sheet and redesigned Ask / Co-sign / Repay / Cancel flows, Mark default and Sync loan, and any `tx` reads. The wallet panel stays as it was, re-hosted on Overview and Requests, with the repay fix. From S5: 200% zoom and short-height runs.
+
+## Wallet run
+
+Date: 14 November 2026, 11:54 to 13:21 UTC, on NEAR testnet against the live, keyless desk `desk.fiador-ops-vmwpxk.testnet` and DAO `fiador.sputnikv2.testnet`. The board was the production build served under a subpath, `http://127.0.0.1:5192/fiador/app/` (`python -m http.server`), in the builder's Chrome, with the builder's own testnet account `goodkale2741.testnet` (created in Meteor Wallet) and the Meteor Wallet browser extension. Every result below was read back from the chain by RPC (`get_loan`, `get_member`, `get_requests`, `get_proposal`, `view_account`, access keys), and transactions from the public testnet explorer API; none is taken from what the page said. The desk's contract and state were not touched except through its public methods and ordinary council proposals.
+
+### What was run and what the chain says
+
+| Step | Result | Chain evidence |
+|---|---|---|
+| `npm run verify` before the run | PASS | `VERIFY PASS (16 checks, 6 loans)` |
+| `npm run visitor` (CLI, faucet account) | PASS | `fiador-visitor-187asci7.testnet`; held 0.1 above standing, cancelled; loan #6 0.1 NEAR paid by proposal 13 (filed by the desk 11:55:21.057Z, desk vote only, Approved), Repaid; standing 0.1 -> 0.2 |
+| Council admits the account (`npm run admit`) | PASS | proposal 14, 12:10:17.456Z, council-1 + council-2 approve (2 of 3), `admit_member`; standing 4 NEAR |
+| Gas money (`--top-up 2 --yes`) | PASS | root -> goodkale2741.testnet 2 NEAR; balance 0 -> 2 |
+| Connect with Meteor Wallet | PASS | two FunctionCall keys added for the desk only (any method, 0.25 NEAR allowance): txs `HXqRxQLF2N19Sk3MdYi9kfibL6nxqgbZsTvUow35N9so` 12:20:19Z and `Bxgdp2sf32zT53bS4gru7XVtnStAvLQPG9tvos9iQC37` 12:20:48Z (the sign-in ran twice; one key is spare). The session survived a reload. [6a](screenshots/wallet/6a-signed-in-meteor.jpg) |
+| Ask 3 NEAR, first try | FAIL in the browser, nothing sent | the panel said "The wallet reported an error for ask: Buffer is not defined"; no loan, no request, balances unchanged. Fixed (see below) |
+| Ask 3 NEAR | PASS | tx `7eRGze7fHsgkbTEkyPoetHQEpC4MApP52TvHYqVvZkv1` 12:28:48Z; loan #7 Standing, Active, proposal 15 (desk, 12:28:48.824Z, desk vote only, Approved, Transfer 3 NEAR to the borrower); DAO 15.42154 -> 12.42154; borrower 1.999915 -> 4.998398 |
+| Repay #7 on time | FAIL: a real default | the term was then 120 s (due 12:30:50.462Z, grace to 12:31:50Z). The first repay attempt produced no transaction. The repay that landed was tx `AxUGFNSjubPmU6cgfhvsnHxa4zPaa7AbWrXniZ2B9Tmh` at 12:37:24Z with exactly 3 NEAR, past term and grace, so the desk settled loan #7 `Defaulted` (closed 12:37:24.669Z), standing 4 -> 0, defaults 1, as `settle` in `contract/desk/src/repay.rs` is written. The 3 NEAR went back: DAO back to 15.42154. Kept in the book as a real default |
+| Council raises the term (`npm run params`) | PASS | proposal 16, 12:45:59.211Z, council-1 + council-2 approve; `set_params` with the full set read live and only `loan_term_sec` 120 -> 600 and `grace_sec` 60 -> 300 changed; `get_config` read back 600 / 300; `npm run verify` PASS (20 checks, 8 loans) |
+| Council re-admits the account (`npm run admit -- --readmit`) | PASS | proposal 17, 12:49:25.712Z, council-1 + council-2 approve; `remove_member` then `admit_member`; standing 0 -> 4 (the member record resets; loan #7 stays in the book) |
+| Ask 1 NEAR, repay on time | PASS | loan #8, proposal 18 (desk, 12:53:24.969Z, Approved), created 12:53:24.365Z, due 13:03:26.882Z; repay tx `8uNLMx4KHAuevPnYfrt23TvDDtRrSYT88yJnzMmtceRX` 12:55:44.271Z, 1 NEAR; `Repaid`; standing 4 -> 5, repaid_on_time 1. This repay was clicked in the runner's test tab (old build) and went to the builder's Meteor extension, where the builder approved it |
+| Ask 1 NEAR, repay on time with the builder's own click | PASS | loan #9, proposal 19 (desk, 13:07:06.837Z, Approved), created 13:07:06.229Z, due 13:17:08.685Z; repay tx `EQ12CM3cESFerGEASZkTZ2E4D6uvSGS3NzH3TQZf9TsF` 13:12:08.327Z, 1 NEAR, from the fixed build; `Repaid`; standing 5 -> 6, repaid_on_time 2 |
+| Ask 7 (above standing 6): held | PASS | tx `oGbNztxr64b7PYEw6GrG8oefHDhohVKqeTfE3ygqye6` 13:18:14.147Z; `get_requests`: 7 NEAR, gap 1 NEAR, expires 13:28:14.147Z; no loan opened. The board's Requests tab showed it under "Waiting for a co-signer" with the count badge. [6f held](screenshots/wallet/6f-held-request-waiting.jpg) |
+| Cancel my request | PASS | tx `J3KrWPzT11rBFBZt6hjbDhuvHNjBVDj4ngMZNt6cK6QL` 13:20:02.051Z; `get_requests` returns `[]`; the board read "No request is waiting for a co-signer". [6f cancelled](screenshots/wallet/6f-request-cancelled.jpg) |
+| `npm run verify` after the run | PASS | `VERIFY PASS (22 checks, 10 loans)`: loans #7 Defaulted (proposal 15), #8 and #9 Repaid (18, 19) match their Sputnik proposals; book 0 |
+
+End state: goodkale2741.testnet standing 6, nothing open; DAO 15.42154 NEAR, what it held before the wallet run.
+
+### What broke and what was fixed (all in `web/`, each with unit tests)
+
+1. **MyNearWallet cannot serve a new account** (it no longer creates them). Meteor Wallet was added as a second connector (`@near-wallet-selector/meteor-wallet` 10.1.4), loaded only when chosen or restored; the panel offers "Connect with Meteor Wallet" and "Connect with MyNearWallet (existing accounts only)". Meteor signs in without leaving the page, so the panel now takes the account from the sign-in result (before, it waited for a reload that never came).
+2. **The Meteor chunk crashed on load** ("Cannot read properties of undefined (reading 'from')"): found by importing it on the served page before any click. Its `randombytes` reaches Node's `Buffer`; aliased to a Web Crypto stand-in (`web/src/wallet/randombytes.ts`).
+3. **Ask failed with "Buffer is not defined"**: the Meteor SDK and the near-api-js 6 it bundles call a global `Buffer`. `buffer` 6.0.3 is set as `globalThis.Buffer` inside the Meteor loader only.
+4. **The repayment that never left the browser.** Meteor signs a call with no deposit in the page with its desk key, but a call that attaches NEAR (repay) needs approval in Meteor itself: in the extension when installed, otherwise in a pop-up window. Reproduced on the served build in the runner's tab:
+   - with the extension: the repay click reached the extension, `window.open` was never called, and the old panel said "Opening your wallet for repay…" for 96 s until the builder found and approved the request;
+   - extension hidden and `window.open` stubbed to a blocked pop-up (it was called 895 ms after the click, with the click's user activation still active): old panel "The wallet reported an error for repay: Couldn't open popup window to complete wallet action";
+   - extension hidden and `window.open` stubbed to an already-closed window: old panel still "Opening your wallet for repay…" 17 s later; the SDK keeps waiting with no time limit.
+
+   The first repay attempt on loan #7 matches this: the builder reported done, no transaction exists, and the old panel had no way to say that an approval was still waiting. Which of the three paths it took cannot be read back (the builder's tab and the extension keep no record we could read); the extension path is the one installed in this browser. Fix (`web/src/wallet/status.ts`): after 8 s without an answer the panel says nothing is sent until approved, to click the Meteor icon in the toolbar, or to allow pop-ups and press Repay again; Meteor's end tags read in plain words ("…the browser blocked the pop-up, so nothing was sent…"); an unknown error stays verbatim and claims nothing; when the wallet returns an outcome the panel shows the transaction hash with an explorer link. Re-run on the fixed build: blocked -> the plain-words message; closed -> at 4 s "Opening…", at 11 s the explanation. [notice](screenshots/wallet/7-fixed-still-waiting-notice.jpg)
+5. **The 120 s term was not humanly repayable in a browser wallet** (loan #7). Not a contract bug: the council raised the term to 600 s and the grace to 300 s through proposal 16; the board reads both live.
+
+### Not run, or not proven here
+
+- **Co-sign from the browser**: needs a second admitted account; none existed. The co-signed lane is proven by the scripted story (loan #0, proposal 6, co-signed by bayo-1, repaid on time; see `npm run verify`).
+- **MyNearWallet**: the connector is unchanged and offered for existing accounts, but was not exercised (no MyNearWallet account was available).
+- **The council lane from the browser** (`ask_council`) and Mark default / Sync loan: not in the panel; not run.
+- **A real (unstubbed) Meteor pop-up**: this browser has the Meteor extension, so the pop-up path was exercised only with `window.open` stubbed; no real pop-up window was opened.
+- **The panel's success text in the builder's tab** ("Your wallet sent repay in transaction …") was not captured; the builder reported "done" without the text. The hash rendering is unit-tested.
+- The spare desk key from the double sign-in is still on the account (desk-only, 0.25 NEAR allowance).
+- `npm audit`: the Meteor SDK brings `nanoid` 5.1.5 and `decode-uri-component` 0.2.2 (5 high-severity denial-of-service advisories in browser code that loads only with Meteor); not fixed upstream here.

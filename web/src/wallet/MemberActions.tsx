@@ -1,7 +1,8 @@
 /**
  * Wallet-connected member actions for /app (ask, co-sign, repay). Optional; the board stays read-only without it.
- * Never exercised end to end with a real wallet, and it claims no transaction state it did not read: after the wallet
- * returns it says only that, and the board shows the result once the desk records it.
+ * Ask, repay and cancel were run end to end with Meteor Wallet on testnet on 2026-11-14 (co-sign was not; see
+ * docs/design/ACCEPTANCE_EVIDENCE.md, "Wallet run"). It claims no transaction state it did not read: after the wallet
+ * returns it gives the transaction hash if the wallet returned one, and the board shows the result once the desk records it.
  */
 import { useEffect, useState } from 'react';
 import type { LoanView } from '../../../src/lib/desk';
