@@ -1,6 +1,11 @@
 <!-- readme-schema: R2-contract-protocol v1 -->
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/brand/mark-reversed.svg">
+  <img src="docs/brand/mark.svg" alt="Fiador mark" width="84">
+</picture>
+
 # Fiador
 
 **The desk files the loan. The DAO pays it. Repaying on time raises the limit.**

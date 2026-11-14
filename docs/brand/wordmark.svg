@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 202 40" width="202" height="40" role="img" aria-label="Fiador"><title>Fiador</title><g fill="#1f1a15">
+<path d="M0 0H24V6.5H7V16.5H19V23H7V40H0Z"/>
+<rect x="28" y="0" width="7" height="40"/>
+<path fill-rule="evenodd" d="M39 40L54.6 0H61.4L77 40H69.6L67.7 35H47.3L45.4 40ZM50.9 28.5H65.1L58 10.3Z"/>
+<path fill-rule="evenodd" d="M82 0H97A20 20 0 0 1 97 40H82ZM89 6.5V33.5H96.5A13.5 13.5 0 0 0 96.5 6.5Z"/>
+<path fill-rule="evenodd" d="M143 0A20 20 0 1 1 143 40A20 20 0 1 1 143 0ZM143 6.5A13.5 13.5 0 1 0 143 33.5A13.5 13.5 0 1 0 143 6.5Z"/>
+<path fill-rule="evenodd" d="M169 0H185A12 12 0 0 1 185 24H169ZM176 6.5V17.5H184.5A5.5 5.5 0 0 0 184.5 6.5Z"/>
+<rect x="169" y="0" width="7" height="40"/>
+<path d="M182 24H190L201 40H193Z"/>
+</g></svg>
