@@ -131,7 +131,13 @@ export function Shell({ route, board, nowMs, tabs = TABS, search, children }: {
       </a>
       <header className="topbar">
         <div className="wrap wrap-app topbar-row">
-          <a className="wordmark" href="../">Fiador</a>
+          <a className="wordmark" href="../">
+            <svg className="wordmark-mark" viewBox="0 0 64 64" width="22" height="22" aria-hidden="true" focusable="false">
+              <path className="mark-block" d="M0 0H64V38H38V64H0Z" />
+              <rect className="mark-seat" x="42" y="42" width="22" height="22" />
+            </svg>
+            Fiador
+          </a>
           <Tabs route={route} tabs={tabs} className="tabs" label="Board" />
           <div className="topbar-tools">
             {search}
