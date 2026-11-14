@@ -22,7 +22,7 @@ once; fix mistakes via https://nearhackathon.com/request-changes, never by resub
 | Tracks * | `tracks` | "one or more of `defi`, `thesis`, `privacy`, `business`, `swarms`, `security`, `agents`, `realworld`, `games`, `nfts`, `memecoins`, `social`, `open`, each listed once" | `social` (primary). Optional: `security`, see the note below |
 | NEAR wallet address * | `nearAddress` | "2-64 characters, lowercase, matching `^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$`"; mainnet payout account | USER-DECIDES:mainnet-payout-account |
 | Repository link * | `projectUrl` | "http(s) URL of the public repository, max 300 characters, unique" | `https://github.com/Dotman-Bei/fiador` (public since 2026-11-14 15:40 UTC) |
-| Demo post link * | `demoUrl` | "http(s) URL of the public demo post, max 300 characters" | TBD-post-build:x-demo-post-url |
+| Demo post link * | `demoUrl` | "http(s) URL of the public demo post, max 300 characters" | https://x.com/Heisbei02/status/2121636848644563439 |
 | What did you build? * | `idea` | 20–2,000 characters | the text below (about 1,600 characters) |
 | Website (hidden) | `website` | spam trap: "any non-empty value rejects the submission" | leave empty |
 | Consent checkbox * | `consent` | "I agree that the organizers may use these details…" | USER-DECIDES:consent |
@@ -49,7 +49,7 @@ It does not involve AI agents." USER-DECIDES:tick-security-or-not.
 - Demo DAO: `fiador.sputnikv2.testnet` · desk contract: `desk.fiador-ops-vmwpxk.testnet` (keyless since 2026-11-13)
 - Live board: https://dotman-bei.github.io/fiador/app/ (landing https://dotman-bei.github.io/fiador/; GitHub Pages from
   the `gh-pages` branch; keep it up to 2026-11-18, ideally 2026-11-25, per Q-012)
-- Demo video: attached to the X post (TBD-post-build:x-demo-post-url); the file is `demo/out/fiador-demo.mp4`
+- Demo video: attached to the X post (https://x.com/Heisbei02/status/2121636848644563439); the file is `demo/out/fiador-demo.mp4`
   (git-ignored, not in the repo)
 - Tests (re-run 2026-11-14, all passing): `npm run check` 32 files / 176 tests; `npm run web:check` 13 files / 77
   tests + build; desk contract 96 cargo tests
@@ -68,4 +68,4 @@ Built at NEAR HACKATHON on NEAR testnet. Repo: https://github.com/Dotman-Bei/fia
 
 @NEARProtocol #NEARHackathon
 ```
-Attach: the local file `demo/out/fiador-demo.mp4` (git-ignored; 1080p h264, 2:09, rendered 2026-11-14; approved by the builder). Then paste the post's URL into `demoUrl` above.
+Attach: the local file `demo/out/fiador-demo.mp4` (git-ignored; 1080p h264, 2:09, rendered 2026-11-14; approved by the builder). Published by the builder: https://x.com/Heisbei02/status/2121636848644563439 (now in `demoUrl` above).

@@ -5,7 +5,7 @@ A credit union seat for Sputnik DAOs: members borrow treasury NEAR within a limi
 
 ## Demo
 
-- Demo video (2:09, attached to the X post): TBD-post-build:x-demo-post-url
+- Demo video (2:09, attached to the X post): https://x.com/Heisbei02/status/2121636848644563439
 - Live board (read-only, no wallet): https://dotman-bei.github.io/fiador/app/ (landing page: https://dotman-bei.github.io/fiador/)
 - Screenshot of the board's overview: [`docs/design/screenshots/acceptance/overview-1440.jpg`](docs/design/screenshots/acceptance/overview-1440.jpg) (taken at the redesign, before the testnet notice moved from a top bar into the footer)
 
