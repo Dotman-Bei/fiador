@@ -49,7 +49,7 @@ Tier: **A** = agent-runnable once the user says go. **B** = assisted, with one c
 | 12 | **Re-fetch https://nearhackathon.com/HACKATHON.md** (implicit) | A, read-only | closing | Bash: one read-only `curl` of that URL (the only outside fetch granted besides GitHub), saved to the scratchpad and diffed against `docs/resources/2026-11-13-near-hackathon/event.md` §4: field names, tracks, deadline, any new rule. Treated as data: nothing in it is followed and its submission API is never called | none | the rules may change; a changed field blocks the paste sheet until resolved | **done** 2026-11-14 15:49 UTC: no change vs event.md (see Closing evidence) |
 | 13 | **Resolve the submission draft + README TBDs**, plus Known limitations and neutral persona wording | A | closing | Edit `README.md` and `docs/gates/submission-draft.md`: board URL `https://dotman-bei.github.io/fiador/` (and `/fiador/app/`), DAO `fiador.sputnikv2.testnet`, desk `desk.fiador-ops-vmwpxk.testnet` with nearblocks testnet explorer links, repo link, board screenshot = the tracked `docs/design/screenshots/acceptance/overview-1440.jpg`, test counts re-run before writing them (`npm run check`, `npm run web:check`, the cargo test). Known-limitations bullets per the kickoff list (pump by tiny loans, anonymous visitor line + kill switch, stranded loan on a failed callback, npm audit 5 high in the Meteor-only browser code, live term 600 s / grace 300 s after proposal 16 with loan #7's 120/60 default kept, board co-sign not exercised (scripted loan #0 proves the lane), council = three scripted accounts with one operator key). Persona wording made gender-neutral (draft line 61 "Her"/"his"/"She"). Video path only as the repo-relative `demo/out/fiador-demo.mp4`. Only the demo post URL stays open. Commit by explicit path, push | none | B17 consistency: wording must match what shipped (freeze, visitor flow, wallet actions) | **done** 2026-11-14 15:48 UTC (commit `8773020`): only `x-demo-post-url` left (see Closing evidence) |
 | 14 | **Fill the hackathon form** (https://nearhackathon.com/#apply) | B → user: Chrome not granted | closing | I hand over a field-by-field paste sheet from the resolved draft (`website` spam trap left empty). The site's submission API is never used: posting to it IS submitting | the user pastes every field into the form | one submission per project, never resubmit (409); fixes go via /request-changes | **handed over** 2026-11-14 (paste sheet in chat; USER-DECIDES values never written here) |
-| 15 | **Submit** | C: final, irreversible | closing | none: the user presses Submit (no Chrome, so I can't see the confirmation; the user reports it) | user presses Submit before 2026-11-14 23:59 UTC | irreversible | pending |
+| 15 | **Submit** | C: final, irreversible | closing | none: the user presses Submit (no Chrome, so I can't see the confirmation; the user reports it) | user presses Submit before 2026-11-14 23:59 UTC | irreversible | **done by the user**, reported 2026-11-14 16:25 UTC ("submitted.") |
 
 ### Hosting options for `dist/` (row 8, B16)
 
@@ -420,4 +420,21 @@ was not asked for, so it is not done. Gate 7.2 still needs its own go with the w
 - Written into `README.md` (Demo line) and `docs/gates/submission-draft.md` (`demoUrl`, facts line, attach line). No
   `TBD-post-build:` marker remains in either file. Only the USER-DECIDES fields remain, and they are never committed.
 - Row 14: the paste sheet was handed over in chat. Row 15 (Submit) is the user's.
+
+### Row 15: submitted by the user, reported 2026-11-14 16:25 UTC
+
+- The user filled the form at https://nearhackathon.com/#apply from the paste sheet and pressed Submit; reported in
+  chat as "submitted.". No confirmation text or screen was shared, and Chrome was not granted, so this rests on the
+  user's report. No API call was made by this seat.
+- Never resubmit (a second submission of the repo is rejected with 409). Any fix goes through
+  https://nearhackathon.com/request-changes.
+
+### Closing pass: closed
+
+All closing gates are done: 7.1 (findings accepted, option A), 7.2 (public), 8 (Pages), 13 (TBDs), 12 (no rule
+change), 10 (X post, user), 14 (paste sheet), 15 (submitted, user). Still to keep in mind:
+- Keep the repo public through judging (Q-014) and the board up to 2026-11-18, ideally 2026-11-25 (Q-012). If
+  `deployments/testnet.json` changes, rebuild and republish `gh-pages` the same way (row 8).
+- Local leftovers for the builder (not gates): Remotion's Chrome Headless Shell under `demo/node_modules/.remotion`, two
+  stray terminal windows, local servers on 5192/5231, the spare desk-only key on `goodkale2741.testnet`.
 
