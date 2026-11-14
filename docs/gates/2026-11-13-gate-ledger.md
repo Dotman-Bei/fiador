@@ -239,3 +239,30 @@ Faucet: `https://helper.nearprotocol.com/account` (the plans' default `FIADOR_FA
 - From now on, a desk fix means a new desk (`npm run seed -- --desk desk2.<root>`) that the council seats
 - Still open: the root, council, smoke and persona accounts keep their keys in `.env` (by design: they are the demo's
   council/burners); only the desk is keyless
+
+## Demo studio (Step 2.5), session card and rows, 2026-11-14 13:45 UTC
+
+Run by demo-studio, model `claude-sonnet-5-5` (tier standard, effort high), against origin/main HEAD `9f0f574`. Read-only probes; nothing installed, nothing written to testnet, no wallet, no sign-in. Consent rule as above: no install runs until the user says yes to the install list; no upload, ever, in this pass.
+
+### Session card (references/tollgate.md rows 5-6, 8-13, 16; row 8 skipped by instruction)
+
+| # | Requirement | Class here | Result | Evidence |
+|---|---|---|---|---|
+| 5 | claude-in-chrome MCP responding in this session | not needed: browser scenes use Playwright driving the installed Chrome | N-A | `tabs_context_mcp` answered "this session has no tab group of its own"; no group was created, no tab opened |
+| 6 | computer-use granted | not needed: the terminal scene is captured by ffmpeg `gfxcapture` on a window demo-studio launches; the foreground session itself needs the user's consent at Stage 3 | N-A | no computer-use tools in this session |
+| 8 | wallet extension / burner permission | struck: no wallet access granted | SKIPPED (by instruction) | |
+| 9 | Node ≥20 + npm | hard | PASS | node v22.23.4, npm 10.9.9 |
+| 10 | ffmpeg ≥8.1 + gfxcapture + hw encoder identified | hard | PASS | ffmpeg 9.0.2-essentials (gyan.dev); `gfxcapture` and `ddagrab` listed by `ffmpeg -filters`; encoders h264_nvenc, h264_amf, h264_qsv and libx264 compiled in, but the only GPU is Intel UHD Graphics, so the software `libx264` path is used (a hardware encoder was not tested) |
+| 11 | Python 3.10-3.12 reachable | degraded | PASS | `py -0p`: 3.12 (3.12.3); uv 0.11.16 |
+| 12 | elevenlabs-mcp | VOICE is Kokoro | N-A | |
+| 13 | Chrome logged into the upload account | UPLOAD is none | N-A | |
+| 16 | ~2 GB free disk | degraded | PASS | 68 GB free on C: |
+
+Other facts read: one display (\.\DISPLAY1, 1536×864 logical, 125% scaling); Google Chrome is installed; ports 5190 and 5192 are in use, 5231 is free (the demo server uses 5231); Playwright's own Chromium is already cached under `%LOCALAPPDATA%\ms-playwright` (not needed: Chrome is used); Kokoro-82M weights (`kokoro-v1_0.pth`, 327 MB) and the `af_heart` voice are already in the Hugging Face cache; torch 2.10.0+cpu is installed; the `kokoro` and `misaki` packages and espeak are not. Verdict: **2.5: CLEAR** pending the install list below.
+
+### Rows
+
+| date | event | detail |
+|---|---|---|
+| 2026-11-14 | live chain re-read (read-only, `npm run verify` plus view calls) | `VERIFY PASS (22 checks, 10 loans)`; params term 600 s, grace 300 s; DAO 15.4215 NEAR; book 0; standings ada-1 4, bayo-1 5, chidi-1 0, two visitors 0.2, goodkale2741.testnet 6; loan #0 Repaid, proposal 6; loan #3 Defaulted, proposal 9 |
+| 2026-11-14 | demo script written | `docs/demo/2026-11-14-demo-script.md` (schema v1, headings conformance PASS); awaiting the user's approval of the whole call sheet |
