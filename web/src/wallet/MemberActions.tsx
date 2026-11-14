@@ -10,6 +10,7 @@ import { formatNear } from '../../../src/lib/units';
 import { shortAccount } from '../ledger';
 import { askCall, cancelCall, cosignCall, repayCall } from './actions';
 import type { CallSpec } from './actions';
+import { errorStatus, openingStatus, sentStatus, SLOW_WALLET_MS, slowStatus, txHash, txUrl } from './status';
 import { currentAccount, send, signIn, signOut } from './wallet';
 import type { WalletId } from './wallet';
 
@@ -33,6 +34,7 @@ export function MemberActions({ deployment, loans = [] }: { deployment: Deployme
   const [maxPledge, setMaxPledge] = useState('1');
   const [loanId, setLoanId] = useState('');
   const [connecting, setConnecting] = useState(false);
+  const [tx, setTx] = useState<string | null>(null);
 
   useEffect(() => {
     currentAccount()
@@ -58,10 +60,22 @@ export function MemberActions({ deployment, loans = [] }: { deployment: Deployme
   const run = (build: () => CallSpec): void => {
     try {
       const spec = build();
-      setStatus(`Opening your wallet for ${spec.methodName}…`);
+      setTx(null);
+      setStatus(openingStatus(spec.methodName));
+      let settled = false;
+      const slow = setTimeout(() => {
+        if (!settled) setStatus(slowStatus(spec.methodName));
+      }, SLOW_WALLET_MS);
       send(desk, spec)
-        .then(() => setStatus(`Your wallet returned from ${spec.methodName}. Fiador has not read the result; the board shows it once the desk records it.`))
-        .catch((e: unknown) => setStatus(`The wallet reported an error for ${spec.methodName}: ${e instanceof Error ? e.message : String(e)}`));
+        .then((outcome) => {
+          setStatus(sentStatus(spec.methodName, outcome));
+          setTx(txHash(outcome));
+        })
+        .catch((e: unknown) => setStatus(errorStatus(spec.methodName, e)))
+        .finally(() => {
+          settled = true;
+          clearTimeout(slow);
+        });
     } catch (e) {
       setStatus(e instanceof Error ? e.message : String(e));
     }
@@ -127,7 +141,15 @@ export function MemberActions({ deployment, loans = [] }: { deployment: Deployme
             </div>
           </>
         )}
-        <p role="status" className="act-status">{status}</p>
+        <p role="status" className="act-status">
+          {status}
+          {tx === null ? null : (
+            <>
+              {' '}
+              <a href={txUrl(deployment.explorer, tx)} target="_blank" rel="noreferrer">View the transaction</a>
+            </>
+          )}
+        </p>
       </div>
     </section>
   );

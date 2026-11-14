@@ -75,11 +75,11 @@ export async function signOut(): Promise<void> {
   await wallet.signOut();
 }
 
-/** Sends one desk call from the signed-in account; the wallet asks the member to confirm. */
-export async function send(deskId: string, spec: CallSpec): Promise<void> {
+/** Sends one desk call from the signed-in account; the wallet asks the member to confirm. Returns the wallet's outcome. */
+export async function send(deskId: string, spec: CallSpec): Promise<unknown> {
   const s = await getSelector();
   const wallet = await s.wallet();
-  await wallet.signAndSendTransaction({
+  return wallet.signAndSendTransaction({
     receiverId: deskId,
     actions: [actionCreators.functionCall(spec.methodName, spec.args, spec.gas, spec.deposit)],
   });
