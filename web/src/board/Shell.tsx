@@ -1,4 +1,4 @@
-/** The board's shell: testnet line, topbar with index tabs and the status chip, a phone tab bar, the footer. */
+/** The board's shell: topbar with index tabs and the status chip, a phone tab bar, the footer with the testnet facts. */
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { REPO_URL } from '../deployment';
@@ -20,9 +20,6 @@ export interface Tab {
 
 /** The routes this build ships; a tab appears in the stage that builds its page. */
 export const TABS: readonly Tab[] = [{ key: 'overview', label: 'Overview', href: '#/' }];
-
-/** Where "What this means" points: the board's proof page. */
-export const FACTS_HREF = '#/desk';
 
 const CHIP: Record<BoardView['phase'], string> = {
   unseeded: 'Not seeded',
@@ -111,12 +108,11 @@ function Tabs({ route, tabs, className, label, short = false }: { route: Route; 
   );
 }
 
-export function Shell({ route, board, nowMs, tabs = TABS, factsHref = FACTS_HREF, search, children }: {
+export function Shell({ route, board, nowMs, tabs = TABS, search, children }: {
   route: Route;
   board: BoardView;
   nowMs: number;
   tabs?: readonly Tab[];
-  factsHref?: string;
   search?: ReactNode;
   children: ReactNode;
 }) {
@@ -133,15 +129,6 @@ export function Shell({ route, board, nowMs, tabs = TABS, factsHref = FACTS_HREF
       >
         Skip to content
       </a>
-      <div className="testnet-line">
-        <div className="wrap wrap-app testnet-row">
-          <p>
-            <span className="testnet-long">Testnet only · unaudited · not real money · the desk is frozen, with no access keys · the council is three scripted accounts sharing one operator key</span>
-            <span className="testnet-short">Testnet only · unaudited</span>
-          </p>
-          <a href={factsHref}>What this means</a>
-        </div>
-      </div>
       <header className="topbar">
         <div className="wrap wrap-app topbar-row">
           <a className="wordmark" href="../">Fiador</a>
@@ -158,7 +145,11 @@ export function Shell({ route, board, nowMs, tabs = TABS, factsHref = FACTS_HREF
       <footer className="board-foot">
         <div className="wrap wrap-app">
           <p>
-            Built at NEAR HACKATHON 2026. Testnet only, unaudited. <a href="../">About Fiador</a> · <a href={REPO_URL}>Source on GitHub</a>
+            Built at NEAR HACKATHON 2026. Testnet only, unaudited, not real money. The desk is frozen, with no access keys; the council is three scripted accounts
+            sharing one operator key.
+          </p>
+          <p>
+            <a href="#/desk">Desk and proof</a> · <a href="../">About Fiador</a> · <a href={REPO_URL}>Source on GitHub</a>
           </p>
         </div>
       </footer>

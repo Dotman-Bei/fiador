@@ -4,6 +4,8 @@ Date: 14 November 2026, stage S5 of [UX_AUDIT_AND_REDESIGN_PROPOSAL.md](UX_AUDIT
 
 What was tested: the production build (`npm run web:build`) of the S5 working tree, copied under a `fiador/` folder and served by `python -m http.server` at `http://127.0.0.1:5192/fiador/`, so the hash routes and relative assets were exercised from a subpath, as on GitHub Pages. Pages were driven by headless Chrome over the DevTools protocol from a Node 22 script using built-ins only (no package installed), at exact CSS widths with device scale 1 (mobile emulation at 390), against live NEAR testnet through the public RPC in `deployments/testnet.json`. Nothing was written to testnet; no wallet was used.
 
+After S5, at the builder's request, the black testnet bar above the navigation was removed from both pages; its facts moved into the footers ("Testnet only, unaudited, not real money" on `/`, and on `/app/` also the frozen desk and the scripted council, with a link to Desk and proof). The screenshots below were taken before that change and still show the bar; the measurements were re-checked after it (no horizontal scroll at 1440 and 390, `npm run check` and `npm run web:check` pass).
+
 ## Summary
 
 | Check | Result | Evidence |
@@ -94,7 +96,7 @@ WCAG ratios computed from the token values (`web/src/styles/tokens.css`):
 | `--ink-3` on `--leaf` (passbook) | #6f655a on #fdf8ec | 5.38:1 |
 | `--on-accent` on `--accent` (primary button) | #fffdf8 on #7b1e2c | 10.01:1 |
 | `--accent` on `--ground` (hover, focus ring) | #7b1e2c on #faf8f3 | 9.58:1 |
-| `--on-select` on `--select` (selection, testnet line) | #ffffff on #1f1a15 | 17.26:1 |
+| `--on-select` on `--select` (selection, skip link) | #ffffff on #1f1a15 | 17.26:1 |
 | `--signal` on `--ground` | #8a4f00 on #faf8f3 | 6.18:1 |
 | `--signal` on `--signal-wash` (stale band) | #8a4f00 on #f6efe4 | 5.75:1 |
 | `--ink` on `--signal-wash` | #1f1a15 on #f6efe4 | 15.11:1 |

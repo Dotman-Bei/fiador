@@ -587,6 +587,10 @@ ul.narrow-only,
   color: var(--ink-3);
 }
 
+.board-foot p + p {
+  margin-top: var(--s-2);
+}
+
 /* Phone tab bar */
 .tabbar {
   display: none;

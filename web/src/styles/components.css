@@ -1,28 +1,4 @@
-/* Components shared by / and /app/: testnet line, provenance tags, segmented selectors, the chain, checks. Tokens only. */
-
-/* Testnet line: one ink line of facts above the navigation */
-.testnet-line {
-  background: var(--select);
-  color: var(--on-select);
-  font-size: var(--fs-small);
-}
-
-.testnet-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-4);
-  min-height: var(--s-7);
-}
-
-.testnet-row a {
-  color: var(--on-select);
-  white-space: nowrap;
-}
-
-.testnet-short {
-  display: none;
-}
+/* Components shared by / and /app/: provenance tags, segmented selectors, the chain, checks. Tokens only. */
 
 /* Provenance tags: a word plus a shape */
 .prov {
@@ -422,15 +398,5 @@
 
   .boundary {
     grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 720px) {
-  .testnet-long {
-    display: none;
-  }
-
-  .testnet-short {
-    display: inline;
   }
 }

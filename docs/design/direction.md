@@ -71,7 +71,7 @@ All in `web/src/styles/tokens.css`. Contrast ratios were computed with the WCAG 
 | `--ink` / `--ink-2` / `--ink-3` | `#1f1a15` / `#5c5248` / `#6f655a` | text roles (16.3, 7.2 and 5.4:1 on ground) |
 | `--hair-color` / `--hair-strong` | ink at 9% / 18% | hairlines; header, slip and control rules |
 | `--accent` / `--accent-deep` / `--on-accent` | `#7b1e2c` / `#5e1520` / `#fffdf8` | the one accent: primary action and focus ring (9.6:1 on ground; 10:1 with its text) |
-| `--select` / `--on-select` | `#1f1a15` / `#ffffff` | selection fill, the testnet line, the skip link (17.3:1) |
+| `--select` / `--on-select` | `#1f1a15` / `#ffffff` | selection fill and the skip link (17.3:1) |
 | `--signal` / `--signal-wash` | `#8a4f00` / `#f6efe4` | system attention only: stale, unavailable, overdue (6.2:1 on ground, 5.8:1 on its wash) |
 | `--stamp-repaid` / `--stamp-late` / `--stamp-default` / `--stamp-open` / `--stamp-void` | `#2f6b45` / `#8a5a14` / `#b0251c` / `#1f1a15` / `#6f655a` | stamp inks, only for loan outcomes and their legend (all ≥ 5:1 on ground and slip) |
 | `--leaf` / `--margin-rule` | `#fdf8ec` / accent at 32% | the member's passbook page and its double red margin rule |
@@ -133,7 +133,7 @@ Where each duration is used: `--dur-fast` hovers and presses; `--dur-select` the
 
 - **Primary button:** `--accent` fill, `--on-accent` text, `--r-control`, 40px (48px on the landing), weight 500. Hover `--accent-deep`, press `--press`.
 - **Quiet button:** `--surface` with an 18% ink hairline; hover `--raised`.
-- **Testnet line:** one ink line above the topbar with the facts that must stay true (testnet only, unaudited, not real money, the desk frozen with no access keys, the council three scripted accounts sharing one operator key) and a link to the proof.
+- **Footer facts:** the facts that must stay true sit in the footer, not in a bar above the navigation (removed by the builder, 2026-11-14): on `/` "Testnet only, unaudited, not real money"; on `/app/` the same plus the desk frozen with no access keys and the council three scripted accounts sharing one operator key, with links to Desk and proof, the landing and the source.
 - **Topbar and index tabs:** wordmark, then ledger index tabs: the active tab is joined to the page (ground fill, no bottom rule, a 2px ink top edge). They are links with `aria-current="page"`, not ARIA tabs.
 - **Status chip:** a word plus a mark (Reading, Live with the read age, Stale, Unavailable, Not seeded); it opens a panel with the endpoint, the last good read in UTC, the last error in words and Retry. Phase changes are announced in a polite live region; read ages are not.
 - **Phone tab bar:** text tabs fixed to the bottom under 720px, 56px tall, safe-area inset.
@@ -148,7 +148,7 @@ Where each duration is used: `--dur-fast` hovers and presses; `--dur-select` the
 
 ## Page map
 
-- **`/`:** testnet line → navigation → hero (headline, one sentence from the README, the live chain instrument with the lane and party controls) → `#problem` "A DAO treasury can only give money away" → `#how` "Three lanes, and how a loan closes", each lane and each outcome linked into the instrument → `#proof` "Run the desk's checks here", the checks run live in the browser → `#try` "Open the board", the visitor line → footer with the repo link. No demo-video section (frontend contract, item 1).
+- **`/`:** navigation → hero (headline, one sentence from the README, the live chain instrument with the lane and party controls) → `#problem` "A DAO treasury can only give money away" → `#how` "Three lanes, and how a loan closes", each lane and each outcome linked into the instrument → `#proof` "Run the desk's checks here", the checks run live in the browser → `#try` "Open the board", the visitor line → footer with the repo link. No demo-video section (frontend contract, item 1).
 - **`/app/`** (hash routes, so every deep link works from a subpath with no server rewrite):
   - `#/` Overview: the book (one large figure, the book bar, treasury balance and spendable, room to lend), the desk's state, what needs a hand, "Waiting for a co-signer", the loan book with each loan's Sputnik proposal id and status, the members with the repaid loans behind each standing, and the optional wallet panel. README step 3 is true on this route with no hash.
   - `#/loans` (lane, outcome and member filters in the hash), `#/loans/:id` with the proposal chain, the proposal as read and the loan's check, `#/requests`, `#/members`, `#/members/:account` with the passbook and the derived standing trail, `#/desk` with the live checks, the policy as read and the twelve parameters. Index tabs: Overview, Loans, Requests (with the waiting count), Members, Desk & proof.

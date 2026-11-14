@@ -62,11 +62,6 @@ export function Landing({ deployment }: { deployment: Deployment | null }) {
 
   return (
     <>
-      <div className="testnet-line">
-        <div className="wrap testnet-row">
-          <p>Testnet only · unaudited · not real money</p>
-        </div>
-      </div>
       <header className="nav">
         <div className="wrap nav-row">
           <a className="wordmark" href="./">Fiador</a>
@@ -224,7 +219,7 @@ export function Landing({ deployment }: { deployment: Deployment | null }) {
       <footer>
         <div className="wrap">
           <p>
-            Built at NEAR HACKATHON 2026. Testnet only, unaudited. <a href={REPO_URL}>Source on GitHub</a>.
+            Built at NEAR HACKATHON 2026. Testnet only, unaudited, not real money. <a href={REPO_URL}>Source on GitHub</a>.
           </p>
         </div>
       </footer>
